@@ -33,3 +33,19 @@ from every regular season game, 1999–2024. The notebooks load it straight from
 
 Inspired by the [NFL Big Data Bowl](https://www.kaggle.com/competitions/nfl-big-data-bowl-2027), which asks the grown-up
 version of Lab 1's question.
+
+## Contributing
+
+Ideas and new labs are welcome, for the NFL or any other sport.
+
+- **Have an idea?** Open an [issue](https://github.com/o-ostrovskiy/sport-python-learning/issues) with the question a young fan would want answered.
+- **Made a lab?** Send a pull request. Put it in a folder for its sport (`football/`, `basketball/`, …) and keep it kid-friendly:
+  - one question a sports fan cares about, answered with open data;
+  - short missions, each with something to run, change, or guess;
+  - data loaded from a public URL, so it runs in Colab with nothing to install;
+  - run it top to bottom before sending, and clear the outputs.
+- Found a bug or a wrong number? An issue or a fix is great too.
+
+## License
+
+[MIT](LICENSE)
