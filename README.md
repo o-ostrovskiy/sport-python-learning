@@ -16,7 +16,7 @@ the data downloads itself.
 - Lab 1 is guided: the code is written, the kid runs it, changes names and numbers, and guesses results first.
 - Lab 2 has `___` blanks to fill in, with a "Google it" hint next to each one.
 
-More sports coming.
+What comes next, and in what order: [CURRICULUM.md](CURRICULUM.md). More sports coming.
 
 ## How to use
 
