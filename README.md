@@ -14,7 +14,7 @@ the data downloads itself.
 | **2. Stat Detective** | His favorite player's best game, the biggest games in history, and who's better | `print`, quotes, variables, `=` vs `==`, `len`, `.max()`, `.mean()`, square brackets | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/o-ostrovskiy/sport-python-learning/blob/main/football/Football_Lab_2.ipynb) |
 | **3. Referee Bot** | First down or not? Go for it, kick or punt? Rate a player's best game, and fix a bug in `compare` | `True`/`False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colons and indents | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/o-ostrovskiy/sport-python-learning/blob/main/football/Football_Lab_3.ipynb) |
 
-- Lab 1 is guided: the code is written, the kid runs it, changes names and numbers, and guesses results first.
+- Lab 1 is guided: the code is written, the kid runs it, changes names and numbers, and guesses results first. Every new thing has a plain-words explanation, and the harder analyst boxes are marked "watch the pros".
 - Labs 2 and 3 start slow and explain every new symbol. They have a couple of `___` blanks to fill in, with a hint and a "Google it" phrase for each one. Each takes under an hour.
 
 What comes next, and in what order: [CURRICULUM.md](CURRICULUM.md). More sports coming.

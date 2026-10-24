@@ -35,7 +35,7 @@ but no programming words and no math/statistics words.
 
 | Lab | New Python ideas | Data skills |
 |---|---|---|
-| **1. Football Lab** (guided, done 2026-10-22) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
+| **1. Football Lab** (guided; he did it 2026-10-22; plain-words explanations added 2026-10-24, same code) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
 | **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` several) | one player's games, `.max()`, `.mean()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
 | **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`), rules checked top to bottom, reading `def` line by line, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
 
