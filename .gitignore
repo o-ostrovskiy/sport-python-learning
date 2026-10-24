@@ -2,3 +2,5 @@ football/answers/
 football/russian/
 .ipynb_checkpoints/
 .DS_Store
+SCORE_SUBMISSION.md
+_build/

@@ -36,16 +36,17 @@ but no programming words and no math/statistics words.
 | Lab | New Python ideas | Data skills |
 |---|---|---|
 | **1. Football Lab** (guided, done 2026-10-22) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
-| **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `len( )` | one player's games, `.max()`, `.mean()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
+| **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` several) | one player's games, `.max()`, `.mean()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
+| **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`), rules checked top to bottom, reading `def` line by line, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
 
-Seen but **not yet explained** (Lab 3+ should explain them properly): `if` / `else` (inside `compare`),
-`def` (inside `compare`), `&` with two conditions (Lab 1).
+Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6), `.sum()` (used inside `compare`),
+`&` with two conditions (Lab 1).
 
 ## The plan
 
 | Lab | Working title | New Python ideas | Sports task (idea) | Reuses |
 |---|---|---|---|---|
-| **3** | Referee Bot | `if` / `elif` / `else`, comparisons `>` `<` `>=` `==`, `True` / `False`, indentation | "First down or not?" (yards gained vs yards to go) · touchdown / field goal / punt decision · then open up `compare` from Lab 2 and see its `if` / `else` | variables, `print` |
+| **3** ✅ | Referee Bot | `if` / `elif` / `else`, comparisons `>` `<` `>=` `==`, `True` / `False`, indentation | "First down or not?" (yards gained vs yards to go) · touchdown / field goal / punt decision · then open up `compare` from Lab 2 and see its `if` / `else` | variables, `print` |
 | **4** | Build Your Roster | lists `[ ]`, counting from 0, `len( )`, `.append( )`, `in` | make his dream team as a list · "is Mahomes on my team?" · top 5 passers from the data as a list | `if`, `len` |
 | **5** | Game Day Loop | `for` loops, `range( )`, a running total | add up a season game by game · print a scoreboard for each week · count his player's 100-yard games | lists, `if` |
 | **6** | Build Your Own Machine | `def`, inputs (parameters), `return` | rebuild `compare` himself · a "fantasy points" calculator for any player and season | loops, `if` |
@@ -59,8 +60,8 @@ After Lab 10: start a second sport with the same order but faster, or harder NFL
 
 ## Mistakes kids commonly make (plan a short "what went wrong?" moment for each)
 - Forgetting quotes around text (`NameError`) — done in Lab 2.
-- `=` (put in a box) vs `==` (ask "same?") — introduced in Lab 2, practise in Lab 3.
-- Missing `:` or wrong indentation after `if`, `for`, `def` — Lab 3.
+- `=` (put in a box) vs `==` (ask "same?") — introduced in Lab 2, practised in Lab 3.
+- Missing `:` after `if` — done in Lab 3; indentation again with `for` (Lab 5) and `def` (Lab 6).
 - Lists start counting at 0, not 1 — Lab 4.
 - Capital letters matter (`"travis kelce"` finds nothing) — Lab 2.
 - Text vs number (`"100" + "50"`) — Lab 2; `input( )` always gives text — Lab 8.
