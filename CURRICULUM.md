@@ -5,7 +5,7 @@ and stays sporty. Read this before building a lab, and update the "Already cover
 
 ## Who it's for
 A 10-year-old who loves the NFL and is new to Python. He knows players and stats very well,
-but no programming words and no math/statistics words.
+but no programming words and no math/statistics words. The same plan now has a baseball track (see the end).
 
 ## How kids learn Python best (what the research and courses agree on)
 - **Order:** variables → decisions (`if`) → lists → loops → functions → dictionaries. Courses for ages 10–12
@@ -55,8 +55,44 @@ Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6), 
 | **9** | Chart Room | bar and line charts with clear labels | his team's yards season by season · two players' careers side by side | dictionaries, loops |
 | **10** | My Own Investigation | putting it all together (the "Make" step) | he picks his own question, answers it with data, and shows mom the chart | everything |
 
-After Lab 10: start a second sport with the same order but faster, or harder NFL labs
+After Lab 10: harder NFL labs
 (two Steve Smiths and `player_id`, grouping by season, the mystery-player filters from the first draft of Lab 2).
+
+## Baseball (MLB) track
+
+Started 2026-10-29. **Same Python ideas, same order, same rules** as the NFL labs above: lab N in baseball teaches
+exactly what lab N in football teaches, so a kid can do either sport, or switch between them.
+Only the sports task changes. Build scripts: `_build/build_baseball_labN.py` (local, not in git).
+
+**Data.** One table `stats`: one row = one batter in one season (a player traded mid-season is added up into one row,
+with his last team). Columns: `name`, `season`, `team` (full name), `G`, `AB`, `H`, `HR`, `RBI`, `SB`, `BB`, `SO`, `playerID`.
+History is the Lahman database (1871 to last year); newer seasons come live from statsapi.mlb.com, matched to
+Lahman players by birth date and last name, so careers add up across both. Active players carry MLB's spelling
+(`"Vladimir Guerrero Jr."`), and every name is stripped of accent marks so kids can type it (`"Julio Rodriguez"`,
+`"Ronald Acuna Jr."`). Stats are whole numbers (`Int64`); a stat nobody recorded is `<NA>`, not 0.
+The loader is a folded Colab box (`#@title`) at the top of every lab; reading it is a good Lab 7–10 challenge.
+If MLB's API is down, the loader prints a short note and carries on with history only.
+
+Watch out when building the next baseball labs:
+- **Missing strikeouts and steals.** `SO` is empty for many seasons before 1949 (and in the Negro Leagues), `SB` before 1923.
+  Adding up careers over empty seasons makes old stars look like they never struck out. Drop those seasons first
+  (`stats.dropna(subset=["SO"])`), as Lab 1 does, and say why in kid words.
+- **A misspelled name** gives `<NA>`, then `TypeError` in `round( )` or `if`. Each lab tells the kid what that means.
+- **Same-name players** (Ken Griffey dad and son) are joined in `compare`, which matches by name. Fine for now;
+  `playerID` is the fix for a later lab.
+
+| Lab | Title | Baseball task | Status |
+|---|---|---|---|
+| **1** | Baseball Lab | total bases with `*` · records with `sort_values` · `.dropna()` before adding up careers · `time_to_plate(mph)` machine · career HR vs SO chart, then SB vs HR / HR vs BB | ✅ |
+| **2** | Stat Detective | best season (`.max()`), average season, biggest seasons ever, `compare` career totals | ✅ |
+| **3** | Umpire Bot | `>=` with a walk (4 balls) · safe or out (runner vs throw time) · home run / extra bases / caught by distance (450 ft: order matters) · rate best season · tie bug in `compare` | ✅ |
+| **4** | Build Your Roster | a 9-player lineup as a list (batting order counts from 0!) · "is Judge in my lineup?" · this season's top 5 home run hitters as a list | |
+| **5** | Game Day Loop | add up a career season by season · count 30-homer seasons · a box score for each inning | |
+| **6** | Build Your Own Machine | rebuild `compare` · `batting_average(hits, at_bats)` | |
+| **7** | Player Cards | a player card dictionary · position number → name (`6` → `"shortstop"`) | |
+| **8** | Guess the Player | quiz with clues from the data | |
+| **9** | Chart Room | home runs season by season · two careers side by side | |
+| **10** | My Own Investigation | the kid's own question | |
 
 ## Mistakes kids commonly make (plan a short "what went wrong?" moment for each)
 - Forgetting quotes around text (`NameError`) — done in Lab 2.
