@@ -30,16 +30,19 @@ but no programming words and no math/statistics words. The same plan now has a b
    look at it: axes labelled in plain words ("left = faster"), and the text must match the picture.
 8. End with a short "Today you learned" list and one line teasing the next lab.
 9. Answer key for the parent, kept out of the public repo.
+10. **Explain whatever shows up, even if it's taught later** (his feedback on Lab 2, 2026-11-05). If a box contains something from
+    a future lab (a list, `True`), say in plain words what it's doing there and why it's needed, and name the lab that covers it.
+    Long lines get taken apart step by step, with a small box for each step.
 
 ## Already covered (don't re-teach, just reuse)
 
 | Lab | New Python ideas | Data skills |
 |---|---|---|
-| **1. Football Lab** (guided; he did it 2026-10-22; plain-words explanations added 2026-10-24, same code) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
-| **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` several) | one player's games, `.max()`, `.mean()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
-| **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`), rules checked top to bottom, reading `def` line by line, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
+| **1. Football Lab** (guided; he did it 2026-10-22; plain-words explanations added 2026-10-24 and 2026-11-05, same code) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
+| **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `True`/`False` as answers (first look), `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` = a list inside brackets, first look), `KeyError`, `SyntaxError`, `=` as a setting (`ascending=False`), the dot | reading a row filter from the inside out, one player's games, `.max()`, `.mean()`, `.sum()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
+| **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`, `IndentationError`), rules checked top to bottom, reading `def` line by line, reading the `total1` line from the inside out, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
 
-Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6), `.sum()` (used inside `compare`),
+Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6),
 `&` with two conditions (Lab 1).
 
 ## The plan
@@ -85,7 +88,7 @@ Watch out when building the next baseball labs:
 |---|---|---|---|
 | **1** | Baseball Lab | total bases with `*` · records with `sort_values` · `.dropna()` before adding up careers · `time_to_plate(mph)` machine · career HR vs SO chart, then SB vs HR / HR vs BB | ✅ |
 | **2** | Stat Detective | best season (`.max()`), average season, biggest seasons ever, `compare` career totals | ✅ |
-| **3** | Umpire Bot | `>=` with a walk (4 balls) · safe or out (runner vs throw time) · home run / extra bases / caught by distance (450 ft: order matters) · rate best season · tie bug in `compare` | ✅ |
+| **3** | Umpire Bot | `>=` with a walk (4 balls) · safe or out (runner vs throw time, bonus: tie goes to the runner with `<=`) · home run / extra bases / caught by distance (450 ft: order matters) · rate best season · tie bug in `compare` | ✅ |
 | **4** | Build Your Roster | a 9-player lineup as a list (batting order counts from 0!) · "is Judge in my lineup?" · this season's top 5 home run hitters as a list | |
 | **5** | Game Day Loop | add up a career season by season · count 30-homer seasons · a box score for each inning | |
 | **6** | Build Your Own Machine | rebuild `compare` · `batting_average(hits, at_bats)` | |
