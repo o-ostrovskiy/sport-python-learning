@@ -18,7 +18,8 @@ but no programming words and no math/statistics words. The same plan now has a b
 - **One project per idea.** Every course pairs each new idea with something fun to build. For us: a sports task.
 
 ## Rules for every lab (from his first test run, 2026-10-22)
-1. **Under 1 hour.** About 4–5 short parts. Lab 1 took 1.5 hours, which was too long.
+1. **About 40 minutes.** 4 short parts, about 15 code boxes. Lab 1 took 1.5 hours and Lab 3 (5 parts, 19 boxes) took over
+   an hour and tired him out (2026-11-12), so from Lab 4 on: shorter, and the intro suggests doing Parts 1–2 and 3–4 on two days.
 2. **No analytics or math words** (no "correlation", "hypothesis", "variance"...). If a word is needed, explain it
    in kid language the first time ("average = add up all games and share them out equally").
 3. **Explain every new symbol slowly:** what it does and why it's needed. Show what goes wrong without it
@@ -41,6 +42,7 @@ but no programming words and no math/statistics words. The same plan now has a b
 | **1. Football Lab** (guided; he did it 2026-10-22; plain-words explanations added 2026-10-24 and 2026-11-05, same code) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
 | **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `True`/`False` as answers (first look), `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` = a list inside brackets, first look), `KeyError`, `SyntaxError`, `=` as a setting (`ascending=False`), the dot | reading a row filter from the inside out, one player's games, `.max()`, `.mean()`, `.sum()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
 | **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`, `IndentationError`), rules checked top to bottom, reading `def` line by line, reading the `total1` line from the inside out, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
+| **4. My Draft Board** (NFL) / **My Lineup Card** (MLB) | lists `[ ]` and commas (a missing comma glues two names), counting from 0, `IndexError`, `.append( )`, `in`, a list written over several lines, `list( )`, the last spot is `len( ) - 1` | season-totals file (NFL `player_stats_season.csv`, one row = one season), newest season with `.max()`, top 5 as a list |
 
 Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6),
 `&` with two conditions (Lab 1).
@@ -50,7 +52,7 @@ Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6),
 | Lab | Working title | New Python ideas | Sports task (idea) | Reuses |
 |---|---|---|---|---|
 | **3** ✅ | Referee Bot | `if` / `elif` / `else`, comparisons `>` `<` `>=` `==`, `True` / `False`, indentation | "First down or not?" (yards gained vs yards to go) · touchdown / field goal / punt decision · then open up `compare` from Lab 2 and see its `if` / `else` | variables, `print` |
-| **4** | Build Your Roster | lists `[ ]`, counting from 0, `len( )`, `.append( )`, `in` | make his dream team as a list · "is Mahomes on my team?" · top 5 passers from the data as a list | `if`, `len` |
+| **4** ✅ | My Draft Board | lists `[ ]`, counting from 0, `len( )`, `.append( )`, `in` | make his dream team as a list · "is Mahomes on my team?" · top 5 passers from the data as a list | `if`, `len` |
 | **5** | Game Day Loop | `for` loops, `range( )`, a running total | add up a season game by game · print a scoreboard for each week · count his player's 100-yard games | lists, `if` |
 | **6** | Build Your Own Machine | `def`, inputs (parameters), `return` | rebuild `compare` himself · a "fantasy points" calculator for any player and season | loops, `if` |
 | **7** | Player Cards | dictionaries `{ }`: key → value | a player card (name, team, number, best season) · team code → team name (`"KC"` → `"Chiefs"`) | functions, loops |
@@ -89,7 +91,7 @@ Watch out when building the next baseball labs:
 | **1** | Baseball Lab | total bases with `*` · records with `sort_values` · `.dropna()` before adding up careers · `time_to_plate(mph)` machine · career HR vs SO chart, then SB vs HR / HR vs BB | ✅ |
 | **2** | Stat Detective | best season (`.max()`), average season, biggest seasons ever, `compare` career totals | ✅ |
 | **3** | Umpire Bot | `>=` with a walk (4 balls) · safe or out (runner vs throw time, bonus: tie goes to the runner with `<=`) · home run / extra bases / caught by distance (450 ft: order matters) · rate best season · tie bug in `compare` | ✅ |
-| **4** | Build Your Roster | a 9-player lineup as a list (batting order counts from 0!) · "is Judge in my lineup?" · this season's top 5 home run hitters as a list | |
+| **4** | My Lineup Card | a 9-player lineup as a list (batting order counts from 0, cleanup = `lineup[3]`) · trade machine with `in` + `.append` · newest season's top 5 home run hitters as a list | ✅ |
 | **5** | Game Day Loop | add up a career season by season · count 30-homer seasons · a box score for each inning | |
 | **6** | Build Your Own Machine | rebuild `compare` · `batting_average(hits, at_bats)` | |
 | **7** | Player Cards | a player card dictionary · position number → name (`6` → `"shortstop"`) | |
@@ -101,7 +103,7 @@ Watch out when building the next baseball labs:
 - Forgetting quotes around text (`NameError`) — done in Lab 2.
 - `=` (put in a box) vs `==` (ask "same?") — introduced in Lab 2, practised in Lab 3.
 - Missing `:` after `if` — done in Lab 3; indentation again with `for` (Lab 5) and `def` (Lab 6).
-- Lists start counting at 0, not 1 — Lab 4.
+- Lists start counting at 0, not 1 — done in Lab 4 (`IndexError` on purpose).
 - Capital letters matter (`"travis kelce"` finds nothing) — Lab 2.
 - Text vs number (`"100" + "50"`) — Lab 2; `input( )` always gives text — Lab 8.
 
