@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Season</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0d1b2e;--navy2:#16294a;--gold:#ff9f1c;--grass:#2f8f3a;--grass2:#27792f;--ink:#10203a;--red:#ff5a4f;--ok:#31c46b}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:Fredoka,system-ui,sans-serif;display:flex;flex-direction:column;background:#fff;color:var(--ink);overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+
+/* top bar + ticket strip */
+aside{flex:none;display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:10px 18px;padding:10px 18px 12px;background:#fff;border-bottom:5px solid var(--grass);
+ background-image:repeating-linear-gradient(90deg,#0000 0 60px,#2f8f3a0d 60px 120px)}
+.brand{display:flex;align-items:center;gap:8px;font-size:26px;font-weight:700}
+.brand span{color:var(--grass)}
+.voice{margin-left:6px;width:38px;height:38px;border-radius:50%;border:3px solid var(--ink);background:#fff;color:var(--ink);font-size:16px}
+.voice.on{background:var(--gold)}
+.tabs{display:flex;gap:6px;background:#eef3fb;padding:4px;border-radius:999px}
+.tab{padding:7px 16px;border-radius:999px;border:0;background:none;color:var(--ink);font-size:16px;font-weight:600}
+.tab.on{background:var(--grass);color:#fff}
+.record{justify-self:end;display:flex;gap:10px;align-items:center;font-weight:600;color:#5b6b88}
+.record b{font-family:"JetBrains Mono",monospace;background:var(--ink);color:var(--gold);font-size:20px;padding:2px 12px;border-radius:8px}
+h4{display:none}
+#sched{grid-column:1/-1;display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px}
+.wk{flex:none;display:flex;align-items:center;gap:10px;text-align:left;padding:7px 14px 7px 8px;border-radius:12px;border:3px dashed #c3cfe4;background:#fff;color:var(--ink);font-size:15px;font-weight:600;transition:transform .15s}
+.wk:hover{transform:translateY(-3px) rotate(-1deg)}
+.wk .n{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#eef3fb;font-size:19px;flex:none}
+.wk small{display:block;color:#5b6b88;font-size:12px;font-weight:500}
+.wk.next{border:3px solid var(--gold);background:#fff6e8}
+.wk.next .n{background:var(--gold)}
+.wk.won{border:3px solid var(--ok)}
+.wk.won .n{background:#d9f7e4}
+.wk.locked{opacity:.6}
+
+/* map */
+main{flex:1;position:relative;min-width:0}
+#map{position:absolute;inset:0;background:#cfe3ee}
+.pin{width:46px;height:46px;border-radius:14px;rotate:-6deg;display:grid;place-items:center;font-size:22px;background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 #0003;transition:transform .15s}
+.leaflet-marker-icon{transition:opacity .3s}
+.pin:hover{transform:scale(1.2) rotate(-8deg)}
+.pin.next{border-color:var(--gold);animation:pulse 1.2s infinite}
+.pin.won{border-color:var(--ok)}
+.pin.locked{filter:grayscale(1);opacity:.8}
+@keyframes pulse{50%{box-shadow:0 0 0 12px #ff9f1c66,0 4px 0 #0003}}
+.leaflet-container{font-family:inherit}
+
+#whole{display:none;position:absolute;top:14px;left:14px;z-index:1000;background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:14px;padding:8px 14px;font-size:15px;font-weight:600}
+/* coach */
+#coach{position:absolute;right:18px;bottom:14px;z-index:1200;display:flex;flex-direction:row-reverse;align-items:flex-end;gap:6px;pointer-events:none;max-width:calc(100% - 36px)}
+#coach img{width:170px;height:170px;flex:none;pointer-events:auto;cursor:pointer;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 0 #0003);transform-origin:50% 100%}
+@keyframes bob{50%{transform:translateY(-7px) rotate(-2deg)}}
+#coach.jump img,#coach.win img{animation:jump .5s 2}
+#coach.hint img{animation:jump .5s 1}
+@keyframes jump{50%{transform:translateY(-34px) rotate(8deg)}}
+#coach.flag img{animation:shake .35s 2}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.mouth{transform-origin:75px 104px}
+#coach.talk .mouth{animation:talk .22s infinite}
+@keyframes talk{50%{transform:scaleY(.3)}}
+.lid{animation:blink 4s infinite;transform-origin:75px 74px}
+@keyframes blink{0%,94%,100%{transform:scaleY(0)}97%{transform:scaleY(1)}}
+.bubble{pointer-events:auto;background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:22px 22px 4px 22px;padding:12px 16px;margin-bottom:38px;font-size:17px;line-height:1.35;max-width:430px}
+.bubble .who{display:inline-block;background:var(--grass);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 8px;border-radius:8px;margin-bottom:4px}
+.bubble code{font-family:"JetBrains Mono",monospace;background:#e7efff;padding:1px 6px;border-radius:6px;color:#2a4d8f}
+.bubble .go{display:block;margin-top:10px;background:var(--gold);color:var(--ink);border:0;border-radius:12px;padding:9px 16px;font-size:16px;font-weight:700;box-shadow:0 4px 0 #c46f00}
+.bubble .go:active{transform:translateY(3px);box-shadow:0 1px 0 #c46f00}
+
+#ask{display:none;order:1;pointer-events:auto;width:100%;flex-wrap:wrap;gap:6px;margin-bottom:2px}
+#coach.lab #ask{display:flex}
+#askIn{flex:1;min-width:0;font-family:inherit;font-size:15px;padding:9px 12px;border-radius:14px;border:3px solid var(--ink);color:var(--ink);background:#fff}
+#ask button{width:42px;border-radius:14px;border:3px solid var(--ink);background:var(--gold);color:var(--ink);font-size:16px;box-shadow:3px 3px 0 var(--ink)}
+#askMsg{flex-basis:100%;font-size:13px;font-weight:600;color:#b3261e;min-height:16px}
+@media(max-width:820px){#coach.lab #ask{display:none}}
+/* lab notebook */
+#game{position:absolute;inset:0;z-index:1100;display:none;flex-direction:column;background:#eef3fb;color:var(--ink)}
+#game.on{display:flex}
+.board{display:flex;align-items:center;gap:14px;background:#081120;color:#fff;padding:10px 18px;font-weight:700;flex:none}
+.board .x{background:none;border:2px solid #ffffff33;color:#fff;border-radius:12px;padding:6px 12px;font-size:14px}
+.board .sc{margin:0 auto;display:flex;gap:14px;align-items:center;font-size:18px}
+.board .num{font-family:"JetBrains Mono",monospace;background:#000;color:var(--gold);padding:3px 12px;border-radius:8px;font-size:26px;min-width:52px;text-align:center}
+.board .q{color:#9fb2d2;font-size:14px}
+.field{position:relative;height:50px;flex:none;background:var(--grass2);border-bottom:4px solid #fff;overflow:hidden}
+.field .ez{position:absolute;top:0;bottom:0;width:9%;display:grid;place-items:center;font-size:11px;font-weight:700;letter-spacing:.15em;color:#fff}
+.field .ez.l{left:0;background:#1d4f8f}.field .ez.r{right:0;background:#c9322b}
+.field .lines{position:absolute;left:9%;right:9%;top:0;bottom:0;background:repeating-linear-gradient(90deg,#0000 0 calc(10% - 2px),#ffffff88 calc(10% - 2px) 10%)}
+.ball{position:absolute;top:50%;left:9%;font-size:30px;transform:translate(-50%,-50%);transition:left 1s cubic-bezier(.3,1.6,.5,1);z-index:2}
+.ball.spin{animation:spin 1s}
+@keyframes spin{to{rotate:720deg}}
+#nb{flex:1;overflow:auto;padding:22px 300px 60px 26px;scroll-behavior:smooth}
+#nb>*{max-width:760px}
+.md{font-size:18px;line-height:1.55;margin:0 0 14px}
+.md h2{font-size:26px;margin:26px 0 6px}
+.md code,.task code{font-family:"JetBrains Mono",monospace;background:#dbe6fa;padding:1px 6px;border-radius:6px;font-size:.9em}
+.cell{background:#fff;border-radius:20px;padding:16px 18px;margin:0 0 22px;box-shadow:0 5px 0 #d3deef;border:3px solid transparent;transition:opacity .3s}
+.cell.wait{opacity:.4;pointer-events:none;filter:grayscale(.6)}
+.cell.done{border-color:var(--ok)}
+.cell.bad{animation:shake .35s}
+.tag{display:inline-block;background:#e7efff;color:#2a4d8f;font-size:12px;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:8px}
+.tag.turn{background:var(--gold);color:var(--ink)}
+.cell.done .tag::after{content:" ✓"}
+.task{font-size:18px;line-height:1.5;margin:8px 0 12px}
+textarea.code{display:block;width:100%;resize:none;border:0;outline:3px solid transparent;font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f1ff;border-radius:14px;padding:14px 16px;font-size:16px;line-height:1.55;tab-size:4;white-space:pre;overflow-x:auto}
+textarea.code:focus{outline-color:var(--gold)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.run{background:var(--ok);color:#fff;border:0;border-radius:14px;padding:10px 22px;font-size:17px;font-weight:700;box-shadow:0 5px 0 #1f8e4b}
+.run:active{transform:translateY(3px);box-shadow:0 2px 0 #1f8e4b}
+.hint{background:#fff;color:var(--ink);border:3px solid #d5deee;border-radius:14px;padding:8px 16px;font-size:16px;font-weight:600}
+.key{color:#7a8aa6;font-size:13px}
+.guess{font-family:"JetBrains Mono",monospace;font-size:18px;width:110px;padding:8px 12px;border-radius:12px;border:3px solid #b9c6de;color:var(--ink)}
+.out{font-family:"JetBrains Mono",monospace;font-size:16px;white-space:pre-wrap;margin:12px 0 0;padding:12px 16px;border-radius:14px;background:#f2f6ff;border-left:6px solid #7fa4e8;display:none}
+.out .tbl{overflow-x:auto;white-space:normal}.out table{border-collapse:collapse;font-size:13px}.out th,.out td{padding:4px 10px;text-align:right;white-space:nowrap}.out thead th{background:#dbe6fa}.out tbody tr:nth-child(even){background:#e9effb}.out img{display:block;max-width:100%;border-radius:10px;margin-top:6px}
+.out.on{display:block}.out.err{background:#ffeceb;border-color:var(--red);color:#8f1d16}
+.msg{color:var(--red);font-weight:600;font-size:15px}
+.opts{display:grid;gap:10px}
+.opt{font-family:"JetBrains Mono",monospace;text-align:left;font-size:17px;padding:12px 16px;border-radius:14px;border:3px solid #d5deee;background:#fff;color:var(--ink);box-shadow:0 4px 0 #d5deee;transition:transform .1s}
+.opt:hover{transform:translateY(-2px);border-color:#7fa4e8}
+.opt.right{background:#d9f7e4;border-color:var(--ok);box-shadow:0 4px 0 var(--ok)}
+.opt.wrong{background:#ffe2df;border-color:var(--red);box-shadow:0 4px 0 var(--red);opacity:.7}
+pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f1ff;border-radius:14px;padding:14px 16px;margin:0 0 14px;font-size:16px;line-height:1.5;white-space:pre-wrap}
+.rep{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:14px;background:#f2f6ff;margin-bottom:8px;font-size:18px;font-weight:500}
+.rep span{font-size:14px;font-weight:700;padding:4px 12px;border-radius:10px}
+.rep .g{background:#d9f7e4;color:#157a3d}.rep .p{background:#fff1c9;color:#8a6100}.rep .n{background:#ffe2df;color:#b3261e}
+.big{font-size:44px;text-align:center;margin:4px 0}
+#coach.lab{flex-direction:column-reverse;align-items:flex-end;width:262px;top:130px;bottom:auto}
+#coach.lab .bubble{max-height:max(120px,calc(100vh - 570px));overflow-y:auto;margin:0 0 0 0;border-radius:22px 4px 22px 22px;max-width:262px;font-size:16px}
+.confetti{position:absolute;top:-20px;width:12px;height:18px;z-index:1300;animation:fall linear forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:1000px){.record span{display:none}}
+@media(max-width:820px){#coach img{width:104px;height:104px}.bubble{font-size:15px}#nb{padding:16px 14px 250px}#coach.lab{flex-direction:row-reverse;align-items:flex-end;width:auto;top:auto;bottom:10px}#coach.lab .bubble{max-width:none;max-height:40vh;border-radius:22px 22px 4px 22px}}
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand"><a href="index.html" style="color:inherit;text-decoration:none">🏈 Python <span>Season</span></a><button class="voice" id="voice" title="Coach voice" aria-label="Coach voice">🔈</button></div>
+  <div class="tabs">
+    <button class="tab on" data-sport="nfl">🏈 Football</button>
+    <button class="tab" data-sport="mlb">⚾ Baseball</button>
+  </div>
+  <div class="record"><span>Season record</span><b id="rec">0–0</b></div>
+  <h4>ROAD TRIP SCHEDULE</h4>
+  <div id="sched"></div>
+</aside>
+
+<main>
+  <div id="map"></div>
+  <button id="whole">🗺 Whole map</button>
+
+  <section id="game">
+    <div class="board">
+      <button class="x" id="quit">← Map</button>
+      <div class="sc"><span>YOU</span><span class="num" id="you">0</span><span class="q" id="qtr">WEEK 1</span><span class="num">0</span><span>BUGS</span></div>
+      <span class="q" id="down"></span>
+    </div>
+    <div class="field">
+      <div class="ez l">HOME</div><div class="lines"></div><div class="ez r" id="goal">TD</div>
+      <div class="ball" id="ball">🏈</div>
+    </div>
+    <div id="nb"></div>
+  </section>
+
+  <div id="coach">
+    <img id="coachSvg" src="assets/coach-wave.png" alt="Coach Andrew" width="170" height="170">
+    <div class="bubble"><span class="who">COACH ANDREW</span><div id="say"></div></div>
+    <form id="ask" autocomplete="off"><input id="askIn" maxlength="200" placeholder="Ask me about Python…" aria-label="Ask Coach Andrew about Python"><button aria-label="Send question">➤</button><div id="askMsg"></div></form>
+  </div>
+</main>
+
+<script src="season.js"></script>
+<script src="assets/voice/index.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const store = { get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
+                set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} } };
+
+/* ---------- data ---------- */
+
+
+/* ---------- coach ---------- */
+let voiceOn = false, typer;   // the voice is off until the child turns it on; the choice is remembered
+// Pick the most natural English voice this computer has; the default one often sounds robotic.
+const VOICE_PICKS = [/Andrew.*Natural/i, /Guy.*Natural/i, /Natural/i, /Evan.*(Enhanced|Premium)/i, /Nathan.*(Enhanced|Premium)/i, /(Enhanced|Premium)/i, /Google US English/i, /Aaron/i, /Samantha/i, /Daniel/i];
+function bestVoice() {
+  const en = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+  for (const p of VOICE_PICKS) { const v = en.find(v => p.test(v.name)); if (v) return v; }
+  return en.find(v => /en[-_]US/i.test(v.lang)) || en[0];
+}
+if ('speechSynthesis' in window) speechSynthesis.getVoices();
+// The coach's voice comes from the site's server (/api/speak); without it, the computer's own voice is used.
+const ttsCache = new Map(); let audio, speakN = 0;
+function hush() { audio?.pause(); window.speechSynthesis?.cancel(); }
+function localSpeak(text) {
+  if (!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text), v = bestVoice();
+  if (v) u.voice = v; u.lang = 'en-US'; u.rate = 0.96; u.pitch = 1; speechSynthesis.speak(u);
+}
+// What the server offers (coach questions, coach voice). Stays off when the site runs without its server.
+const API = { ask: false, voice: false };
+fetch('/api/status').then(r => r.ok ? r.json() : {}).then(j => Object.assign(API, j)).catch(() => {});
+async function synth(text) {
+  const r = await fetch('/api/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+  if (!r.ok) throw new Error('speak ' + r.status);
+  return URL.createObjectURL(await r.blob());
+}
+// Lines recorded ahead of time (assets/voice, made by tools/record-voice.mjs) play at once, with no wait.
+const RECORDED = window.COACH_VOICE ||= {};
+// Sound goes through one meter, so the coach can bounce with his own voice.
+let actx, meter, amp;
+function wire(el) {
+  try { actx ??= new (window.AudioContext || window.webkitAudioContext)();
+    if (!meter) { meter = actx.createAnalyser(); meter.fftSize = 512; amp = new Uint8Array(512); meter.connect(actx.destination); }
+    actx.createMediaElementSource(el).connect(meter); if (actx.state === 'suspended') actx.resume();
+  } catch (e) { console.warn('No sound meter', e); }
+  return el;
+}
+addEventListener('pointerdown', () => { if (actx?.state === 'suspended') actx.resume(); });
+const loadClip = url => { const el = new Audio(url); el.preload = 'auto'; return wire(el); };
+const playClip = el => new Promise((done, fail) => { audio = el; el.onended = done; el.onerror = () => fail(new Error('clip did not load')); el.play().catch(fail); });
+let level = 0;
+(function bounce() {
+  requestAnimationFrame(bounce); let now = 0;
+  if (meter && audio && !audio.paused && !audio.ended) { meter.getByteTimeDomainData(amp); let sum = 0; for (const v of amp) sum += ((v - 128) / 128) ** 2; now = Math.min(1, 4.5 * Math.sqrt(sum / amp.length)); }
+  level += (now - level) * (now > level ? .55 : .18);
+  const img = $('#coachSvg').style;
+  if (level < .01) { if (img.scale) img.scale = img.translate = ''; return; }
+  img.scale = `${1 - .04 * level} ${1 + .09 * level}`; img.translate = `0 ${-7 * level}px`;
+})();
+// Cut a bubble into recorded pieces, longest first: "Boom!" + the lab's line, or "Flag!" + the tip + "Try again."
+// Words with no recording come back as { live }, to be spoken by the server when it offers a voice.
+function pieces(text) {
+  if (!text) return [];
+  const k = Object.keys(RECORDED).filter(k => ` ${text} `.includes(` ${k} `)).sort((a, b) => b.length - a.length)[0];
+  if (!k) return [{ live: text }];
+  const i = ` ${text} `.indexOf(` ${k} `);
+  return [...pieces(text.slice(0, i).trim()), { clip: RECORDED[k] }, ...pieces(text.slice(i + k.length).trim())];
+}
+async function speak(text) {
+  hush(); const n = ++speakN; text = text.replace(/\s+/g, ' ').trim(); if (!text) return;
+  const plan = pieces(text);
+  // One voice only: once recorded lines exist, a line with no recording stays silent (the bubble still shows it)
+  // instead of switching to the computer's robotic voice.
+  const robotOk = !Object.keys(RECORDED).length;
+  if (!API.voice && !plan.some(p => p.clip)) { if (robotOk) localSpeak(text); return; }
+  // Get every piece moving at once, so each is ready when the one before it ends.
+  const ready = plan.map(p => p.clip ? loadClip('assets/voice/' + p.clip) : !API.voice ? null
+    : (ttsCache.get(p.live) || ttsCache.set(p.live, synth(p.live)).get(p.live)).then(loadClip));
+  ready.forEach(r => r?.catch?.(() => {}));
+  let started = false;
+  try { for (const r of ready) { if (!r) continue; const el = await r; if (n !== speakN) return; started = true; await playClip(el); if (n !== speakN) return; } }
+  catch (e) { if (e?.name === 'NotAllowedError') return;   // the browser wants one tap on the page before any sound
+    console.warn('Coach voice failed', e); plan.forEach(p => p.live && ttsCache.delete(p.live)); if (n === speakN && !started && robotOk) localSpeak(text); }
+}
+function say(html, mood = '', btn) {
+  const c = $('#coach'), box = $('#say');
+  const lab = c.classList.contains('lab'); c.className = mood; void c.offsetWidth; c.classList.add('talk'); c.classList.toggle('lab', lab);
+  $('#coachSvg').src = 'assets/coach-' + (sport === 'mlb' ? 'baseball' : { jump: 'cheer', flag: 'flag', hint: 'hint', win: 'trophy' }[mood] || 'wave') + '.png';
+  box.innerHTML = html;
+  if (btn) { const b = document.createElement('button'); b.className = 'go'; b.textContent = btn.label; b.onclick = btn.go; box.appendChild(b); }
+  clearTimeout(typer); typer = setTimeout(() => c.classList.remove('talk'), Math.min(4000, 600 + box.textContent.length * 45));
+  if (voiceOn) { const t = document.createElement('div'); t.innerHTML = html.replace(/<br\s*\/?>/gi, ' '); speak(t.textContent.replace(/[^\p{L}\p{N}\p{P}\p{Zs}+=<>*\/]/gu, ' ')); }
+}
+function setVoice(on) { voiceOn = on; const b = $('#voice'); b.classList.toggle('on', on); b.textContent = on ? '🔊' : '🔈'; try { localStorage.setItem('voice', on ? '1' : '0'); } catch {} }
+$('#voice').onclick = () => { setVoice(!voiceOn); if (voiceOn) say('Voice is on! I will talk you through the plays.', 'jump'); else hush(); };
+try { if (localStorage.getItem('voice') === '1') setVoice(true); } catch {}
+let pokes = 0;
+$('#coachSvg').onclick = () => say(['Hey, that tickles!', 'I am a ball. I do not have a belly button.', 'Less poking, more coding!'][pokes++ % 3], 'jump');
+
+/* ---------- map ---------- */
+const params = new URLSearchParams(location.search);
+let sport = params.get('sport') === 'mlb' ? 'mlb' : 'nfl', wantWeek = (parseInt(params.get('week')) || 0) - 1, won = loadWins();
+const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([38.5, -96], 4);
+L.control.zoom({ position: 'topright' }).addTo(map);
+const street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, minZoom: 3, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+const photo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, attribution: 'Imagery &copy; Esri' });
+map.on('zoomend', () => { const close = map.getZoom() >= 13;
+  if (close && !map.hasLayer(photo)) { photo.addTo(map); map.removeLayer(street); }
+  if (!close && !map.hasLayer(street)) { street.addTo(map); map.removeLayer(photo); }
+  $('#whole').style.display = map.getZoom() > 5 ? 'block' : 'none'; });
+const layer = L.layerGroup().addTo(map);
+
+function status(i) { return won[sport].includes(i) ? 'won' : SEASON[sport].weeks[i].ready ? 'next' : 'locked'; }
+function draw() {
+  const S = SEASON[sport]; layer.clearLayers();
+  L.polyline(S.weeks.map(w => w.at), { color: '#10203a', weight: 4, dashArray: '2 12', lineCap: 'round' }).addTo(layer);
+  $('#sched').innerHTML = '';
+  S.weeks.forEach((w, i) => {
+    const st = status(i), face = st === 'won' ? '✅' : st === 'locked' ? '🔒' : S.ball;
+    L.marker(w.at, { icon: L.divIcon({ className: '', iconSize: [46, 46], iconAnchor: [23, 23], html: `<div class="pin ${st}">${face}</div>` }) })
+      .addTo(layer).on('click', () => tap(i));
+    const b = document.createElement('button'); b.className = 'wk ' + st;
+    b.innerHTML = `<span class="n">${face}</span><span>Week ${i + 1} · ${w.city}<small>${w.stadium}</small></span>`;
+    b.onclick = () => tap(i); $('#sched').appendChild(b);
+  });
+  $('#rec').textContent = `${won[sport].length}–0`;
+}
+// First tap flies to the stadium; a second tap on the same one starts its lab.
+let picked = -1;
+function tap(i) { const w = SEASON[sport].weeks[i]; if (picked === i && w.ready) startGame(w, i); else pick(i); }
+function pick(i) {
+  picked = i;
+  const w = SEASON[sport].weeks[i], st = status(i);
+  map.flyTo(w.at, 16, { duration: 2.2 });
+  const card = stadiumLine(w);
+  if (!w.ready) return say(`${card}<br><br>${playbookLine(w, i)} This game is coming soon!`);
+  say(`${card}<br><br>${playbookLine(w, i)} Tap the ball again or press Kick off!`, 'jump', { label: st === 'won' ? 'Play again' : 'Kick off!', go: () => startGame(w, i) });
+}
+$('#whole').onclick = () => { picked = -1; map.flyTo([38.5, -96], 4, { duration: 1.5 }); say('Here is the whole season. Tap a stadium to fly there!'); };
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  sport = t.dataset.sport; picked = -1; draw(); map.flyTo([38.5, -96], 4);
+  say(sport === 'mlb' ? 'Baseball season! Same Python, different ballpark. These games are coming soon.' : 'Back to the gridiron! Tap a stadium on the map.');
+});
+
+/* ---------- real Python in the browser ---------- */
+let pyReady;
+function loadPy() {
+  return pyReady ??= new Promise((res, rej) => {
+    const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
+    s.onload = () => loadPyodide().then(res, rej); s.onerror = rej; document.head.appendChild(s);
+  });
+}
+let baseReady; const dataFiles = new Set();
+function loadBase() {
+  return baseReady ??= (async () => {
+    const py = await loadPy(); await py.loadPackage(['pandas', 'matplotlib']);
+    py.runPython(`
+import warnings; warnings.filterwarnings("ignore")
+import matplotlib; matplotlib.use("Agg")
+import io, base64, pandas as _pd
+def _show(x):
+    if isinstance(x, _pd.Series): x = x.to_frame()
+    if isinstance(x, _pd.DataFrame): return x.to_html(max_rows=12, max_cols=10, border=0, na_rep="NaN")
+    return None
+def _fig():
+    import matplotlib.pyplot as plt
+    if not plt.get_fignums(): return None
+    b = io.BytesIO(); plt.savefig(b, format="png", dpi=110, bbox_inches="tight"); plt.close("all")
+    return base64.b64encode(b.getvalue()).decode()
+`);
+    return true;
+  })();
+}
+// Loads pandas, then this lab's own data files and helper code (each only once).
+async function loadData() {
+  await loadBase(); const py = await loadPy(), lab = LABS[sport][week];
+  for (const f of lab.data || []) if (!dataFiles.has(f)) {
+    const r = await fetch('data/' + f); if (!r.ok) throw new Error('missing data file ' + f);
+    py.FS.writeFile(f, new Uint8Array(await r.arrayBuffer())); dataFiles.add(f); }
+  if (lab.setup && !lab.setupDone) { py.runPython(lab.setup); lab.setupDone = true; }
+  return true;
+}
+function friendly(e) {
+  const t = String(e.message || e).trim(), last = t.split('\n').pop();
+  const ln = [...t.matchAll(/File "<exec>", line (\d+)/g)].pop()?.[1], at = ln ? ` on line ${ln}` : '';
+  let m;
+  if ((m = last.match(/NameError: name '(.+?)' is not defined/))) return `Python looked for a locker called <code>${m[1]}</code>${at} and found nothing. If it is a word you want to show, put quotes around it. If it is a locker, check the spelling.`;
+  if ((m = last.match(/KeyError: ['"]?(.+?)['"]?$/))) return `The table has no column called <code>${m[1]}</code>${at}. Check the spelling, and keep the quotes.`;
+  if (/AttributeError/.test(last)) return `Python does not know that command${at}. Check the spelling of the word after the dot.`;
+  if (/unterminated string/.test(last)) return `A quote is missing${at}. Text needs a quote at the start <b>and</b> at the end.`;
+  if (/was never closed/.test(last)) return `A bracket is still open${at}. Every <code>(</code> needs a <code>)</code>.`;
+  if (/IndexError/.test(last)) return `There is no spot with that number${at}. Remember: Python counts from 0, so a list of 5 things has spots 0, 1, 2, 3 and 4.`;
+  if (/IndentationError/.test(last)) return `The spaces at the start of a line look off${at}. Lines inside a machine need 4 spaces; other lines need none.`;
+  if (/SyntaxError/.test(last)) return `Python could not read the code${at}. Words and names need quotes around them. Also look for a missing comma or bracket.`;
+  if (/ModuleNotFoundError|No module named/.test(t)) return `That helper is not ready in this box${at}. Use only the helpers this lab has shown you.`;
+  if (/NAType|NA is ambiguous|boolean value of NA/.test(last)) return `Python found an empty spot where it expected a number${at}. That usually means a name is not in the table: check the spelling and the capital letters.`;
+  if (/TypeError/.test(last)) return `Python got mixed up${at}: it looks like text and numbers got mixed. Numbers do not need quotes.`;
+  if (/ZeroDivisionError/.test(last)) return `Nobody can divide by zero, not even Python. Try a bigger number.`;
+  return `Something tripped Python up${at}: ${last.replace(/https?:\/\/\S+/g, '').replace(/</g, '&lt;').slice(0, 200)}`;
+}
+
+const LABS = { nfl: {}, mlb: {} };
+function registerLab(sp, n, lab) { LABS[sp][n - 1] = lab; }
+
+/* ---------- ask the coach: Python questions only ---------- */
+// The rules for the coach's answers live on the server (functions/_handler.mjs), where a child cannot change them.
+const ASK_OFF = 'Good question for another day! In the film room I can only talk about <b>Python and this lab</b>. Ask me about your code, an error, or what a word like <code>append</code> means.';
+const ASK_ADULT = 'That sounds important. Please talk to your mom, dad or another grown-up you trust right now. I am only a coding coach, but they can really help.';
+const ASK_PRIVATE = 'Careful! Never type private things like your address, phone, email or passwords here. Ask me a Python question instead.';
+const ASK_LIMIT = 'We have talked a lot! Try the next play, and use 💡 Hint if you get stuck.';
+const PRIVATE = [/[\w.+-]+@[\w-]+\.[\w.]+/, /(\d[\s().-]?){7,}/, /https?:\/\/|www\./i, /\b(my (address|password|phone|school) is|i live (at|in|on))\b/i];
+let askLog = [], askCount = 0, askBusy = false, askLast = 0;
+function labContext() {
+  const c = cells?.find(x => !x.done) || cells?.[cells.length - 1]; if (!c) return {};
+  const strip = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent; };
+  return { sport, week: week + 1, topic: SEASON[sport].weeks[week].topic, skills: Object.values(SKILL_NAMES).join(', '),
+    play: cells.indexOf(c) + 1, plays: cells.length, task: strip(c.task),
+    code: (c.el.querySelector('textarea')?.value ?? c.code ?? '').slice(0, 1200), output: (c.el.querySelector('.out')?.textContent ?? '').slice(0, 300) };
+}
+async function askCoach(question) {
+  const r = await fetch('/api/ask', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question, lab: labContext(), history: askLog.slice(-3) }) });
+  if (r.status === 429) return { kind: 'limit' };
+  if (!r.ok) throw new Error('ask ' + r.status);
+  return r.json();
+}
+$('#ask').onsubmit = async e => {
+  e.preventDefault(); const inp = $('#askIn'), note = $('#askMsg'), qn = inp.value.trim().slice(0, 200); note.textContent = '';
+  if (!qn) return note.textContent = 'Type your question first.';
+  if (askBusy) return;
+  if (!API.ask) return say('My question line is not connected yet. Press 💡 Hint on your play if you are stuck.');
+  if (PRIVATE.some(p => p.test(qn))) return say(ASK_PRIVATE, 'flag');
+  if (++askCount > 25) return say(ASK_LIMIT);
+  if (Date.now() - askLast < 3000) return note.textContent = 'One question at a time. Wait a moment.';
+  askBusy = true; askLast = Date.now(); inp.value = ''; say('Hmm, good question. Let me think…');
+  try {
+    const res = await askCoach(qn);
+    if (res.kind === 'answer') { const a = String(res.text).slice(0, 600); askLog.push({ q: qn, a });
+      return say(esc(a).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\s*\n+\s*/g, '<br>'), 'hint'); }
+    say({ adult: ASK_ADULT, private: ASK_PRIVATE, limit: ASK_LIMIT }[res.kind] || ASK_OFF, res.kind === 'private' ? 'flag' : '');
+  } catch (err) { console.warn(err); say('I could not hear that. Check the internet and ask again, or press 💡 Hint on your play.', 'flag'); }
+  finally { askBusy = false; }
+};
+
+/* ---------- lab notebook ---------- */
+let cells, misses, doneCount, rvWrong, myVote, LAB, REVIEW, SKILL_NAMES, week;
+// The coach's words follow the sport being played.
+const WORDS = { nfl: { cheers: ['Boom!', 'What a play!', 'Nice hands!', 'First down!', 'You are on fire!'], win: 'TOUCHDOWN!', flag: 'Flag on the play!', oops: 'Flag!', goal: 'TD' },
+                mlb: { cheers: ['Boom!', 'What a play!', 'Nice catch!', 'Base hit!', 'You are on fire!'], win: 'HOME RUN!', flag: 'Foul ball!', oops: 'Foul ball!', goal: 'HR' } };
+const words = () => WORDS[sport];
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+function moveBall() { const b = $('#ball'); b.style.left = (9 + doneCount / cells.length * 82) + '%'; b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin');
+  $('#down').textContent = `Play ${Math.min(doneCount + 1, cells.length)} of ${cells.length}`; }
+function miss(c) { misses[c.skill]++; c.el.classList.remove('bad'); void c.el.offsetWidth; c.el.classList.add('bad'); }
+
+function loadLab(sp, i) {
+  const v = document.createElement('script'); v.src = labFile(sp, i).replace('labs/', 'assets/voice/'); document.head.appendChild(v);   // this lab's recorded lines
+  return new Promise((res, rej) => { const t = document.createElement('script'); t.src = labFile(sp, i);
+    t.onload = () => LABS[sp][i] ? res() : rej(new Error('lab file did not register')); t.onerror = rej; document.head.appendChild(t); });
+}
+async function startGame(w, i) {
+  if (!LABS[sport][i]) { try { await loadLab(sport, i); } catch { return say('I could not open this game. Check the internet connection and try again.', 'flag'); } }
+  week = i; ({ cells: LAB, review: REVIEW, skills: SKILL_NAMES } = LABS[sport][i]);
+  $('#qtr').textContent = w.stadium.toUpperCase();
+  misses = Object.fromEntries(Object.keys(SKILL_NAMES).map(k => [k, 0])); doneCount = 0; rvWrong = {}; askLog = []; askCount = 0;
+  $('#game').classList.add('on'); $('#coach').classList.add('lab'); $('#you').textContent = 0; $('#ball').textContent = SEASON[sport].ball; $('#goal').textContent = words().goal;
+  const nb = $('#nb'); nb.innerHTML = ''; nb.scrollTop = 0;
+  cells = [];
+  LAB.forEach(c => {
+    if (c.md) { const d = document.createElement('div'); d.className = 'md'; d.innerHTML = c.md; nb.appendChild(d); return; }
+    const cell = { ...c, done: false, hintN: 0 }, el = cell.el = document.createElement('div'); el.className = 'cell wait';
+    const n = cells.length + 1, label = { run: 'RUN IT', turn: SEASON[sport].ball + ' YOUR TURN', boom: 'ERROR ON PURPOSE', quiz: c.vote ? 'YOUR GUESS' : 'QUICK QUESTION', predict: 'GUESS FIRST' }[c.kind];
+    let h = `<span class="tag ${c.kind === 'turn' ? 'turn' : ''}">PLAY ${n} · ${label}</span><div class="task">${c.task}</div>`;
+    if (c.kind === 'quiz') h += `${c.code ? `<pre class="show">${esc(c.code)}</pre>` : ''}<div class="opts">${c.opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div>`;
+    else h += `<textarea class="code" spellcheck="false" autocapitalize="off" rows="${c.code.split('\n').length}">${esc(c.code)}</textarea>
+      <div class="row">${c.kind === 'predict' ? '<input class="guess" inputmode="numeric" placeholder="guess">' : ''}<button class="run">▶ Run</button>
+      ${c.hints ? '<button class="hint">💡 Hint</button>' : ''}<span class="key">or Shift + Enter</span><span class="msg"></span></div><div class="out"></div>`;
+    el.innerHTML = h; nb.appendChild(el); cells.push(cell);
+    if (c.kind === 'quiz') el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+      const i = +o.dataset.i; if (c.vote) { if (cell.done) return; myVote = i; o.classList.add('right'); finish(cell, c.ok); }
+      else if (i === c.a) { o.classList.add('right'); finish(cell, c.ok); }
+      else { o.classList.add('wrong'); o.disabled = true; miss(cell); say(`<b>🚩 ${words().oops}</b> ${c.tips[i]} Try again.`, 'flag'); } });
+    else {
+      const ta = el.querySelector('textarea'), fit = () => ta.rows = ta.value.split('\n').length;
+      ta.oninput = () => { fit(); el.querySelector('.msg').textContent = ''; };
+      ta.onkeydown = e => { if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); run(cell); }
+        if (e.key === 'Tab') { e.preventDefault(); ta.setRangeText('    ', ta.selectionStart, ta.selectionEnd, 'end'); } };
+      el.querySelector('.run').onclick = () => run(cell);
+      const g = el.querySelector('.guess'); if (g) g.oninput = () => el.querySelector('.msg').textContent = '';
+      const hb = el.querySelector('.hint'); if (hb) hb.onclick = () => { misses[c.skill] += .5;
+        say(`<b>💡 Hint ${Math.min(cell.hintN + 1, c.hints.length)}:</b> ${c.hints[Math.min(cell.hintN++, c.hints.length - 1)]}`, 'hint'); };
+    }
+  });
+  cells[0].el.classList.remove('wait'); moveBall();
+  say('Welcome to the locker room! This is our playbook. Run the first box. I am warming up Python…');
+  loadPy().then(() => { loadData().catch(() => {}); return doneCount === 0 && say('Python is ready. Press <b>▶ Run</b> on Play 1!', 'jump'); },
+                () => say('I could not load Python. Check the internet connection and open the game again.', 'flag'));
+}
+async function run(c) {
+  const el = c.el, msg = el.querySelector('.msg'), out = el.querySelector('.out'), btn = el.querySelector('.run'), code = el.querySelector('textarea').value;
+  let guess; msg.textContent = '';
+  if (c.kind === 'predict' && !c.done) { guess = el.querySelector('.guess').value.trim();
+    if (!guess || isNaN(+guess)) { msg.textContent = 'Type your guess as a number first.'; return; } }
+  if (!code.replace(/#.*/g, '').trim()) { msg.textContent = 'Write some code first.'; return; }
+  if (code.includes('___')) { msg.textContent = 'Fill in every ___ first.'; return; }
+  btn.textContent = '⏳ Running'; let py;
+  try { py = await loadPy(); } catch { btn.textContent = '▶ Run'; return say('I could not load Python. Check the internet connection.', 'flag'); }
+  if (c.data) { btn.textContent = '⏳ Opening the archive';
+    try { await loadData(); } catch { btn.textContent = '▶ Run'; return say('I could not open the stats. Check the internet connection and try again.', 'flag'); } }
+  const lines = []; py.setStdout({ batched: s => lines.push(s) }); let rich = '';
+  try { const res = await py.runPythonAsync(code);
+    if (c.data) { const t = py.globals.get('_show')(res); if (t) rich += `<div class="tbl">${t}</div>`;
+      const f = py.globals.get('_fig')(); if (f) rich += `<img alt="chart" src="data:image/png;base64,${f}">`; } }
+  catch (e) { btn.textContent = '▶ Run'; if (c.data) { try { py.runPython('import matplotlib.pyplot as _plt; _plt.close("all")'); } catch {} }   // no half-drawn chart may leak into the next box
+    out.className = 'out on err'; out.textContent = (String(e.message).trim().split('\n').filter(l => !/^See https?:/.test(l)).pop() || '').replace(/https?:\/\/\S+/g, '');
+    if (c.expectError && String(e.message).includes(c.expectError)) { if (!c.done) finish(c, c.ok); return; }
+    if (!c.done) miss(c); return say(`<b>🚩 ${words().flag}</b> ${friendly(e)}`, 'flag'); }
+  btn.textContent = '▶ Run'; const text = lines.join('\n'); out.className = 'out on'; out.innerHTML = (text ? `<div>${esc(text)}</div>` : '') + rich || '(nothing printed)';
+  if (c.done) return;
+  const r = c.check ? c.check({ code, out: text, guess, g: n => py.globals.get(n), q: x => py.runPython(x) }) : { ok: true, msg: c.ok };
+  if (r.missed) misses[c.skill]++;
+  if (r.ok) finish(c, r.msg); else { miss(c); say(`<b>🚩 Not yet.</b> ${r.msg}`, 'flag'); }
+}
+function finish(c, text) {
+  c.done = true; c.el.classList.add('done'); doneCount++; moveBall();
+  const next = cells[cells.indexOf(c) + 1];
+  if (next) { next.el.classList.remove('wait');
+    say(`<b>${words().cheers[doneCount % 5]}</b> ${text}`, 'jump', { label: 'Next play ↓', go: () => { (next.el.previousElementSibling.classList.contains('md') ? next.el.previousElementSibling : next.el).scrollIntoView({ block: 'start' }); next.el.querySelector('textarea')?.focus({ preventScroll: true }); } });
+  } else { $('#you').textContent = 7; confetti();
+    say(`<b>${words().win}</b> ${text} You win 7–0! Now let's watch the film and see what stuck.`, 'win', { label: '🎬 Film review', go: () => review(0) }); }
+}
+function confetti() {
+  for (let i = 0; i < 70; i++) { const d = document.createElement('div'); d.className = 'confetti';
+    d.style.cssText = `left:${Math.random() * 100}%;background:${['#ffc83d', '#ff5a4f', '#31c46b', '#4aa3ff', '#fff'][i % 5]};animation-duration:${1.6 + Math.random() * 1.8}s;animation-delay:${Math.random() * .5}s`;
+    $('main').appendChild(d); setTimeout(() => d.remove(), 4200); }
+}
+
+/* ---------- film review ---------- */
+function card(html) { let el = $('#film'); if (!el) { el = document.createElement('div'); el.id = 'film'; el.className = 'cell'; $('#nb').appendChild(el); }
+  el.innerHTML = html; el.scrollIntoView({ block: 'center' }); return el; }
+function review(i) {
+  const r = REVIEW[i]; $('#qtr').textContent = 'FILM'; $('#down').textContent = `Question ${i + 1} of ${REVIEW.length}`;
+  const el = card(`<span class="tag">🎬 FILM REVIEW · ONE TRY, NO HINTS</span><div class="task">${r.q}</div>${r.code ? `<pre class="show">${esc(r.code)}</pre>` : ''}
+    <div class="opts">${r.opts.map((o, k) => `<button class="opt" data-i="${k}">${esc(o)}</button>`).join('')}</div>`);
+  if (i === 0) say('Film room time. One try each, no hints from me. It is OK to miss. This just shows me what we should practice.');
+  el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+    const ok = +o.dataset.i === r.a; el.querySelectorAll('.opt').forEach(b => b.disabled = true);
+    o.classList.add(ok ? 'right' : 'wrong'); if (!ok) { rvWrong[r.skill] = true; el.querySelector(`[data-i="${r.a}"]`).classList.add('right'); }
+    say(ok ? 'Yes! Locked in.' : 'Not this time. The green one is right. We will drill it.', ok ? 'jump' : '');
+    setTimeout(() => i + 1 < REVIEW.length ? review(i + 1) : report(), 1400);
+  });
+}
+function report() {
+  const lvl = k => rvWrong[k] ? ['n', 'Not yet'] : misses[k] >= 2 ? ['p', 'Practice more'] : ['g', 'Got it'];
+  const rows = Object.keys(SKILL_NAMES).map(k => `<div class="rep">${SKILL_NAMES[k]}<span class="${lvl(k)[0]}">${lvl(k)[1]}</span></div>`).join('');
+  const weak = Object.keys(SKILL_NAMES).filter(k => lvl(k)[0] !== 'g').map(k => SKILL_NAMES[k]);
+  card(`<span class="tag">📋 SCOUTING REPORT</span><div class="big">🏆</div><div class="task" style="text-align:center"><b>Week ${week + 1} final: You 7, Bugs 0</b></div>${rows}`);
+  $('#down').textContent = 'Final';
+  if (!won[sport].includes(week)) { won[sport].push(week); store.set('wins', won); }
+  draw();
+  say(weak.length ? `Great game! Next time we will warm up with <b>${weak.join(' and ')}</b>.`
+                  : 'A perfect game! Every skill locked in.', 'win', { label: 'Back to the map', go: leave });
+}
+function leave() { $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); $('#whole').onclick(); }
+$('#quit').onclick = () => { $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); say('Back on the map. Tap a stadium to play.'); };
+
+draw();
+// A week is playable once its lab file exists in labs/.
+findLabs((sp, i) => { draw(); if (sp === sport && i === wantWeek) { wantWeek = -1; pick(i); } });
+document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.dataset.sport === sport));
+say("Hi, I'm Coach Andrew! This map is our season. Tap the glowing stadium and let's win some games with Python.");
+</script>
+</body>
+</html>

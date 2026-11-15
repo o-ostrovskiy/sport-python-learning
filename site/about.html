@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About Python Season</title>
+<meta name="description" content="What Python Season is, how it works, and what parents should know about privacy and the coach.">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pages.css">
+<style>
+.intro{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:44px 0 26px}
+.intro img{width:200px;filter:drop-shadow(0 8px 0 #0002)}
+.prose{max-width:760px}
+.prose h2{margin-top:34px}
+.prose li{margin:6px 0}
+.note{background:#fff6e8;border:3px solid var(--gold);border-radius:18px;padding:14px 18px;margin:18px 0}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:16px}
+th,td{text-align:left;padding:8px 10px;border-bottom:2px solid var(--paper);vertical-align:top}
+th{color:var(--soft);font-weight:600}
+@media(max-width:640px){.intro{grid-template-columns:1fr}.intro img{width:150px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">🏈 Python <span>Season</span></a>
+  <nav><a href="index.html">Home</a><a href="index.html#calendar">Calendar</a><a class="here" href="about.html">About</a><a href="play.html">Play</a></nav>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <h1>About Python Season</h1>
+      <p class="lead" style="max-width:52ch">A free Python course for kids who know every player and every stat, and have never written a line of code.</p>
+    </div>
+    <img src="assets/coach-hint.png" alt="Coach Andrew pointing up with an idea">
+  </section>
+
+  <div class="prose">
+    <h2>What it is</h2>
+    <p>Python Season teaches the first steps of real programming through football and baseball. Each sport has a season of ten game days. Every game day is one lesson of about 40 minutes, set in a real stadium, with real NFL or MLB numbers.</p>
+    <p>It began as a set of notebooks a parent wrote for a 10-year-old who loves the NFL. The lessons follow the order most beginner courses for ages 10 to 12 use: variables, decisions, lists, loops, functions, dictionaries, then a project of the child's own.</p>
+
+    <h2>How a lesson works</h2>
+    <ul>
+      <li><b>Guess, run, change.</b> The child first guesses what a small piece of code will do, runs it, and then changes it.</li>
+      <li><b>Real Python.</b> The code runs inside the web page. There is nothing to install and no account to make.</li>
+      <li><b>Every answer is checked.</b> Coach Andrew looks at the result and says what went wrong in plain words, with hints that go from gentle to exact.</li>
+      <li><b>A short review at the end.</b> A few one-try questions show which ideas stuck and which need more practice.</li>
+    </ul>
+
+    <h2>For parents</h2>
+    <div class="note">Sit with your child for the first game. After that, most children can play on their own, and the review at the end tells you what to practice.</div>
+    <ul>
+      <li><b>Who it is for:</b> ages about 8 to 12 who can read short English sentences. No coding experience needed.</li>
+      <li><b>What you need:</b> a computer or tablet with a keyboard and a current web browser. A phone screen is too small for writing code.</li>
+      <li><b>Pace:</b> one game a week works well. A game can be split over two days.</li>
+      <li><b>Same lessons as notebooks:</b> every lab also exists as a Google Colab notebook in the <a href="https://github.com/o-ostrovskiy/sport-python-learning">project's GitHub repository</a>.</li>
+    </ul>
+
+    <h2 id="privacy">Privacy</h2>
+    <p>We built the site to need as little as possible from a child.</p>
+    <table>
+      <tr><th>What</th><th>Where it goes</th></tr>
+      <tr><td>Name, email, account</td><td>Never asked for. There are no accounts.</td></tr>
+      <tr><td>Progress (which games are won, calendar start date)</td><td>Saved only in this browser on this device. Clearing the browser's site data erases it.</td></tr>
+      <tr><td>The code your child writes</td><td>Runs inside the browser. It is not sent to us, except as described in the next row.</td></tr>
+      <tr><td>Questions typed to the coach</td><td>The question, the current task, the code in the current box and its last output are sent to our server and passed to Google's Gemini model to write the answer. We do not save them, and we ask Google not to store them.</td></tr>
+      <tr><td>The coach's voice (when switched on)</td><td>The coach's own lines are sent to Gemini to be turned into speech. Nothing from the microphone is ever used.</td></tr>
+    </table>
+    <p>The page also loads parts from other services, which see the device's internet address as any website does: map pictures (OpenStreetMap and Esri), fonts (Google Fonts), and the Python engine and map code (jsDelivr and unpkg). There are no ads and no tracking or analytics scripts.</p>
+
+    <h2 id="coach">What the coach can and cannot say</h2>
+    <ul>
+      <li>He answers only questions about Python and the lesson in front of the child. Anything else gets a fixed, friendly "ask me about your code".</li>
+      <li>He gives hints, not finished answers, for the task the child is working on.</li>
+      <li>He never asks for personal details. Messages that look like a phone number, an email or an address are stopped before they are sent.</li>
+      <li>Every answer is read by a second, separate check before your child sees it. Links are removed.</li>
+      <li>If a child writes that they are upset or scared, he tells them to talk to a parent or another trusted adult.</li>
+    </ul>
+    <p>The coach is a computer program and can still make mistakes. If he says something wrong or strange, please tell us through the GitHub page above.</p>
+
+    <h2>Where the numbers come from</h2>
+    <ul>
+      <li><b>Football:</b> the open <a href="https://github.com/nflverse/nflverse-data">nflverse</a> data project (Scouting Combine results and player statistics).</li>
+      <li><b>Baseball:</b> the Lahman Baseball Database, with recent seasons from MLB's public statistics service.</li>
+      <li><b>Maps:</b> © OpenStreetMap contributors; satellite pictures © Esri.</li>
+    </ul>
+    <p>Python Season is an independent educational project. It is not connected to, sponsored by or endorsed by the NFL, MLB or any team. Team and stadium names are used only to describe real places and statistics.</p>
+    <p style="margin-bottom:50px"><a class="btn" href="index.html#calendar">See the season calendar</a></p>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>Python Season is free. It is not connected to the NFL or MLB.</span><span><a href="index.html">Home</a></span></div></footer>
+</body>
+</html>

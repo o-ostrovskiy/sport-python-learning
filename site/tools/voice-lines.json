@@ -1,0 +1,201 @@
+{
+ "_about": "Coach lines that are recorded ahead of time (node tools/record-voice.mjs). Text must match what the bubble shows in play.html; emoji and HTML tags are ignored. 'starts' are short pieces that open or close a bubble around a lab line. Stadium and lab lines are not listed here: the tool finds them by itself.",
+ "styles": {
+  "warm": "A warm, upbeat sports coach talking to a child. Clear and friendly, not shouting.",
+  "excited": "A warm sports coach cheering for a child who just got it right. Big smile, energetic and punchy, not shouting.",
+  "gentle": "A kind sports coach encouraging a child after a small mistake. Calm, soft and reassuring.",
+  "playful": "A playful sports coach joking around with a child, with a little laugh in the voice."
+ },
+ "lines": [
+  {
+   "text": "Hi, I'm Coach Andrew! This map is our season. Tap the glowing stadium and let's win some games with Python.",
+   "style": "warm"
+  },
+  {
+   "text": "Voice is on! I will talk you through the plays.",
+   "style": "excited"
+  },
+  {
+   "text": "Hey, that tickles!",
+   "style": "playful"
+  },
+  {
+   "text": "I am a ball. I do not have a belly button.",
+   "style": "playful"
+  },
+  {
+   "text": "Less poking, more coding!",
+   "style": "playful"
+  },
+  {
+   "text": "Here is the whole season. Tap a stadium to fly there!",
+   "style": "warm"
+  },
+  {
+   "text": "Baseball season! Same Python, different ballpark. These games are coming soon.",
+   "style": "warm"
+  },
+  {
+   "text": "Back to the gridiron! Tap a stadium on the map.",
+   "style": "warm"
+  },
+  {
+   "text": "Back on the map. Tap a stadium to play.",
+   "style": "warm"
+  },
+  {
+   "text": "Welcome to the locker room! This is our playbook. Run the first box. I am warming up Python…",
+   "style": "warm"
+  },
+  {
+   "text": "Python is ready. Press ▶ Run on Play 1!",
+   "style": "excited"
+  },
+  {
+   "text": "Film room time. One try each, no hints from me. It is OK to miss. This just shows me what we should practice.",
+   "style": "warm"
+  },
+  {
+   "text": "Yes! Locked in.",
+   "style": "excited"
+  },
+  {
+   "text": "Not this time. The green one is right. We will drill it.",
+   "style": "gentle"
+  },
+  {
+   "text": "A perfect game! Every skill locked in.",
+   "style": "excited"
+  },
+  {
+   "text": "Hmm, good question. Let me think…",
+   "style": "warm"
+  },
+  {
+   "text": "Good question for another day! In the film room I can only talk about Python and this lab. Ask me about your code, an error, or what a word like append means.",
+   "style": "warm"
+  },
+  {
+   "text": "That sounds important. Please talk to your mom, dad or another grown-up you trust right now. I am only a coding coach, but they can really help.",
+   "style": "gentle"
+  },
+  {
+   "text": "Careful! Never type private things like your address, phone, email or passwords here. Ask me a Python question instead.",
+   "style": "gentle"
+  },
+  {
+   "text": "We have talked a lot! Try the next play, and use 💡 Hint if you get stuck.",
+   "style": "warm"
+  },
+  {
+   "text": "My question line is not connected yet. Press 💡 Hint on your play if you are stuck.",
+   "style": "gentle"
+  },
+  {
+   "text": "I could not hear that. Check the internet and ask again, or press 💡 Hint on your play.",
+   "style": "gentle"
+  },
+  {
+   "text": "I could not open this game. Check the internet connection and try again.",
+   "style": "gentle"
+  },
+  {
+   "text": "I could not load Python. Check the internet connection and open the game again.",
+   "style": "gentle"
+  },
+  {
+   "text": "I could not load Python. Check the internet connection.",
+   "style": "gentle"
+  },
+  {
+   "text": "I could not open the stats. Check the internet connection and try again.",
+   "style": "gentle"
+  }
+ ],
+ "starts": [
+  {
+   "text": "Boom!",
+   "style": "excited"
+  },
+  {
+   "text": "What a play!",
+   "style": "excited"
+  },
+  {
+   "text": "Nice hands!",
+   "style": "excited"
+  },
+  {
+   "text": "First down!",
+   "style": "excited"
+  },
+  {
+   "text": "You are on fire!",
+   "style": "excited"
+  },
+  {
+   "text": "TOUCHDOWN!",
+   "style": "excited"
+  },
+  {
+   "text": "Great game!",
+   "style": "excited"
+  },
+  {
+   "text": "🚩 Flag on the play!",
+   "style": "gentle"
+  },
+  {
+   "text": "🚩 Flag!",
+   "style": "gentle"
+  },
+  {
+   "text": "🚩 Not yet.",
+   "style": "gentle"
+  },
+  {
+   "text": "💡 Hint 1:",
+   "style": "warm"
+  },
+  {
+   "text": "💡 Hint 2:",
+   "style": "warm"
+  },
+  {
+   "text": "💡 Hint 3:",
+   "style": "warm"
+  },
+  {
+   "text": "Try again.",
+   "style": "gentle"
+  },
+  {
+   "text": "You win 7–0! Now let's watch the film and see what stuck.",
+   "style": "excited"
+  },
+  {
+   "text": "This game is coming soon!",
+   "style": "warm"
+  },
+  {
+   "text": "Tap the ball again or press Kick off!",
+   "style": "excited"
+  },
+  {
+   "text": "Nice catch!",
+   "style": "excited"
+  },
+  {
+   "text": "Base hit!",
+   "style": "excited"
+  },
+  {
+   "text": "HOME RUN!",
+   "style": "excited"
+  },
+  {
+   "text": "🚩 Foul ball!",
+   "style": "gentle"
+  }
+ ]
+}

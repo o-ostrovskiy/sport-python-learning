@@ -1,0 +1,28 @@
+:root{--gold:#ff9f1c;--grass:#2f8f3a;--grass2:#27792f;--ink:#10203a;--soft:#5b6b88;--paper:#eef3fb;--ok:#31c46b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Fredoka,system-ui,sans-serif;color:var(--ink);background:#fff;font-size:18px;line-height:1.55}
+a{color:#1d5fb8}
+.top{display:flex;align-items:center;gap:18px;padding:12px 22px;border-bottom:5px solid var(--grass);background:#fff repeating-linear-gradient(90deg,#0000 0 60px,#2f8f3a0d 60px 120px);position:sticky;top:0;z-index:5}
+.top .brand{font-size:26px;font-weight:700;text-decoration:none;color:var(--ink)}
+.top .brand span{color:var(--grass)}
+.top nav{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.top nav a{text-decoration:none;color:var(--ink);font-weight:600;padding:6px 14px;border-radius:999px}
+.top nav a:hover,.top nav a.here{background:var(--paper)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.08;margin:0 0 14px}
+h2{font-size:30px;margin:0 0 6px}
+h3{font-size:21px;margin:0 0 4px}
+.lead{font-size:21px;color:var(--soft);margin:0 0 22px;max-width:36ch}
+.btn{display:inline-block;text-decoration:none;font:inherit;font-weight:700;font-size:19px;padding:12px 24px;border-radius:16px;border:3px solid var(--ink);background:var(--gold);color:var(--ink);box-shadow:4px 4px 0 var(--ink);cursor:pointer;transition:transform .1s}
+.btn:hover{transform:translate(-1px,-1px)}.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.alt{background:#fff}
+.band{padding:56px 0}
+.band.tint{background:var(--paper)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:22px}
+.card{background:#fff;border:3px solid var(--ink);border-radius:22px;padding:18px 20px;box-shadow:5px 5px 0 var(--ink)}
+.card .big{font-size:36px;line-height:1}
+.card p{margin:6px 0 0;color:var(--soft);font-size:17px}
+footer{border-top:5px solid var(--grass);padding:22px 0;color:var(--soft);font-size:15px}
+footer .wrap{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between}
+@media(max-width:640px){body{font-size:17px}.top{padding:10px 14px}.top .brand{font-size:21px}.band{padding:38px 0}}

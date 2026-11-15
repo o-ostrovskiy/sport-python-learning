@@ -5,3 +5,6 @@ football/russian/
 SCORE_SUBMISSION.md
 _build/
 baseball/answers/
+site/tools/node_modules/
+site/labs/answers/
+server/.env

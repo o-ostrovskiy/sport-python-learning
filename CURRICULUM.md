@@ -43,9 +43,14 @@ but no programming words and no math/statistics words. The same plan now has a b
 | **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `True`/`False` as answers (first look), `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` = a list inside brackets, first look), `KeyError`, `SyntaxError`, `=` as a setting (`ascending=False`), the dot | reading a row filter from the inside out, one player's games, `.max()`, `.mean()`, `.sum()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
 | **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`, `IndentationError`), rules checked top to bottom, reading `def` line by line, reading the `total1` line from the inside out, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
 | **4. My Draft Board** (NFL) / **My Lineup Card** (MLB) | lists `[ ]` and commas (a missing comma glues two names), counting from 0, `IndexError`, `.append( )`, `in`, a list written over several lines, `list( )`, the last spot is `len( ) - 1` | season-totals file (NFL `player_stats_season.csv`, one row = one season), newest season with `.max()`, top 5 as a list |
+| **5. Game Day Loop** | `for` loops, `range( )`, a running total, counting with `if` inside a loop, indentation with `for` | add up a season game by game (NFL) / a career season by season (MLB), count the big games |
+| **6. Build Your Own Machine** | `def`, inputs (parameters), `return`, machines calling machines | fantasy points machine and `compare` rebuilt (NFL) / `batting_average(hits, at_bats)` and `compare` rebuilt (MLB) |
+| **7. Player Cards** | dictionaries `{ }`: key and value, look up, add, change, looping over a card | cards built from real stats; team code to team name (NFL) / position number to name (MLB) |
+| **8. Guess the Player** | `input( )` (always gives text; `int( )`), `while` with a counted number of tries, `random.choice` | a mystery-player quiz with clues from the data |
+| **9. Chart Room** | `plt.bar`, `plt.plot`, title and axis labels, `label=` with `plt.legend()`, a planned `ValueError` when the lists differ in length | one player season by season, two careers side by side |
+| **10. My Own Investigation** | no new Python: question, numbers, a closer look, chart, written answer | a worked example, then the child's own question |
 
-Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6),
-`&` with two conditions (Lab 1).
+Seen but **not yet explained**: `&` with two conditions (Lab 1).
 
 ## The plan
 
@@ -53,12 +58,12 @@ Seen but **not yet explained**: writing a `def` from scratch, `return` (Lab 6),
 |---|---|---|---|---|
 | **3** ✅ | Referee Bot | `if` / `elif` / `else`, comparisons `>` `<` `>=` `==`, `True` / `False`, indentation | "First down or not?" (yards gained vs yards to go) · touchdown / field goal / punt decision · then open up `compare` from Lab 2 and see its `if` / `else` | variables, `print` |
 | **4** ✅ | My Draft Board | lists `[ ]`, counting from 0, `len( )`, `.append( )`, `in` | make his dream team as a list · "is Mahomes on my team?" · top 5 passers from the data as a list | `if`, `len` |
-| **5** | Game Day Loop | `for` loops, `range( )`, a running total | add up a season game by game · print a scoreboard for each week · count his player's 100-yard games | lists, `if` |
-| **6** | Build Your Own Machine | `def`, inputs (parameters), `return` | rebuild `compare` himself · a "fantasy points" calculator for any player and season | loops, `if` |
-| **7** | Player Cards | dictionaries `{ }`: key → value | a player card (name, team, number, best season) · team code → team name (`"KC"` → `"Chiefs"`) | functions, loops |
-| **8** | Guess the Player | `input( )`, `while` loop, `random` | a quiz game: Python picks a player, gives clues from the data, he guesses | everything so far |
-| **9** | Chart Room | bar and line charts with clear labels | his team's yards season by season · two players' careers side by side | dictionaries, loops |
-| **10** | My Own Investigation | putting it all together (the "Make" step) | he picks his own question, answers it with data, and shows mom the chart | everything |
+| **5** ✅ | Game Day Loop | `for` loops, `range( )`, a running total | add up a season game by game · print a scoreboard for each week · count his player's 100-yard games | lists, `if` |
+| **6** ✅ | Build Your Own Machine | `def`, inputs (parameters), `return` | rebuild `compare` himself · a "fantasy points" calculator for any player and season | loops, `if` |
+| **7** ✅ | Player Cards | dictionaries `{ }`: key → value | a player card (name, team, number, best season) · team code → team name (`"KC"` → `"Chiefs"`) | functions, loops |
+| **8** ✅ | Guess the Player | `input( )`, `while` loop, `random` | a quiz game: Python picks a player, gives clues from the data, he guesses | everything so far |
+| **9** ✅ | Chart Room | bar and line charts with clear labels | his team's yards season by season · two players' careers side by side | dictionaries, loops |
+| **10** ✅ | My Own Investigation | putting it all together (the "Make" step) | he picks his own question, answers it with data, and shows mom the chart | everything |
 
 After Lab 10: harder NFL labs
 (two Steve Smiths and `player_id`, grouping by season, the mystery-player filters from the first draft of Lab 2).
@@ -92,12 +97,21 @@ Watch out when building the next baseball labs:
 | **2** | Stat Detective | best season (`.max()`), average season, biggest seasons ever, `compare` career totals | ✅ |
 | **3** | Umpire Bot | `>=` with a walk (4 balls) · safe or out (runner vs throw time, bonus: tie goes to the runner with `<=`) · home run / extra bases / caught by distance (450 ft: order matters) · rate best season · tie bug in `compare` | ✅ |
 | **4** | My Lineup Card | a 9-player lineup as a list (batting order counts from 0, cleanup = `lineup[3]`) · trade machine with `in` + `.append` · newest season's top 5 home run hitters as a list | ✅ |
-| **5** | Game Day Loop | add up a career season by season · count 30-homer seasons · a box score for each inning | |
-| **6** | Build Your Own Machine | rebuild `compare` · `batting_average(hits, at_bats)` | |
-| **7** | Player Cards | a player card dictionary · position number → name (`6` → `"shortstop"`) | |
-| **8** | Guess the Player | quiz with clues from the data | |
-| **9** | Chart Room | home runs season by season · two careers side by side | |
-| **10** | My Own Investigation | the kid's own question | |
+| **5** | Game Day Loop | add up a career season by season · count 30-homer seasons · a box score for each inning | ✅ |
+| **6** | Build Your Own Machine | rebuild `compare` · `batting_average(hits, at_bats)` | ✅ |
+| **7** | Player Cards | a player card dictionary · position number → name (`6` → `"shortstop"`) | ✅ |
+| **8** | Guess the Player | quiz with clues from the data | ✅ |
+| **9** | Chart Room | home runs season by season · two careers side by side | ✅ |
+| **10** | My Own Investigation | the kid's own question | ✅ |
+
+## The website (added 2026-11-15)
+
+All 10 labs of both sports also exist as interactive site labs in `site/labs/<sport>-<NN>.js`, where a coach
+runs real Python in the browser and checks every box. Same ideas and code as the notebooks; a few notebook boxes are
+merged or left out to keep about 15 plays. Format and rules: `site/labs/README.md`. Before changing a lab, run
+`cd site/tools && node check-lab.mjs <name>`. Site data files are trimmed snapshots in `site/data/`
+(the baseball file keeps 4,360 of the 24,124 players: long careers, current players and every season's top 10).
+How to publish: `DEPLOY.md`.
 
 ## Mistakes kids commonly make (plan a short "what went wrong?" moment for each)
 - Forgetting quotes around text (`NameError`) — done in Lab 2.
