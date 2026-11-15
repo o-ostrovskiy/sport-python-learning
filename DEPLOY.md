@@ -70,7 +70,7 @@ Must do
       For a public site, sign up with a map provider (MapTiler, Stadia, Esri with a key, or Google Maps) and put its address in `play.html`
       (search for `tile.openstreetmap.org` and `World_Imagery`).
 - [ ] **A separate Gemini key with a spending cap** (step 1 above).
-- [ ] **Facts check.** Stadium facts and seat numbers in `site/season.js` were written from memory. Check each once.
+- [x] **Facts check.** Stadium facts and seat numbers in `site/season.js` checked against sources on 2026-11-15; 7 lines corrected. Check Camden Yards seats again after Opening Day 2027.
 - [x] **All 20 labs pass** `cd site/tools && node check-lab.mjs all` and a full play-through in a browser (2026-11-15). Run both again after any change.
 - [x] **Commit and push** the `site/` and `server/` folders (done 2026-11-15). `server/.env` and `site/labs/answers/` stay out of git.
 
