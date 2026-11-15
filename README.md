@@ -57,8 +57,9 @@ The folder [`site/`](site/) holds the same 20 labs as an interactive website for
 - **A season of game days.** Each lab is a week in a real stadium on a map; a home page shows the season calendar.
 - **Real Python in the page.** Code runs in the browser with [Pyodide](https://pyodide.org); there is nothing to install and no account.
 - **A coach who checks every box.** He says what went wrong in plain words, gives hints step by step, and ends each lab with a short review.
-- **Optional extras that need a small server:** typed questions to the coach (answered by Google's Gemini, limited to Python and the current lab)
-  and the coach's recorded voice. The key lives only on the server, never in a page.
+- **Nothing is collected from a child.** No accounts, no ads, no tracking; the code a child types never leaves the browser.
+- **For home experiments only, off by default:** typed questions to the coach, answered by Google's Gemini through a small server.
+  It is not part of the public children's site (see `DEPLOY.md`, "Children's privacy").
 
 Try it on your computer (needs [Node.js](https://nodejs.org) 20 or newer):
 
@@ -66,8 +67,8 @@ Try it on your computer (needs [Node.js](https://nodejs.org) 20 or newer):
 node server/local.mjs
 ```
 
-Then open http://localhost:8765. The lessons work straight away. For coach questions, copy `server/.env.example` to `server/.env`
-and add your own Gemini key.
+Then open http://localhost:8765. The lessons work straight away. To try coach questions at home with an adult,
+copy `server/.env.example` to `server/.env`, add your own Gemini key and set `ASK=on`.
 
 | Where | What |
 |---|---|

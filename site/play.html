@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Python Season</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/vendor/fonts/fonts.css">
 <style>
 :root{--navy:#0d1b2e;--navy2:#16294a;--gold:#ff9f1c;--grass:#2f8f3a;--grass2:#27792f;--ink:#10203a;--red:#ff5a4f;--ok:#31c46b}
 *{box-sizing:border-box}
@@ -76,6 +76,7 @@ main{flex:1;position:relative;min-width:0}
 #ask button{width:42px;border-radius:14px;border:3px solid var(--ink);background:var(--gold);color:var(--ink);font-size:16px;box-shadow:3px 3px 0 var(--ink)}
 #askMsg{flex-basis:100%;font-size:13px;font-weight:600;color:#b3261e;min-height:16px}
 @media(max-width:820px){#coach.lab #ask{display:none}}
+body:not(.ask-on) #ask{display:none!important}   /* the question box shows only when the server offers it */
 /* lab notebook */
 #game{position:absolute;inset:0;z-index:1100;display:none;flex-direction:column;background:#eef3fb;color:var(--ink)}
 #game.on{display:flex}
@@ -172,7 +173,7 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
 
 <script src="season.js"></script>
 <script src="assets/voice/index.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="assets/vendor/leaflet/leaflet.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const store = { get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
@@ -201,7 +202,7 @@ function localSpeak(text) {
 }
 // What the server offers (coach questions, coach voice). Stays off when the site runs without its server.
 const API = { ask: false, voice: false };
-fetch('/api/status').then(r => r.ok ? r.json() : {}).then(j => Object.assign(API, j)).catch(() => {});
+fetch('/api/status').then(r => r.ok ? r.json() : {}).then(j => { Object.assign(API, j); document.body.classList.toggle('ask-on', !!API.ask); }).catch(() => {});
 async function synth(text) {
   const r = await fetch('/api/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
   if (!r.ok) throw new Error('speak ' + r.status);

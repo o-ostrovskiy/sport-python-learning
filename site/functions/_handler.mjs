@@ -104,7 +104,9 @@ export async function handle(request, env = {}, ip = 'unknown') {
   const url = new URL(request.url);
   if (!url.pathname.startsWith('/api/')) return null;
   const on = !!env.GEMINI_API_KEY;
-  const askOn = on && env.ASK !== 'off', voiceOn = on && env.VOICE !== 'off';   // either can be switched off without touching the site
+  // Both are OFF unless switched on. Google's Gemini API terms do not allow its use in a site for people under 18,
+  // so the public children's site runs with neither. See DEPLOY.md, "Children's privacy".
+  const askOn = on && env.ASK === 'on', voiceOn = on && env.VOICE === 'on';
   if (url.pathname === '/api/status' && request.method === 'GET') return json({ ask: askOn, voice: voiceOn });
   if (request.method !== 'POST') return json({ kind: 'error' }, 405);
   // Only our own pages may call the API.

@@ -14,8 +14,8 @@ Hosting prices and free allowances below are from memory: check each provider's 
 | Coach questions and coach voice | `site/functions/_handler.mjs` (the API), `server/local.mjs` (runs pages + API together) | **Yes** |
 
 The Gemini key lives only on the server (`server/.env` on this computer, a secret setting on the host).
-It is never in a page. Without a server the lessons still work; the question box says it is not connected and
-the voice falls back to the browser's own.
+It is never in a page. Without a server the lessons still work; the question box is hidden and
+the coach speaks from his recorded lines.
 
 Run it on this computer: `node server/local.mjs`, then open http://localhost:8765.
 
@@ -28,7 +28,7 @@ Run it on this computer: `node server/local.mjs`, then open http://localhost:876
 - Every answer is read by a second, cheaper model (ALLOW or BLOCK) before it is shown; links are stripped; length is capped.
 - Limits: 20 questions and 150 spoken lines per visitor per hour, and daily totals for the whole site (2,000 and 8,000).
   All are settings (`server/.env.example`).
-- Switches: `ASK=off` and `VOICE=off` turn either feature off without touching the pages.
+- Switches: the question box and live voice are **off unless** `ASK=on` / `VOICE=on` is set. Keep both off on the public site (see the checklist).
 - Answer keys, tools, notes and server code are never served.
 
 Known limits of this protection: the visitor limits are kept in memory, so they reset on restart and are only exact
@@ -50,15 +50,22 @@ Recommendation: Cloud Run with one instance if Google Cloud is already set up; o
 1. Make a **new Gemini key just for this site** (do not reuse another project's key) and put a monthly spending cap on its Google Cloud project.
 2. Create the service from this repository (Dockerfile, or the `site` folder on Cloudflare).
 3. Set the secrets: `GEMINI_API_KEY`, and `ALLOWED_ORIGINS=https://your-address` (exactly the public address, no slash at the end).
-4. Open the public address and check: a lesson runs, the question box answers a Python question and refuses another topic,
-   the voice plays, and `https://your-address/labs/answers/nfl-01.json` gives "Not found".
+4. Open the public address and check: a lesson runs, there is no question box under the coach,
+   the recorded voice plays, and `https://your-address/labs/answers/nfl-01.json` gives "Not found".
 5. Point your own domain at it, then update `ALLOWED_ORIGINS` to that domain.
 
 ## Before the public launch: checklist
 
 Must do
-- [ ] **Children's privacy.** In the US, a site for children under 13 falls under COPPA; typed questions to an AI are the sensitive part.
-      Get a qualified opinion, or launch with `ASK=off` (lessons, hints and checks all still work) and add the question box later.
+- [x] **Children's privacy.** Decided 2026-11-15: the public site runs **without the question box and without live voice**.
+      Both are now off unless `ASK=on` / `VOICE=on` is set on the server; the box is hidden when off; recorded voice still plays.
+      Why: (1) Google's Gemini API terms forbid using it in a site "directed towards or likely to be accessed by" people under 18
+      (https://aistudio.google.com/docs/terms); (2) under COPPA (amended rule, in force since 2026-04-22) free text typed by a
+      child under 13 and passed to another company needs a parent's verifiable consent. Fonts and the map code are now served
+      from `site/assets/vendor/` so pages no longer call Google Fonts or unpkg. Still outside our site: map pictures and jsDelivr
+      (Python engine); both are named in the Privacy section of `about.html`. This is not a lawyer's opinion.
+      To bring the question box back later: another AI provider whose terms allow children's products, parental consent, and a lawyer.
+- [x] **Privacy contact.** Decided 2026-11-15: the About page sends parents to the project's GitHub page; no email address.
 - [ ] **Map pictures.** The map uses OpenStreetMap's and Esri's public picture servers, which are meant for light use and testing.
       For a public site, sign up with a map provider (MapTiler, Stadia, Esri with a key, or Google Maps) and put its address in `play.html`
       (search for `tile.openstreetmap.org` and `World_Imagery`).
@@ -76,7 +83,7 @@ Should do
       safe to run again and again). About 100 of roughly 900 lines are recorded. The Gemini speech model allows this key only
       **100 requests a day**, so either raise the key's tier in Google AI Studio and record everything in one go, or run the tool once a day
       for about nine days. Lines without a recording stay silent; the bubble still shows them.
-- [ ] Keep `VOICE=off` on the server (live speech). With a 100-a-day limit it cannot serve visitors; recorded lines do not need it.
+- [x] Live speech stays off on the public site (it is off unless `VOICE=on`; see "Children's privacy"). Recorded lines do not need it.
 
 ## Adding or changing a lesson
 

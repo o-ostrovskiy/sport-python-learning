@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>About Python Season</title>
 <meta name="description" content="What Python Season is, how it works, and what parents should know about privacy and the coach.">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/fonts/fonts.css">
 <link rel="stylesheet" href="pages.css">
 <style>
 .intro{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:44px 0 26px}
@@ -58,26 +58,27 @@ th{color:var(--soft);font-weight:600}
     </ul>
 
     <h2 id="privacy">Privacy</h2>
-    <p>We built the site to need as little as possible from a child.</p>
+    <p>We built the site so that it needs nothing from a child. There is nowhere on it to type a message to us, to the coach or to anyone else.</p>
     <table>
       <tr><th>What</th><th>Where it goes</th></tr>
       <tr><td>Name, email, account</td><td>Never asked for. There are no accounts.</td></tr>
-      <tr><td>Progress (which games are won, calendar start date)</td><td>Saved only in this browser on this device. Clearing the browser's site data erases it.</td></tr>
-      <tr><td>The code your child writes</td><td>Runs inside the browser. It is not sent to us, except as described in the next row.</td></tr>
-      <tr><td>Questions typed to the coach</td><td>The question, the current task, the code in the current box and its last output are sent to our server and passed to Google's Gemini model to write the answer. We do not save them, and we ask Google not to store them.</td></tr>
-      <tr><td>The coach's voice (when switched on)</td><td>The coach's own lines are sent to Gemini to be turned into speech. Nothing from the microphone is ever used.</td></tr>
+      <tr><td>Progress (which games are won, calendar start date, voice on or off)</td><td>Saved only in this browser on this device. Clearing the browser's site data erases it.</td></tr>
+      <tr><td>The code and answers your child types</td><td>They run inside the browser and are checked there. They are never sent to us or to anyone else.</td></tr>
+      <tr><td>The coach's voice</td><td>Recordings that are part of the site. The microphone is never used.</td></tr>
+      <tr><td>The device's internet address (IP address)</td><td>Every website's hosting company sees it in order to send the pages, and may keep it for a short time in its security logs. We use it for nothing else: not to recognize, contact or learn about anyone.</td></tr>
     </table>
-    <p>The page also loads parts from other services, which see the device's internet address as any website does: map pictures (OpenStreetMap and Esri), fonts (Google Fonts), and the Python engine and map code (jsDelivr and unpkg). There are no ads and no tracking or analytics scripts.</p>
+    <p>Two parts of the game come from other services, which also see the device's internet address when they send their files: the map pictures (OpenStreetMap and Esri) and the Python engine (jsDelivr). Fonts and everything else come from our own site.</p>
+    <p>There are no ads, no cookies, and no tracking or analytics scripts. We do not sell or share anything, because we do not have anything to sell or share.</p>
+    <p>Questions about privacy? Parents can write to us through the <a href="https://github.com/o-ostrovskiy/sport-python-learning/issues">project's GitHub page</a>.</p>
 
-    <h2 id="coach">What the coach can and cannot say</h2>
+    <h2 id="coach">How the coach works</h2>
     <ul>
-      <li>He answers only questions about Python and the lesson in front of the child. Anything else gets a fixed, friendly "ask me about your code".</li>
-      <li>He gives hints, not finished answers, for the task the child is working on.</li>
-      <li>He never asks for personal details. Messages that look like a phone number, an email or an address are stopped before they are sent.</li>
-      <li>Every answer is read by a second, separate check before your child sees it. Links are removed.</li>
-      <li>If a child writes that they are upset or scared, he tells them to talk to a parent or another trusted adult.</li>
+      <li>Coach Andrew is not a chatbot. Every line he says, every hint and every check was written ahead of time by a person, and tested.</li>
+      <li>He looks at the result of your child's code inside the browser and picks the line that fits.</li>
+      <li>He gives hints that go from gentle to exact, not finished answers on the first try.</li>
+      <li>He never asks for personal details, and there is no box to type to him.</li>
     </ul>
-    <p>The coach is a computer program and can still make mistakes. If he says something wrong or strange, please tell us through the GitHub page above.</p>
+    <p>If something he says is wrong or unclear, please tell us through the GitHub page above.</p>
 
     <h2>Where the numbers come from</h2>
     <ul>
