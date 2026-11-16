@@ -2,10 +2,10 @@
 //   node site/tools/record-voice.mjs            record every line that has no file yet (safe to run again and again)
 //   node site/tools/record-voice.mjs --list     only count the lines; records nothing, needs no key
 //   node site/tools/record-voice.mjs --lists    only rewrite the lists from the recordings on disk; records nothing
-//   node site/tools/record-voice.mjs --check    only report lines from voice-lines.json that no longer match play.html
+//   node site/tools/record-voice.mjs --check    only report lines from voice-lines.json that no longer match the game page (play.html, js/)
 //   node site/tools/record-voice.mjs --redo "Boom!"   record one line again (a new take)
 // Where the lines come from:
-//   tools/voice-lines.json   the coach's own fixed lines and openers in play.html
+//   tools/voice-lines.json   the coach's own fixed lines and openers in the game page (js/*.js)
 //   season.js                one line per stadium (stadiumLine, playbookLine)
 //   labs/<sport>-<NN>.js     every play's ok line, hints, quiz tips, and fixed text used as msg: in check()
 // Reads the key from server/.env (GEMINI_API_KEY). Needs ffmpeg.
@@ -119,9 +119,11 @@ if (broken.length) console.log(`  could not read (left as they were): ${broken.j
 if (flag('--list')) process.exit(0);
 
 // Does every hand-written line still appear in the page? A line that was reworded there silently loses its recording.
-const page = clean(fs.readFileSync(path.join(SITE, 'play.html'), 'utf8').replace(/<\/?(b|code|i|br)>/g, ''));
+// The coach's lines live in the game page's modules (site/js/*.js) and in play.html itself.
+const pageFiles = [path.join(SITE, 'play.html'), ...fs.readdirSync(path.join(SITE, 'js')).filter(f => f.endsWith('.js')).map(f => path.join(SITE, 'js', f))];
+const page = clean(pageFiles.map(f => fs.readFileSync(f, 'utf8')).join('\n').replace(/<\/?(b|code|i|br)>/g, ''));
 const stale = lines.slice(0, own).filter(l => !page.includes(l.text) && !/^Hint \d:$/.test(l.text));
-for (const l of stale) console.warn(`NOT IN play.html (reworded?): ${l.text}`);
+for (const l of stale) console.warn(`NOT ON THE GAME PAGE (reworded?): ${l.text}`);
 if (flag('--check')) process.exit(stale.length ? 1 : 0);
 
 if (!env.GEMINI_API_KEY) { console.error('No GEMINI_API_KEY in server/.env'); process.exit(1); }

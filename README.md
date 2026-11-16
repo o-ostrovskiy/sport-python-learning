@@ -76,6 +76,7 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | Where | What |
 |---|---|
 | `site/index.html`, `about.html`, `play.html` | home page with the calendar, About, the game |
+| `site/play.css`, `site/js/` | the game page's style and its plain ES modules (no build step): `main.js` lists what each one does |
 | `site/py-worker.js` | Python (Pyodide) in a Web Worker for the game page, so an endless loop can be stopped with ⏹ Stop |
 | `site/labs/` | one file per lab; [`site/labs/README.md`](site/labs/README.md) explains the format |
 | `site/data/` | trimmed copies of the open data, small enough for a browser |

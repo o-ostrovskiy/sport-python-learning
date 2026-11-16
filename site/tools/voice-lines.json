@@ -1,5 +1,5 @@
 {
- "_about": "Coach lines that are recorded ahead of time (node tools/record-voice.mjs). Text must match what the bubble shows in play.html; emoji and HTML tags are ignored. 'starts' are short pieces that open or close a bubble around a lab line. Stadium and lab lines are not listed here: the tool finds them by itself.",
+ "_about": "Coach lines that are recorded ahead of time (node tools/record-voice.mjs). Text must match what the bubble shows on the game page (play.html, js/*.js); emoji and HTML tags are ignored. 'starts' are short pieces that open or close a bubble around a lab line. Stadium and lab lines are not listed here: the tool finds them by itself.",
  "styles": {
   "warm": "A warm, upbeat sports coach talking to a child. Clear and friendly, not shouting.",
   "excited": "A warm sports coach cheering for a child who just got it right. Big smile, energetic and punchy, not shouting.",

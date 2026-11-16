@@ -31,7 +31,7 @@ try {
       for (let k = 1; k <= n; k++) {
         const cell = page.locator('#nb .cell').nth(k - 1), a = ans[k] || {};
         if (await cell.locator('.opts').count()) {   // a quiz: the right option, or any one for a vote
-          const right = await page.evaluate(k => { const c = cells[k - 1]; return c.vote ? 0 : c.a; }, k);
+          const right = await page.evaluate(k => { const c = seasonState.cells[k - 1]; return c.vote ? 0 : c.a; }, k);
           await cell.locator(`.opt[data-i="${right}"]`).click();
         } else {
           if (a.solution) await cell.locator('textarea').fill(a.solution);
@@ -40,7 +40,7 @@ try {
           await cell.locator('.run').click();
           for (;;) {   // answer every input( ) question, until the play is done or shows an error
             const state = await page.waitForFunction(k => { const c = document.querySelectorAll('#nb .cell')[k - 1];
-              return c.classList.contains('done') ? 'done' : c.querySelector('.asks') ? 'ask' : c.querySelector('.out.err') && !cells[k - 1].running ? 'err' : ''; }, k, { timeout: LONG }).then(h => h.jsonValue()).catch(async e => { throw new Error(`play ${k} stuck: ${await cell.locator(".out").innerText().catch(() => "")} / coach: ${await page.locator("#say").innerText()}`); });
+              return c.classList.contains('done') ? 'done' : c.querySelector('.asks') ? 'ask' : c.querySelector('.out.err') && !seasonState.cells[k - 1].running ? 'err' : ''; }, k, { timeout: LONG }).then(h => h.jsonValue()).catch(async e => { throw new Error(`play ${k} stuck: ${await cell.locator(".out").innerText().catch(() => "")} / coach: ${await page.locator("#say").innerText()}`); });
             if (state !== 'ask') break;
             await cell.locator('.asks input').fill(String(inputs.length ? inputs.shift() : '1')); await cell.locator('.asks input').press('Enter');
             await page.waitForFunction(k => !document.querySelectorAll('#nb .cell')[k - 1].querySelector('.asks'), k);
@@ -51,7 +51,7 @@ try {
       }
       // The film review: answer every question right, then the trophy.
       await page.locator('#say .go').click();
-      const rv = await page.evaluate(() => REVIEW.map(r => r.a));
+      const rv = await page.evaluate(() => seasonState.REVIEW.map(r => r.a));
       for (const a of rv) { await page.locator(`#film .opt[data-i="${a}"]:not([disabled])`).click(); await page.waitForTimeout(1500); }
       await page.waitForFunction(() => /SCOUTING REPORT/.test(document.querySelector('#film')?.textContent || ''), null, { timeout: 10000 });
       const charts = await page.locator('#nb .out img').count();

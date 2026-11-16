@@ -143,7 +143,7 @@ Check that it works on an iPad.
   on a shaky connection. Give the cache a version number so that an update replaces it.
 - In Caddy, cache versioned vendor files for a long time (`immutable`).
 
-### 7. Split `play.html` into readable modules
+### 7. Split `play.html` into readable modules — DONE 2026-11-16
 676 lines of HTML, CSS and JavaScript in one file, much of it written as chains of one-liners. Split it into plain ES modules
 with no build step: `play.css`, `js/voice.js` (the coach's voice and face), `js/map.js` (or the new drawn map),
 `js/python.js` (the worker client), `js/game.js` (boxes, checks, review), `js/progress.js` (item 1). Write normal multi-line

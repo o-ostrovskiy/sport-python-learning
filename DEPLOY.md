@@ -7,7 +7,7 @@ hosted, how to update it, and what was settled before launch.
 
 | Part | Files | On the public site? |
 |---|---|---|
-| Pages: home + calendar, About, the game | `site/index.html`, `site/about.html`, `site/play.html`, `site/season.js`, `site/pages.css` | Yes, static files |
+| Pages: home + calendar, About, the game | `site/index.html`, `site/about.html`, `site/play.html` (with `play.css` and `js/`), `site/season.js`, `site/pages.css` | Yes, static files |
 | Lessons | `site/labs/<sport>-<NN>.js` (a week becomes playable when its file exists) | Yes |
 | Data, pictures, recorded voice, fonts, the drawn map | `site/data/*.csv`, `site/assets/` (`voice/`, `vendor/`, `usa-map.js`) | Yes |
 | Python | Runs in the child's browser (Pyodide, loaded from jsDelivr) | Yes, nothing on our side |
@@ -39,7 +39,7 @@ the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for thi
 `~/python-season/`, close SSH. Then open the site and check that a lesson runs and the answer keys give "Not found".
 
 Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson. Before every update that
-touches `play.html`, `py-worker.js`, `season.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
+touches `play.html`, `play.css`, `js/`, `py-worker.js`, `season.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
 `node test-stop.mjs`, `node test-map.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
 
 **Coach voice goes live by itself** (decided 2026-11-16): the daily scheduled task "Запись голоса тренера" records the next
@@ -92,12 +92,12 @@ Should do
 - [x] Mascot pictures replaced with sharp ones (2026-11-15): 720 px WebP with a transparent background, made from the Canva originals.
 - [x] Baseball coach has his own cheer, flag, hint and trophy poses (2026-11-15), `site/assets/coach-baseball-*.webp`.
 - [x] The coach talks and blinks (2026-11-15). Each of the 12 coach pictures has three more next to it: `-talk` (the other mouth), `-blink`, `-talkblink`.
-      They were made with the Gemini image model from the same pictures; `face()` in `site/play.html` picks the picture from the loudness of the voice.
+      They were made with the Gemini image model from the same pictures; `face()` in `site/js/voice.js` picks the picture from the loudness of the voice.
       A new pose needs all four pictures, or its mouth and eyes will not move.
 - [x] Reactions are brief (2026-11-16): after a cheer, flag or hint the coach goes back to a resting picture, at once when the child presses the bubble's button or types.
       He rests waving on the map (`coach-wave`, `coach-baseball`) and with hands on hips inside a lab (`coach-watch`, `coach-baseball-watch`).
 - [x] Try the site in Safari and Firefox and on an iPad. Done in Firefox, in Safari on the Mac and in the iPad simulator;
-      iPad fixes are in `site/play.html` (no autocorrect in code boxes, coach strip and question box when the iPad is upright,
+      iPad fixes are in `site/play.css` and `site/js/` (no autocorrect in code boxes, coach strip and question box when the iPad is upright,
       week buttons hidden during a game) and `site/index.html` (side padding on narrow screens).
 - [ ] Try on a real iPad (same Wi-Fi as the Mac, open `http://Olgas-Mac-mini.local:8765` in Safari), about 5 minutes:
       the coach's sound, the first table (Week 1, Play 8), a chart (Week 9, Play 1), typing quotes in a code box,

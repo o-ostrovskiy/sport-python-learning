@@ -52,7 +52,7 @@ try {
   for (let k = 1; k <= n; k++) {
     const cell = page.locator('#nb .cell').nth(k - 1), a = ANS[k] || {};
     if (await cell.locator('.opts').count()) {
-      await cell.locator(`.opt[data-i="${await page.evaluate(k => cells[k - 1].vote ? 0 : cells[k - 1].a, k)}"]`).click();
+      await cell.locator(`.opt[data-i="${await page.evaluate(k => seasonState.cells[k - 1].vote ? 0 : seasonState.cells[k - 1].a, k)}"]`).click();
     } else {
       if (a.solution) await cell.locator('textarea').fill(a.solution);
       if (a.answer !== undefined) await cell.locator('.guess').fill(String(a.answer));
@@ -61,7 +61,7 @@ try {
     await page.waitForFunction(k => document.querySelectorAll('#nb .cell')[k - 1].classList.contains('done'), k, { timeout: LONG });
   }
   await page.locator('#say .go').click();   // film review
-  for (const a of await page.evaluate(() => REVIEW.map(r => r.a))) { await page.locator(`#film .opt[data-i="${a}"]:not([disabled])`).click(); await page.waitForTimeout(1500); }
+  for (const a of await page.evaluate(() => seasonState.REVIEW.map(r => r.a))) { await page.locator(`#film .opt[data-i="${a}"]:not([disabled])`).click(); await page.waitForTimeout(1500); }
   await page.getByRole('button', { name: 'Back to the map' }).click();
 
   step('back on the map: Week 1 has a trophy, Week 2 glows');
