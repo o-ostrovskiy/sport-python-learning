@@ -48,17 +48,17 @@ const LAB7 = [
     ok: '<code>KeyError</code>, like in Lab 2 when a column name was not in the table. It means the same here: "I cannot find that key". There is no <code>"college"</code> on this card… yet.' },
   { skill: 'keys', kind: 'predict', task: 'Adding a fact and changing a fact use the same kind of line: the key in square brackets, then <code>=</code> and the value. In 2024 Saquon moved to the Eagles. <b>Guess first:</b> how many facts will be on the card after this box? Type a number, then run it.',
     code: CARD + '\n\ncard["college"] = "Penn State"   # a new key: Python adds it\ncard["team"] = "Eagles"          # a key that is already there: Python changes its value\n\nprint(card)\nprint("Facts on the card:", len(card))',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 5, msg: (+guess === 5 ? 'Five, exactly! ' : `You guessed ${esc(guess)}, Python counts 5. `) + '<code>"college"</code> was new, so Python <b>added</b> it. <code>"team"</code> was already there, so Python <b>replaced</b> Giants with Eagles. A key can only be on the card once.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 5, msg: (+guess === 5 ? 'Five, exactly! ' : `You guessed ${esc(guess)}, Python counts 5. `) + '<code>"college"</code> was new, so Python <b>added</b> it. <code>"team"</code> was already there, so Python <b>replaced</b> Giants with Eagles. A key can only be on the card once.' }) },
   { skill: 'cards', kind: 'turn', task: '<b>Your favorite player\'s card.</b> <b>1.</b> Change the four values (what comes <b>after</b> the colons; the keys stay). <b>2.</b> In the last line, one thing is missing: the <b>key</b> that unlocks his jersey number. Type it in place of <code>___</code>, <b>with its quotes</b>.',
     code: 'my_card = {\n    "name": "Justin Jefferson",   # change to your player\n    "team": "Vikings",            # his team\n    "number": 18,                 # his number\n    "position": "WR",             # his position\n}\n\nprint(my_card["name"], "plays for the", my_card["team"])\nprint("He wears number", my_card[___])',
     hints: ['Look at the card: which label sits in front of the 18? Type that label, in quotes.', 'The last line should read: <code>print("He wears number", my_card["number"])</code>', 'Then change the values: <code>"name": "Josh Allen",</code> <code>"team": "Bills",</code> <code>"number": 17,</code> <code>"position": "QB",</code>'],
-    check: ({ code, q }) => {
-      if (!q('isinstance(my_card, dict)')) return { msg: 'The card must be a dictionary. Keep the curly brackets <code>{ }</code> and the <code>"key": value</code> pairs.' };
+    check: async ({ code, q }) => {
+      if (!(await q('isinstance(my_card, dict)'))) return { msg: 'The card must be a dictionary. Keep the curly brackets <code>{ }</code> and the <code>"key": value</code> pairs.' };
       if (!/my_card\[\s*["']number["']\s*\]/.test(code)) return { msg: 'That key works, but it is not the jersey number. Which label sits in front of the number on the card? Type it in quotes.' };
-      if (q('len(my_card)') !== 4 || !q('all(k in my_card for k in ["name", "team", "number", "position"])')) return { msg: 'The card needs its four keys: <code>"name"</code>, <code>"team"</code>, <code>"number"</code> and <code>"position"</code>. Change only what comes after the colons.' };
-      if (q('my_card["name"] == "Justin Jefferson"')) return { msg: 'The key is right: he wears number 18. Now make it <b>your</b> card: change the four values after the colons.' };
-      if (!q('isinstance(my_card["number"], int)')) return { msg: 'The jersey number is a number, so no quotes around it: <code>"number": 17,</code>' };
-      return { ok: true, msg: `${esc(String(q('my_card["name"]')))}, number ${q('my_card["number"]')}. Your first dictionary: four keys, four values.` }; } },
+      if ((await q('len(my_card)')) !== 4 || !(await q('all(k in my_card for k in ["name", "team", "number", "position"])'))) return { msg: 'The card needs its four keys: <code>"name"</code>, <code>"team"</code>, <code>"number"</code> and <code>"position"</code>. Change only what comes after the colons.' };
+      if ((await q('my_card["name"] == "Justin Jefferson"'))) return { msg: 'The key is right: he wears number 18. Now make it <b>your</b> card: change the four values after the colons.' };
+      if (!(await q('isinstance(my_card["number"], int)'))) return { msg: 'The jersey number is a number, so no quotes around it: <code>"number": 17,</code>' };
+      return { ok: true, msg: `${esc(String((await q('my_card["name"]'))))}, number ${(await q('my_card["number"]'))}. Your first dictionary: four keys, four values.` }; } },
 
   { md: '<h2>Part 2. Team codes 🗺️</h2>In our stats tables, teams are short codes: <code>KC</code>, <code>MIN</code>, <code>PHI</code>. A dictionary is perfect for turning a code into a name: the <b>code is the key</b>, the <b>name is the value</b>. Short dictionaries fit on one line, like short lists.' },
   { skill: 'lookup', kind: 'run', task: '<b>Guess first:</b> what will the two lines show? Then run it.',
@@ -75,14 +75,14 @@ const LAB7 = [
   { skill: 'lookup', kind: 'turn', task: 'Teach the dictionary two more teams. Line 2 adds the Cowboys. On line 3, add <b>one more team of your own</b>: change both <code>"???"</code>. (Some codes: <code>"DET"</code> Lions, <code>"BAL"</code> Ravens, <code>"GB"</code> Packers, <code>"CIN"</code> Bengals.)',
     code: TEAMS5 + '\nteams["DAL"] = "Cowboys"\nteams["???"] = "???"        # change both: a team code, and its name\n\nfor code in teams:\n    print(code, "=", teams[code])\n\nprint("Teams I know:", len(teams))',
     hints: ['The code goes in the square brackets, the name after the <code>=</code>. Both in quotes.', 'For example: <code>teams["DET"] = "Lions"</code>'],
-    check: ({ q }) => {
-      if (q('"???" in teams')) return { msg: 'The key is still <code>"???"</code>. Put a real team code in the square brackets, like <code>"DET"</code>.' };
-      if (q('"???" in teams.values()')) return { msg: 'The code is in, but its name is still <code>"???"</code>. Put the team\'s name after the <code>=</code>.' };
-      if (!q('"DAL" in teams')) return { msg: 'The Cowboys are gone! Keep the line <code>teams["DAL"] = "Cowboys"</code>.' };
-      const n = q('len(teams)');
+    check: async ({ q }) => {
+      if ((await q('"???" in teams'))) return { msg: 'The key is still <code>"???"</code>. Put a real team code in the square brackets, like <code>"DET"</code>.' };
+      if ((await q('"???" in teams.values()'))) return { msg: 'The code is in, but its name is still <code>"???"</code>. Put the team\'s name after the <code>=</code>.' };
+      if (!(await q('"DAL" in teams'))) return { msg: 'The Cowboys are gone! Keep the line <code>teams["DAL"] = "Cowboys"</code>.' };
+      const n = (await q('len(teams)'));
       if (n === 6) return { msg: 'Only 6 teams. Your code is one the dictionary already had, so Python <b>changed</b> that team and did not add a new one. Pick a code that is not there yet.' };
       if (n !== 7) return { msg: `The dictionary has ${n} teams, we want 7: the first five, the Cowboys, and yours.` };
-      return { ok: true, msg: `Seven teams! The last one you added: ${esc(String(q('list(teams)[-1]')))} = ${esc(String(q('teams[list(teams)[-1]]')))}.` }; } },
+      return { ok: true, msg: `Seven teams! The last one you added: ${esc(String((await q('list(teams)[-1]'))))} = ${esc(String((await q('teams[list(teams)[-1]]'))))}.` }; } },
 
   { md: '<h2>Part 3. Cards from the real stats 📊</h2>Typing 32 teams is slow, so here is the whole league, ready-made. (The data uses today\'s codes and names even for old seasons.)' },
   { skill: 'lookup', kind: 'run', task: 'Run it to load all 32 teams.',
@@ -97,10 +97,10 @@ const LAB7 = [
   { skill: 'deck', kind: 'turn', data: true, task: 'We do not want to write all that for every player, so we put it in a <b>machine</b> (Lab 6). It takes a name and a stat and <b>hands back</b> a finished card. One word is missing: the 6-letter word that hands the card back.',
     code: MACHINE,
     hints: ['You used this word in Lab 6. It means "hand this back".', 'The line should read: <code>return card</code> (with 4 spaces in front).'],
-    check: ({ code, out, q }) => {
+    check: async ({ code, out, q }) => {
       if (/^\s+print\s*\(?\s*card\s*\)?\s*$/m.test(code)) return { msg: '<code>print</code> only shows the card inside the machine. Then the machine hands back <code>None</code>! Use the 6-letter word that <b>hands the card back</b>.' };
       if (!/^\s+return\s+card\s*$/m.test(code)) return { msg: 'Check the line that had the <code>___</code>. The word that hands an answer back has 6 letters.' };
-      if (!q('isinstance(make_card("Ja\'Marr Chase", "receiving_yards"), dict)')) return { msg: 'The machine does not hand back a card. Keep the other lines the way they were.' };
+      if (!(await q('isinstance(make_card("Ja\'Marr Chase", "receiving_yards"), dict)'))) return { msg: 'The machine does not hand back a card. Keep the other lines the way they were.' };
       if (!out.includes('Bengals') || !out.includes('2005')) return { msg: 'Keep the two <code>print(make_card(…))</code> lines at the bottom so we can see the cards.' };
       return { ok: true, msg: 'Two cards from two short lines: Chase, Bengals, 1,708 yards in 2024, and Barkley, Eagles, 2,005 in 2024. Your machine builds a dictionary and hands it back.' }; } },
 
@@ -111,16 +111,16 @@ const LAB7 = [
   { skill: 'deck', kind: 'turn', data: true, task: '<b>Your own deck.</b> Put your own players in <code>my_names</code>, three or more, all the same kind: receivers and tight ends use <code>"receiving_yards"</code>, running backs <code>"rushing_yards"</code>, quarterbacks <code>"passing_yards"</code>. (A red <code>IndexError</code> means a name is spelled wrong: the machine found no rows for it.)',
     code: 'my_names = ["Justin Jefferson", "Ja\'Marr Chase", "CeeDee Lamb"]   # put your own players here\nstat = "receiving_yards"                                          # or "rushing_yards" or "passing_yards"\n\ndeck = []\nfor name in my_names:\n    deck.append(make_card(name, stat))\n\nfor card in deck:\n    print(card["name"], "|", card["team"], "|", card["position"], "|", card["best season"], "|", card["yards"], "yards")',
     hints: ['Change the names inside the quotes on line 1. Keep the commas between them.', 'For running backs: <code>my_names = ["Saquon Barkley", "Derrick Henry", "Bijan Robinson"]</code> and <code>stat = "rushing_yards"</code>'],
-    check: ({ q, out }) => {
-      if (!q('isinstance(my_names, list)')) return { msg: 'Keep <code>my_names</code> a list: square brackets, names in quotes, commas between.' };
-      if (q('my_names == ' + NAMES3)) return { msg: 'Those are still my three receivers. Put your own players inside the quotes.' };
-      const n = q('len(my_names)');
+    check: async ({ q, out }) => {
+      if (!(await q('isinstance(my_names, list)'))) return { msg: 'Keep <code>my_names</code> a list: square brackets, names in quotes, commas between.' };
+      if ((await q('my_names == ' + NAMES3))) return { msg: 'Those are still my three receivers. Put your own players inside the quotes.' };
+      const n = (await q('len(my_names)'));
       if (n < 3) return { msg: `That is ${n} player${n === 1 ? '' : 's'}. A deck needs three or more. Is a comma missing between two names?` };
-      if (q('len(deck)') !== n) return { msg: 'The deck does not have one card for each name. Keep the loop with <code>deck.append(make_card(name, stat))</code>.' };
+      if ((await q('len(deck)')) !== n) return { msg: 'The deck does not have one card for each name. Keep the loop with <code>deck.append(make_card(name, stat))</code>.' };
       if (!out.includes('|')) return { msg: 'Keep the second loop so we can see your cards.' };
-      const zero = q('", ".join(c["name"] for c in deck if c["yards"] == 0)');
-      if (zero) return { msg: `${esc(zero)} has 0 yards in ${esc(String(q('stat')))}. Pick the stat that fits your players: receivers catch, running backs rush, quarterbacks pass.` };
-      return { ok: true, msg: `${n} cards! The biggest season in your deck: ${esc(String(q('max(deck, key=lambda c: c["yards"])["name"]')))}, ${q('max(c["yards"] for c in deck)').toLocaleString('en-US')} yards. A list, a loop, a machine and dictionaries, all working together. Full deck, Collector! 🏆` }; } }
+      const zero = (await q('", ".join(c["name"] for c in deck if c["yards"] == 0)'));
+      if (zero) return { msg: `${esc(zero)} has 0 yards in ${esc(String((await q('stat'))))}. Pick the stat that fits your players: receivers catch, running backs rush, quarterbacks pass.` };
+      return { ok: true, msg: `${n} cards! The biggest season in your deck: ${esc(String((await q('max(deck, key=lambda c: c["yards"])["name"]'))))}, ${(await q('max(c["yards"] for c in deck)')).toLocaleString('en-US')} yards. A list, a loop, a machine and dictionaries, all working together. Full deck, Collector! 🏆` }; } }
 ];
 const REVIEW7 = [
   { skill: 'cards', q: 'Which one is a correct dictionary?', opts: ['{"name": "Josh Allen", "number": 17}', '["name": "Josh Allen", "number": 17]', '{"name" = "Josh Allen", "number" = 17}'], a: 0 },

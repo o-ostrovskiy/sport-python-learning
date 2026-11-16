@@ -11,8 +11,8 @@ const CELLS = [
   { skill: 'variables', kind: 'turn', task: 'Change the three values to <b>your</b> favorite player. Keep the quotes around the name and the team. (The text after <code>#</code> is a note for people. Python skips it.)',
     code: 'player = "Shohei Ohtani"   # change to your favorite player\nteam = "Dodgers"           # his team\nnumber = 17                # his number\n\nprint(player, "plays for the", team, "and wears number", number)',
     hints: ['Only change what is between the quotes, and the number.', 'Like this: <code>player = "Bobby Witt Jr."</code>. Then fix the team and the number.'],
-    check: ({ g, out }) => {
-      const p = g('player'), n = g('number');
+    check: async ({ g, out }) => {
+      const p = (await g('player')), n = (await g('number'));
       if (typeof p !== 'string') return { msg: 'The name must be text, so it needs quotes: <code>player = "Juan Soto"</code>.' };
       if (p === 'Shohei Ohtani') return { msg: 'It still says Shohei Ohtani. Type your own favorite player between the quotes.' };
       if (typeof n !== 'number') return { msg: 'The jersey number is a number, so no quotes: <code>number = 22</code>.' };
@@ -26,15 +26,15 @@ const CELLS = [
   { md: '<h2>Mission 2. Total bases 🧮</h2>Python is also a calculator. Baseball has a stat called <b>total bases</b>: a single counts 1, a double 2, a triple 3 and a home run 4. In Python, <code>*</code> means <b>times</b>.' },
   { skill: 'math', kind: 'predict', task: '<b>Guess first!</b> This batter hit 2 singles, 1 double and 1 home run. How many total bases will Python print? Type your guess, then run it.',
     code: BASES,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 8, msg: +guess === 8 ? 'You called it: 8! 2×1 + 1×2 + 0×3 + 1×4. Python did the math, then put the answer in <code>total_bases</code>.'
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 8, msg: +guess === 8 ? 'You called it: 8! 2×1 + 1×2 + 0×3 + 1×4. Python did the math, then put the answer in <code>total_bases</code>.'
       : `You guessed ${esc(String(guess))}, Python says 8. Here is how: 2×1 = 2, plus 1×2 = 2, plus 0×3 = 0, plus 1×4 = 4. That is 8.` }) },
   { skill: 'math', kind: 'turn', task: 'A really great day at the plate is <b>10 total bases or more</b>. Change the four numbers to give your batter a great day. Leave the <code>total_bases</code> line alone.',
     code: 'singles = 2     # change these numbers\ndoubles = 1\ntriples = 0\nhome_runs = 1\n\ntotal_bases = singles * 1 + doubles * 2 + triples * 3 + home_runs * 4\nprint("Total bases:", total_bases)',
     hints: ['Change only the numbers after the <code>=</code> signs in the first four lines.', 'A home run is worth the most: 4 bases. Try <code>home_runs = 2</code>.'],
-    check: ({ g, q, out }) => {
-      const t = g('total_bases');
+    check: async ({ g, q, out }) => {
+      const t = (await g('total_bases'));
       if (typeof t !== 'number') return { msg: 'Hits are numbers, so they need no quotes: <code>home_runs = 2</code>.' };
-      if (!q('total_bases == singles * 1 + doubles * 2 + triples * 3 + home_runs * 4')) return { msg: 'The math line changed. It should still say <code>total_bases = singles * 1 + doubles * 2 + triples * 3 + home_runs * 4</code>. Change only the four numbers above it.' };
+      if (!(await q('total_bases == singles * 1 + doubles * 2 + triples * 3 + home_runs * 4'))) return { msg: 'The math line changed. It should still say <code>total_bases = singles * 1 + doubles * 2 + triples * 3 + home_runs * 4</code>. Change only the four numbers above it.' };
       if (t === 8) return { msg: 'Still 8 total bases: those are my numbers. Give your batter more hits.' };
       if (t < 10) return { msg: `That is ${t} total bases. A great day is 10 or more. Add another home run: each one is worth 4.` };
       if (!out.includes(String(t))) return { msg: 'Keep the <code>print</code> line so we can see the total.' };
@@ -47,7 +47,7 @@ const CELLS = [
   { skill: 'functions', kind: 'turn', task: 'Your turn to use the machine. Aroldis Chapman threw a pitch at <b>105.8</b> mph in 2010. Print how many seconds it needed.',
     code: '# Aroldis Chapman threw 105.8 mph. Print the time to home plate:\n',
     hints: ['Look at the play above. The machine is used like this: <code>time_to_plate(100)</code>.', 'Put the machine inside print: <code>print(time_to_plate(____))</code>. Which number goes in?', 'The answer: <code>print(time_to_plate(105.8))</code>'],
-    check: ({ out, code }) => {
+    check: async ({ out, code }) => {
       const c = code.replace(/#.*/g, '');
       if (/time_to_plate\s*\(\s*105\.8\s*\)/.test(c) && out.includes('0.39')) return { ok: true, msg: '0.39 seconds! You used a function all by yourself. Try <code>80</code> (a curveball) or <code>45</code> (a 10-year-old\'s pitch) to see how much more time the batter gets.' };
       if (!/time_to_plate\s*\(/.test(c)) return { msg: 'Use our machine. Its name is <code>time_to_plate</code>, and the speed goes in the round brackets.' };
@@ -62,14 +62,14 @@ const CELLS = [
   { skill: 'tables', kind: 'turn', data: true, task: 'Find <b>your</b> player. Read it like a sentence: "from <code>stats</code>, keep the rows where <code>name</code> is the same as the name I picked". Two equals signs <code>==</code> ask <b>"is it the same?"</b> The double brackets at the end pick which columns to show.',
     code: 'name = "Aaron Judge"   # change this\n\nstats[stats["name"] == name][["name", "season", "team", "G", "H", "HR", "RBI", "SB", "SO"]]',
     hints: ['Change only the name between the quotes. Use the full name, with capital letters.', 'Names have no accent marks, and sons are written like MLB writes them: <code>"Julio Rodriguez"</code>, <code>"Vladimir Guerrero Jr."</code>, <code>"Ronald Acuna Jr."</code>.'],
-    check: ({ g, q }) => {
-      const n = g('name');
+    check: async ({ g, q }) => {
+      const n = (await g('name'));
       if (typeof n !== 'string') return { msg: 'The name is text, so it needs quotes: <code>name = "Juan Soto"</code>.' };
       if (n === 'Aaron Judge') return { msg: 'That is still Aaron Judge. Put your own player between the quotes.' };
-      if (!q('len(stats[stats["name"] == name])')) { const near = q('_near(stats, name)');
+      if (!(await q('len(stats[stats["name"] == name])'))) { const near = (await q('_near(stats, name)'));
         return { msg: near ? `Nobody in the archive is called "${esc(n)}". Did you mean <code>"${esc(near)}"</code>? Every letter and capital must match.`
           : `Nobody in the archive is called "${esc(n)}". Check the spelling and the capital letters. The archive has hitters only, so a pitcher will not be there: try another player.` }; }
-      return { ok: true, msg: `Found him! ${esc(n)}: ${esc(q('_who(stats, name)'))}` }; } },
+      return { ok: true, msg: `Found him! ${esc(n)}: ${esc((await q('_who(stats, name)')))}` }; } },
   { skill: 'tables', kind: 'quiz', task: 'Quick one. What does this count?', code: 'len(stats)',
     opts: ['the columns in the table', 'the rows: one for each player season', 'the letters in the word stats'], a: 1,
     tips: ['Not the columns. <code>len</code> of a table counts how many rows it has.', '', '<code>stats</code> has no quotes, so it is the locker with our table inside, not a word.'],
@@ -82,22 +82,22 @@ const CELLS = [
   { skill: 'tables', kind: 'turn', data: true, task: 'Other records. <b>Guess first:</b> who stole the most bases in one season? Then change <b>only the first line</b>: <code>"HR"</code> to <code>"SB"</code>. Keep the quotes.',
     code: 'stat = "HR"   # try "SB", "H", "SO", "RBI"\n\ntop = stats.sort_values(stat, ascending=False)\ntop[["name", "season", "team", stat]].head(10)',
     hints: ['Change only the two letters between the quotes on line 1.', 'Line 1 should say <code>stat = "SB"</code>, with capital letters.'],
-    check: ({ g, q }) => {
-      const s = g('stat');
+    check: async ({ g, q }) => {
+      const s = (await g('stat'));
       if (s === 'HR') return { msg: 'That is still the home run list. Change <code>"HR"</code> on line 1 to <code>"SB"</code>.' };
       if (!STAT_WORDS[s]) return { msg: `<code>"${esc(String(s))}"</code> is not a stat we can rank. Use one of these, in capital letters: <code>"SB"</code>, <code>"H"</code>, <code>"SO"</code>, <code>"RBI"</code>.` };
-      if (!q('top.iloc[0][stat] == stats[stat].max()')) return { msg: 'Keep the two lines under the first one just as they were. They do the sorting.' };
-      return { ok: true, msg: `The most ${STAT_WORDS[s]} in one season: ${esc(q('str(top.iloc[0]["name"])'))}, ${q('int(top.iloc[0][stat])')} in ${q('int(top.iloc[0]["season"])')}.`
+      if (!(await q('top.iloc[0][stat] == stats[stat].max()'))) return { msg: 'Keep the two lines under the first one just as they were. They do the sorting.' };
+      return { ok: true, msg: `The most ${STAT_WORDS[s]} in one season: ${esc((await q('str(top.iloc[0]["name"])')))}, ${(await q('int(top.iloc[0][stat])'))} in ${(await q('int(top.iloc[0]["season"])'))}.`
         + (s === 'SB' ? ' Four of the top ten are from 1887, when the rules were different. Baseball is old!' : ' You changed one locker, and the whole table changed.') }; } },
   { skill: 'tables', kind: 'turn', data: true, task: 'Now just one season. It starts with <b>2026</b>. Change the year to <b>1998</b>, or to the year you were born. Numbers do not need quotes.',
     code: 'year = 2026   # change the year\n\none_year = stats[stats["season"] == year]\none_year.sort_values("HR", ascending=False)[["name", "team", "HR"]].head(10)',
     hints: ['Change only the number on line 1.', 'Line 1 should look like this: <code>year = 1998</code>'],
-    check: ({ g, q }) => {
-      const y = g('year');
+    check: async ({ g, q }) => {
+      const y = (await g('year'));
       if (typeof y !== 'number') return { msg: 'A year is a number, so it needs no quotes: <code>year = 1998</code>.' };
       if (y === 2026) return { msg: 'Still 2026. Change the number on line 1 to another year, like <code>1998</code>.' };
-      if (!q('len(one_year)')) return { msg: `The archive has no season ${y}. It goes from 1871 to 2026.` };
-      const who = `${esc(q('str(one_year.sort_values("HR", ascending=False).iloc[0]["name"])'))} with ${q('int(one_year["HR"].max())')}`;
+      if (!(await q('len(one_year)'))) return { msg: `The archive has no season ${y}. It goes from 1871 to 2026.` };
+      const who = `${esc((await q('str(one_year.sort_values("HR", ascending=False).iloc[0]["name"])')))} with ${(await q('int(one_year["HR"].max())'))}`;
       return { ok: true, msg: y === 1998 ? `1998: Mark McGwire hit 70 and Sammy Sosa hit 66. Both beat the old record of 61 in the same summer!`
         : `In ${y} the home run leader was ${who}. One number changed, and you travelled through time.` }; } },
 
@@ -110,15 +110,15 @@ const CELLS = [
     ok: 'Barry Bonds on top with 762. Why <code>.dropna</code>? Long ago nobody wrote strikeouts down, so those boxes are empty. If we kept those seasons, a great old hitter would look like he never struck out!' },
   { skill: 'tables', kind: 'run', data: true, task: '👀 <b>The chart.</b> Every dot is one player. <b>Right = more home runs. Up = more strikeouts.</b> If home run hitters strike out the most, the dots should climb like a hill. The names are the top 8 home run hitters.',
     code: 'import matplotlib.pyplot as plt\n\nplt.figure(figsize=(9, 5))\nplt.scatter(careers["HR"], careers["SO"], alpha=0.5)\n\nfor _, row in careers.sort_values("HR", ascending=False).head(8).iterrows():\n    plt.annotate(row["name"], (row["HR"], row["SO"]), fontsize=8)\n\nplt.xlabel("Career home runs   (right = more home runs)")\nplt.ylabel("Career strikeouts   (up = more strikeouts)")\nplt.title("Do home run hitters strike out more?")\nplt.show()',
-    check: () => ({ ok: true, msg: (myVote === 2 ? 'Good call! ' : myVote === 0 ? 'Mostly right! ' : 'Surprise! ') + 'The dots do climb like a hill: more home runs, more strikeouts. But look at the far right. Barry Bonds, Hank Aaron and Babe Ruth are <b>not</b> the highest dots: Jim Thome and Alex Rodriguez are higher.' }) },
+    check: async () => ({ ok: true, msg: (myVote === 2 ? 'Good call! ' : myVote === 0 ? 'Mostly right! ' : 'Surprise! ') + 'The dots do climb like a hill: more home runs, more strikeouts. But look at the far right. Barry Bonds, Hank Aaron and Babe Ruth are <b>not</b> the highest dots: Jim Thome and Alex Rodriguez are higher.' }) },
   { skill: 'tables', kind: 'turn', data: true, task: 'Be the scout. This finds home run kings who did <b>not</b> strike out much: 500 home runs or more, but fewer than 1,450 strikeouts. Now find the rarest of all: change <code>1450</code> to <code>1000</code>. (<code>&lt;</code> means "less than", and <code>&amp;</code> means both must be true.)',
     code: 'careers[(careers["HR"] >= 500) & (careers["SO"] < 1450)][["name", "HR", "SO"]]',
     hints: ['Find the number <code>1450</code> in the line and type <code>1000</code> instead. No comma inside the number.'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       const c = code.replace(/#.*/g, '');
       if (/1450/.test(c)) return { msg: 'It still says 1450. Change it to <code>1000</code> to keep only the hitters who almost never missed.' };
       if (!/<\s*1000\b/.test(c) || !/>=\s*500\b/.test(c)) return { msg: 'Keep the line as it was and change only one number: <code>1450</code> becomes <code>1000</code>.' };
-      return { ok: true, msg: `Only ${q('len(careers[(careers["HR"] >= 500) & (careers["SO"] < 1000)])')} players ever did it: Mel Ott and Ted Williams. Hitting the ball far <b>without</b> missing much is super rare. That is what makes a legend, and you found them with one line.` }; } }
+      return { ok: true, msg: `Only ${(await q('len(careers[(careers["HR"] >= 500) & (careers["SO"] < 1000)])'))} players ever did it: Mel Ott and Ted Williams. Hitting the ball far <b>without</b> missing much is super rare. That is what makes a legend, and you found them with one line.` }; } }
 ];
 const REVIEW = [
   { skill: 'variables', q: 'Which line puts 99 into a locker called number?', opts: ['99 = number', 'number = 99', 'number == 99'], a: 1 },

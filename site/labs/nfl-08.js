@@ -27,19 +27,19 @@ const STATS = ['passing_yards', 'passing_tds', 'rushing_yards', 'rushing_tds', '
 
 const LAB8 = [
   { md: '<h2>Part 1. Python asks YOU ⌨️</h2>Until today, you typed everything into the code before pressing Run. <code>input( )</code> is new: Python <b>stops and asks you a question</b> while the program is running. That is how every game works.' },
-  { skill: 'input', kind: 'run', data: true, task: 'Run it. A small box pops up with a question. Type a player\'s name and press <b>OK</b>.',
+  { skill: 'input', kind: 'run', data: true, task: 'Run it. Python asks its question in a box under the code. Type a player\'s name and press <b>Enter</b>.',
     code: 'name = input("Who is your favorite player? ")\nprint("Great pick:", name)',
     ok: '<code>input( )</code> shows the words in its brackets, waits for you to type, and hands your answer back. The <code>=</code> puts your answer into the locker <code>name</code>.' },
-  { skill: 'input', kind: 'predict', data: true, task: 'Python will ask for a number. Type <b>4</b> in the pop-up box. <b>Guess first:</b> what will <code>tds + tds</code> show? Type your guess, then run it.',
+  { skill: 'input', kind: 'predict', data: true, task: 'Python will ask for a number. Type <b>4</b> in the answer box. <b>Guess first:</b> what will <code>tds + tds</code> show? Type your guess, then run it.',
     code: 'tds = input("How many touchdowns? Type 4: ")\nprint(tds + tds)',
-    check: ({ guess, out }) => { const got = out.trim(), right = String(guess).trim() === got;
+    check: async ({ guess, out }) => { const got = out.trim().split('\n').pop().trim(), right = String(guess).trim() === got;
       return { ok: true, missed: !right, msg: (right ? 'You remembered Lab 2! ' : `You guessed ${esc(String(guess))}, but Python shows ${esc(got)}. `) + '<code>input( )</code> always hands back <b>text</b>, even when you type digits. And <code>+</code> glues text together, so "4" + "4" is "44".' }; } },
-  { skill: 'input', kind: 'turn', data: true, task: 'A touchdown is 6 points. Run this box and type <b>4</b>: the answer is silly, because text times 6 means "repeat it 6 times". <b>Fix it:</b> put <code>int( )</code> around the whole <code>input( )</code>, like this: <code>int(input("..."))</code>. <code>int</code> turns text into a whole number. Type digits in the pop-up, not words.',
+  { skill: 'input', kind: 'turn', data: true, task: 'A touchdown is 6 points. Run this box and type <b>4</b>: the answer is silly, because text times 6 means "repeat it 6 times". <b>Fix it:</b> put <code>int( )</code> around the whole <code>input( )</code>, like this: <code>int(input("..."))</code>. <code>int</code> turns text into a whole number. Type digits in the answer box, not words.',
     code: 'tds = input("How many touchdowns? ")\npoints = tds * 6\nprint(tds, "touchdowns are", points, "points")',
     hints: ['Only line 1 changes. <code>int(</code> goes before <code>input</code>, and one more <code>)</code> goes at the very end of the line.', 'Line 1 should be: <code>tds = int(input("How many touchdowns? "))</code>'],
-    check: ({ q }) => {
-      if (!q('isinstance(points, int)')) return { msg: `Python says ${esc(String(q('str(points)')))} points! <code>tds</code> is still text, so <code>* 6</code> repeated it 6 times. Wrap the input: <code>int(input("..."))</code>.` };
-      return { ok: true, msg: `${q('int(tds)')} touchdowns are ${q('points')} points. Real math! <code>int( )</code> turned your typed text into a number.` }; } },
+    check: async ({ q }) => {
+      if (!(await q('isinstance(points, int)'))) return { msg: `Python says ${esc(String((await q('str(points)'))))} points! <code>tds</code> is still text, so <code>* 6</code> repeated it 6 times. Wrap the input: <code>int(input("..."))</code>.` };
+      return { ok: true, msg: `${(await q('int(tds)'))} touchdowns are ${(await q('points'))} points. Real math! <code>int( )</code> turned your typed text into a number.` }; } },
 
   { md: '<h2>Part 2. Python picks 🎲</h2>A quiz is no fun if you already know the answer. Python has a toolbox called <code>random</code> for surprises. <code>random.choice(a_list)</code> picks <b>one thing from a list</b>, like pulling a name out of a hat.' },
   { skill: 'random', kind: 'run', task: 'Run it <b>three times</b> and watch the name. <code>import random</code> opens the toolbox, just like <code>import pandas</code> in Lab 2.',
@@ -52,9 +52,9 @@ const LAB8 = [
   { skill: 'random', kind: 'turn', data: true, task: 'The <b>coin toss</b>. Python flips, you call it. One word is missing: the 6-letter word that picks one thing from a list. Fill it in and run. Type <b>heads</b> or <b>tails</b> in small letters.',
     code: 'import random\n\ncoin = ["heads", "tails"]\ntoss = random.___(coin)\ncall = input("The coin is in the air! heads or tails? ")\n\nif call == toss:\n    print("It is", toss, "- you won the toss!")\nelse:\n    print("It is", toss, "- the other team gets the ball.")',
     hints: ['You ran this word in the first box of Part 2: <code>random.______(players)</code>.', 'The line should be: <code>toss = random.choice(coin)</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/random\.choice\(\s*coin\s*\)/.test(code)) return { msg: 'Look at the <code>toss</code> line. The missing word picks one thing from the list, and it has 6 letters.' };
-      const call = String(q('call')), toss = String(q('toss'));
+      const call = String((await q('call'))), toss = String((await q('toss')));
       if (call !== 'heads' && call !== 'tails') return { ok: true, msg: `The coin works: it landed on ${toss}. You typed "${esc(call)}", which is not exactly heads or tails, so Python could not match it. Run it again if you like!` };
       return { ok: true, msg: `It landed on ${toss} and you called ${call}. ${call === toss ? 'You won the toss!' : 'Not this time.'} Run it again: Python flips a new coin every time.` }; } },
 
@@ -64,7 +64,7 @@ const LAB8 = [
     ok: '0, 1, 2. Before every lap Python asks "is <code>tries &lt; 3</code>?" True means one more lap. When <code>tries</code> reached 3 the answer was False, so the loop stopped.' },
   { skill: 'loops', kind: 'predict', task: 'Your team gains 3 yards on every play and needs 10 for a first down. <b>Guess first:</b> how many plays will the loop run? Type a number, then run it.',
     code: 'yards = 0\nplays = 0\n\nwhile yards < 10:\n    yards = yards + 3\n    plays = plays + 1\n\nprint("First down after", plays, "plays, with", yards, "yards")',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 4, msg: (+guess === 4 ? 'Exactly! ' : `You guessed ${esc(String(guess))}, but it takes 4. `) + 'After 3 plays there are only 9 yards, and 9 is still less than 10, so the loop goes one more lap: 12 yards.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 4, msg: (+guess === 4 ? 'Exactly! ' : `You guessed ${esc(String(guess))}, but it takes 4. `) + 'After 3 plays there are only 9 yards, and 9 is still less than 10, so the loop goes one more lap: 12 yards.' }) },
   { skill: 'loops', kind: 'quiz', task: 'Someone forgot the line <code>tries = tries + 1</code>. What happens now?',
     code: 'tries = 0\n\nwhile tries < 3:\n    print("Try number", tries)',
     opts: ['It prints once and stops', 'It never stops: tries stays 0 forever', 'A red error'], a: 1,
@@ -76,13 +76,13 @@ const LAB8 = [
   { skill: 'loops', kind: 'turn', data: true, task: 'A real guessing loop: "<b>while</b> the guess is not the secret <b>and</b> there are tries left, ask again". One symbol is missing: the one that means "less than", so you get 3 tries. Fill it in, run it, and answer. Capital letters matter!',
     code: 'secret = "Saquon Barkley"\ntries = 0\nguess = ""\n\nwhile guess != secret and tries ___ 3:\n    guess = input("Who ran for 2,005 yards in 2024? ")\n    tries = tries + 1\n\nif guess == secret:\n    print("Correct! You needed", tries, "tries.")\nelse:\n    print("Out of tries. It was", secret)',
     hints: ['You used this symbol in the first box of Part 3: <code>while tries ___ 3:</code>', 'The line should be: <code>while guess != secret and tries &lt; 3:</code>'],
-    check: ({ code, q }) => {
-      const t = q('tries');
+    check: async ({ code, q }) => {
+      const t = (await q('tries'));
       if (/tries\s*<=\s*3/.test(code)) return { msg: '<code>&lt;=</code> lets the loop run when <code>tries</code> is 0, 1, 2 <b>and</b> 3: that is 4 tries. Use the symbol for "less than" only.' };
       if (t === 0) return { msg: 'The loop never started: Python did not ask you anything. At the start <code>tries</code> is 0, so the question must be True for 0. Which symbol means "less than"?' };
       if (t > 3) return { msg: `That was ${t} tries. We want the loop to stop after 3.` };
       if (!/tries\s*<\s*3/.test(code)) return { msg: 'It ran, but use the "less than" symbol <code>&lt;</code> between <code>tries</code> and <code>3</code>, so the count always stops the loop.' };
-      return q('guess == secret') ? { ok: true, msg: `Correct in ${t} ${t === 1 ? 'try' : 'tries'}! The loop stopped early, because <code>guess != secret</code> turned False.` }
+      return (await q('guess == secret')) ? { ok: true, msg: `Correct in ${t} ${t === 1 ? 'try' : 'tries'}! The loop stopped early, because <code>guess != secret</code> turned False.` }
         : { ok: true, msg: 'Out of tries, so the loop stopped by itself: <code>tries &lt; 3</code> turned False. That count is what keeps a <code>while</code> from running forever.' }; } },
 
   { md: '<h2>Part 4. Guess the Player 🏈</h2>Time to build the real quiz. Python will pick a <b>secret player</b> from the real stats and give you clues. First we need the players.' },
@@ -92,29 +92,29 @@ const LAB8 = [
   { skill: 'game', kind: 'run', data: true, task: 'One new command: <code>.to_dict("records")</code> turns every row of the table into a <b>player card</b>: a dictionary, like in Lab 7. <b>Guess first:</b> how many cards will there be?',
     code: 'cards = top.to_dict("records")\n\nprint("Cards:", len(cards))\nprint(cards[0])\nprint(cards[0]["player_display_name"], "plays for", cards[0]["recent_team"])',
     ok: '<code>cards</code> is a <b>list of dictionaries</b>: 10 player cards. <code>cards[0]</code> is the first card, and <code>cards[0]["recent_team"]</code> reads the team from it.' },
-  { skill: 'game', kind: 'turn', data: true, task: '<b>The game!</b> Python picks a secret card and gives a clue inside the pop-up box. <code>str( )</code> is the twin of <code>int( )</code>: it turns a number into text, so <code>+</code> can glue it into the clue. Right now you get only <b>1</b> try. Change <code>max_tries</code> to <b>3</b>, then play.',
+  { skill: 'game', kind: 'turn', data: true, task: '<b>The game!</b> Python picks a secret card and gives a clue inside the answer box. <code>str( )</code> is the twin of <code>int( )</code>: it turns a number into text, so <code>+</code> can glue it into the clue. Right now you get only <b>1</b> try. Change <code>max_tries</code> to <b>3</b>, then play.',
     code: 'import random\n\nstat = "receiving_yards"\nmax_tries = 1      # how many guesses you get: change it to 3\n\n' + GAME_LOOP,
     hints: ['Only one number changes: the <code>1</code> in the <code>max_tries</code> line near the top.', 'Line 4 should be: <code>max_tries = 3</code>'],
-    check: ({ q }) => {
-      const mt = q('max_tries'), t = q('tries'), ans = esc(String(q('answer')));
+    check: async ({ q }) => {
+      const mt = (await q('max_tries')), t = (await q('tries')), ans = esc(String((await q('answer'))));
       if (!(mt >= 3)) return { msg: `It was ${ans}. With <code>max_tries = ${esc(String(mt))}</code> you never see clues 2 and 3. Change it to 3 and play again: Python will pick a new secret player.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep the <code>while</code> line as it was.' };
-      return q('guess == answer') ? { ok: true, msg: `TOUCHDOWN! ${ans} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a real game. Run it again for a new player!` }
+      return (await q('guess == answer')) ? { ok: true, msg: `TOUCHDOWN! ${ans} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a real game. Run it again for a new player!` }
         : { ok: true, msg: `It was ${ans}. Tough one! The loop stopped because the tries ran out. Run it again: Python picks a new secret player every time.` }; } },
   { skill: 'game', kind: 'turn', data: true, task: '<b>Make it yours.</b> Turn it into a quiz about runners or quarterbacks: change <code>stat</code> to <code>"rushing_yards"</code> or <code>"passing_yards"</code>. The box makes a new top 10 for your stat, and shows all ten names at the end.',
     code: 'import random\n\nstat = "receiving_yards"    # change to "rushing_yards" or "passing_yards"\nmax_tries = 3\n\ntop = last.sort_values(stat, ascending=False).head(10)\ncards = top.to_dict("records")\n' + GAME_LOOP + '\n\nprint("The ten players were:", list(top["player_display_name"]))',
     hints: ['Change only the words inside the quotes on the <code>stat</code> line. Keep the quotes.', 'Like this: <code>stat = "rushing_yards"</code>'],
-    check: ({ q }) => {
-      const stat = String(q('stat')), t = q('tries'), ans = esc(String(q('answer')));
+    check: async ({ q }) => {
+      const stat = String((await q('stat'))), t = (await q('tries')), ans = esc(String((await q('answer'))));
       if (stat === 'receiving_yards') return { msg: `It was ${ans}. That was still the receivers quiz. Change <code>stat</code> to <code>"rushing_yards"</code> or <code>"passing_yards"</code>.` };
       if (!STATS.includes(stat)) return { msg: `<code>"${esc(stat)}"</code> is not a stat we can quiz on. Try <code>"rushing_yards"</code> or <code>"passing_yards"</code>.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep <code>max_tries = 3</code>.' };
-      return { ok: true, msg: (q('guess == answer') ? `TOUCHDOWN! ${ans} it is. ` : `It was ${ans}. `) + 'Your own quiz, built from real stats. Challenge mom or dad: can they beat you?' }; } }
+      return { ok: true, msg: ((await q('guess == answer')) ? `TOUCHDOWN! ${ans} it is. ` : `It was ${ans}. `) + 'Your own quiz, built from real stats. Challenge mom or dad: can they beat you?' }; } }
 ];
 
 const REVIEW8 = [
   { skill: 'input', q: 'What does input( ) always hand back?', opts: ['a number', 'text', 'True or False'], a: 1 },
-  { skill: 'input', q: 'You type 5 in the pop-up box. What prints?', code: 'n = input("Number? ")\nprint(n + n)', opts: ['10', '55', 'a red error'], a: 1 },
+  { skill: 'input', q: 'You type 5 in the answer box. What prints?', code: 'n = input("Number? ")\nprint(n + n)', opts: ['10', '55', 'a red error'], a: 1 },
   { skill: 'random', q: 'Which line lets Python pick one player from the list team?', opts: ['random.choice(team)', 'team.random()', 'pick(team)'], a: 0 },
   { skill: 'loops', q: 'How many numbers does this print?', code: 'downs = 1\nwhile downs <= 4:\n    print(downs)\n    downs = downs + 1', opts: ['3', '4', 'it never stops'], a: 1 },
   { skill: 'loops', q: 'What does != ask?', opts: ['are these the same?', 'are these NOT the same?', 'is the left one bigger?'], a: 1 },
@@ -125,18 +125,5 @@ registerLab('nfl', 8, {
   title: 'Guess the Player',
   skills: SKILLS8, cells: LAB8, review: REVIEW8,
   data: ['player_stats_season.csv'],
-  // Python's own input( ) opens the browser's pop-up with no question in it. This shows the question,
-  // and treats Cancel as an empty answer. It only runs in a browser (the checker has its own input).
-  setup: `
-import builtins as _b
-try:
-    from js import window as _w
-    def _ask(text=""):
-        a = _w.prompt(str(text))
-        return "" if a is None else str(a)
-    _b.input = _ask
-except ImportError:
-    pass
-`
 });
 })();

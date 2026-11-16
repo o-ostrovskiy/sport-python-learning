@@ -27,12 +27,12 @@ const LAB2 = [
     ok: 'Right. No quotes: Python opens the locker and shows Travis Kelce. With quotes: it shows the word itself.' },
   { skill: 'text', kind: 'predict', task: 'Numbers need <b>no quotes</b>, and Python can do math with them. But text in quotes is just letters, even if the letters look like numbers. <b>Guess first:</b> what will the <b>second</b> line print? Type a number, then run it.',
     code: 'print(100 + 50)\nprint("100" + "50")',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 10050, msg: (+guess === 10050 ? 'You saw the trick! ' : `You guessed ${esc(guess)}, but Python says 10050. `) + 'The first line does math: 150. The second line just glues two pieces of text together: 100 and 50 make 10050.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 10050, msg: (+guess === 10050 ? 'You saw the trick! ' : `You guessed ${esc(guess)}, but Python says 10050. `) + 'The first line does math: 150. The second line just glues two pieces of text together: 100 and 50 make 10050.' }) },
   { skill: 'text', kind: 'turn', task: 'Change the name and the number to <b>your</b> favorite player. The name goes in quotes, the number does not. (The words after <code>#</code> are a note for people. Python skips them.)',
     code: 'player = "Travis Kelce"   # change to your favorite player\nnumber = 87               # change to his number\n\nprint("My favorite player is", player, "and he wears number", number)',
     hints: ['Change only what is between the quotes on line 1, and the number on line 2.', 'Like this: <code>player = "Josh Allen"</code> and <code>number = 17</code>.'],
-    check: ({ g, out }) => {
-      const p = g('player'), n = g('number');
+    check: async ({ g, out }) => {
+      const p = (await g('player')), n = (await g('number'));
       if (typeof p !== 'string') return { msg: 'The name is text, so it needs quotes: <code>player = "Josh Allen"</code>.' };
       if (p === 'Travis Kelce') return { msg: 'It still says Travis Kelce. Type your own favorite player between the quotes.' };
       if (typeof n !== 'number') return { msg: 'The jersey number is a number, so take the quotes off: <code>number = 17</code>.' };
@@ -53,10 +53,10 @@ const LAB2 = [
   { skill: 'tables', kind: 'turn', data: true, task: 'How many rows are in the box? Python has a command that <b>counts</b> things. It is 3 letters long and short for "length". Type it in place of <code>___</code>.',
     code: 'print("Rows in the box:", ___(stats))',
     hints: ['It is short for "length": the first 3 letters of that word.', 'The answer: <code>print("Rows in the box:", len(stats))</code>'],
-    check: ({ code, out, q }) => {
+    check: async ({ code, out, q }) => {
       if (!/\blen\s*\(/.test(code)) return { msg: 'That ran, but we want the counting command. It is 3 letters, short for "length".' };
-      if (!out.includes(String(q('len(stats)')))) return { msg: 'Count the whole table: <code>len(stats)</code>, with <code>stats</code> inside the round brackets.' };
-      return { ok: true, msg: `${q('len(stats)').toLocaleString('en-US')} rows! Every row is one player in one game. That is a lot of games.` }; } },
+      if (!out.includes(String((await q('len(stats)'))))) return { msg: 'Count the whole table: <code>len(stats)</code>, with <code>stats</code> inside the round brackets.' };
+      return { ok: true, msg: `${(await q('len(stats)')).toLocaleString('en-US')} rows! Every row is one player in one game. That is a lot of games.` }; } },
 
   { md: '<h2>Part 3. Track down your player 🎯</h2>Right now <code>stats</code> has <b>every</b> player in it. We need a smaller table with only your player\'s rows. For that you need two symbols that look almost the same:<br><br><code>=</code> <b>puts</b> something into a locker.<br><code>==</code> <b>asks a question</b>: "are these the same?"' },
   { skill: 'filter', kind: 'run', task: '<b>Guess first:</b> what will the two <code>print</code> lines say? Then run it.',
@@ -73,32 +73,32 @@ const LAB2 = [
   { skill: 'filter', kind: 'turn', data: true, task: 'Now <b>your</b> player. Change only the name: in quotes, spelled exactly right, with capital letters.',
     code: 'name = "Travis Kelce"   # change to your favorite player\n\ngames = stats[stats["player_display_name"] == name]\n\nprint(name, "played", len(games), "regular season games")\ngames[["season", "opponent_team", "receiving_yards", "rushing_yards", "passing_yards"]].head(10)',
     hints: ['Change only the name between the quotes on line 1.', 'Try a star like <code>"Justin Jefferson"</code>, <code>"Josh Allen"</code> or <code>"Saquon Barkley"</code>.'],
-    check: ({ g, q }) => {
-      const n = g('name');
+    check: async ({ g, q }) => {
+      const n = (await g('name'));
       if (typeof n !== 'string') return { msg: 'The name is text, so it needs quotes: <code>name = "Josh Allen"</code>.' };
       if (n === 'Travis Kelce') return { msg: 'That is still Travis Kelce. Put your own player between the quotes.' };
-      if (!q('len(games)')) return { msg: `0 games for "${esc(n)}". Check the spelling: <code>"Travis Kelce"</code> works, <code>"travis kelce"</code> does not. Capital letters matter. (This box only has players with lots of yards, so try a star.)` };
-      return { ok: true, msg: `Found him: ${esc(n)} played ${q('len(games)')} regular season games through 2024. Every row in <code>games</code> is his.` }; } },
+      if (!(await q('len(games)'))) return { msg: `0 games for "${esc(n)}". Check the spelling: <code>"Travis Kelce"</code> works, <code>"travis kelce"</code> does not. Capital letters matter. (This box only has players with lots of yards, so try a star.)` };
+      return { ok: true, msg: `Found him: ${esc(n)} played ${(await q('len(games)'))} regular season games through 2024. Every row in <code>games</code> is his.` }; } },
   { md: 'Two new things in the next box. <code>stat = "receiving_yards"</code> puts a column name into a locker, so <code>games[stat]</code> means the same as <code>games["receiving_yards"]</code>. To look at another stat, you change one line. And the <b>dot</b> means "do this to that": take this column and run a command on it.' },
   { skill: 'stats', kind: 'turn', data: true, task: 'His <b>best game ever</b>. Every column has a command that finds its <b>biggest</b> number. It is 3 letters, the opposite of "min". Type it in place of <code>___</code>. (Quarterback? Change <code>"receiving_yards"</code> to <code>"passing_yards"</code>. Running back? <code>"rushing_yards"</code>.)',
     code: 'stat = "receiving_yards"\n\nprint("Best game:", games[stat].___())\nprint("Average game:", round(games[stat].mean()), "yards")',
     hints: ['The opposite of "min" is…', 'The line should read: <code>print("Best game:", games[stat].max())</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (/\.min\s*\(\s*\)/.test(code)) return { msg: '<code>.min()</code> finds the <b>smallest</b> number: his worst game. We want the opposite.' };
       if (/\]\s*\.sum\s*\(\s*\)/.test(code)) return { msg: '<code>.sum()</code> adds up <b>all</b> his games. We want only the biggest one. 3 letters, the opposite of "min".' };
       if (!/\.max\s*\(\s*\)/.test(code)) return { msg: 'We want the command for the biggest number: 3 letters, the opposite of "min". Keep the dot before it and the <code>()</code> after it.' };
-      if (!q('len(games)')) return { msg: 'The <code>games</code> table is empty. Go back one box and find your player first.' };
-      return { ok: true, msg: `His best game: ${q('int(games[stat].max())')} yards. A normal game: about ${q('int(round(games[stat].mean()))')}. <code>.mean()</code> is the <b>average</b>: add up all his games and share them out equally. <code>round( )</code> cuts off the decimals.` }; } },
+      if (!(await q('len(games)'))) return { msg: 'The <code>games</code> table is empty. Go back one box and find your player first.' };
+      return { ok: true, msg: `His best game: ${(await q('int(games[stat].max())'))} yards. A normal game: about ${(await q('int(round(games[stat].mean()))'))}. <code>.mean()</code> is the <b>average</b>: add up all his games and share them out equally. <code>round( )</code> cuts off the decimals.` }; } },
 
   { md: '<h2>Part 4. Record games and big arguments 💥</h2><code>sort_values</code> puts all the rows in order. <code>ascending=False</code> means <b>biggest first</b>. Inside a command\'s round brackets, one <code>=</code> chooses a <b>setting</b>, like flipping a switch. <i>Ascending</i> means "going up", so <code>ascending=False</code> says: switch "going up" <b>off</b>.' },
   { skill: 'stats', kind: 'turn', data: true, task: 'Run it first: these are the 5 biggest receiving games since 1999. Then change <b>only the first line</b>: replace <code>"receiving_yards"</code> with <code>"passing_yards"</code> (keep the quotes) and run it again.',
     code: 'stat = "receiving_yards"   # change this word\n\nbiggest = stats.sort_values(stat, ascending=False)\nbiggest[["player_display_name", "season", "opponent_team", stat]].head(5)',
     hints: ['Only the word between the quotes on line 1 changes.', 'Line 1 should be: <code>stat = "passing_yards"</code>'],
-    check: ({ g, q }) => {
-      const s = g('stat');
+    check: async ({ g, q }) => {
+      const s = (await g('stat'));
       if (s === 'receiving_yards') return { msg: 'Number 1 is Calvin Johnson with 329 yards. His nickname is Megatron 🤖. Now change <code>"receiving_yards"</code> to <code>"passing_yards"</code> on line 1.' };
       if (s !== 'passing_yards') return { msg: `That shows the biggest games for ${esc(String(s))}. Cool! For this play, set line 1 to <code>stat = "passing_yards"</code>.` };
-      return { ok: true, msg: `${q('biggest.iloc[0]["player_display_name"]')} threw for ${q('int(biggest.iloc[0][stat])')} yards in one game! You changed one word and got a whole new record book. Later, try <code>"rushing_yards"</code> and <code>"passing_tds"</code> too.` }; } },
+      return { ok: true, msg: `${(await q('biggest.iloc[0]["player_display_name"]'))} threw for ${(await q('int(biggest.iloc[0][stat])'))} yards in one game! You changed one word and got a whole new record book. Later, try <code>"rushing_yards"</code> and <code>"passing_tds"</code> too.` }; } },
   { md: 'Last case: <b>who is better?</b> We built you a machine called <code>compare</code>. You give it two players and a stat. It adds up every game since 1999 for each of them and says who wins.<br><br><code>def</code> teaches Python a new command. <code>player1</code>, <code>player2</code> and <code>stat</code> are empty lockers that get filled when you use the machine. <code>.sum()</code> adds up a column. <code>if</code> and <code>else</code> decide who wins. You will take this machine apart in Lab 3.' },
   { skill: 'stats', kind: 'run', data: true, task: 'Run it. The top part builds the machine. The last line <b>uses</b> it: first player, second player, the stat, each in quotes with commas between.',
     code: COMPARE + '\n\ncompare("Tom Brady", "Peyton Manning", "passing_tds")',
@@ -106,7 +106,7 @@ const LAB2 = [
   { skill: 'stats', kind: 'turn', data: true, task: '<b>Settle an argument.</b> Change the two names, and the stat if you like: <code>"receiving_yards"</code>, <code>"rushing_yards"</code>, <code>"passing_yards"</code>, <code>"passing_tds"</code> or <code>"receiving_tds"</code>. Keep the quotes and the commas.',
     code: 'compare("Justin Jefferson", "Ja\'Marr Chase", "receiving_yards")   # change the names and the stat',
     hints: ['Change the names inside the quotes. Each name keeps its own quotes, with a comma after it.', 'For example: <code>compare("Josh Allen", "Patrick Mahomes", "passing_yards")</code>'],
-    check: ({ code, out }) => {
+    check: async ({ code, out }) => {
       if (!/compare\s*\(/.test(code)) return { msg: 'Use the machine: <code>compare("Name One", "Name Two", "stat")</code>.' };
       if (!out.includes('Winner')) return { msg: 'The machine did not finish. Give it three things in quotes with commas between: player, player, stat.' };
       if (out.includes('Justin Jefferson') && out.includes("Ja'Marr Chase")) return { msg: 'Jefferson wins that one, 7,432 yards to 5,425. Now put in two players <b>you</b> would argue about.' };

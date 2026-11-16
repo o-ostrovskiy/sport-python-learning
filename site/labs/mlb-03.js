@@ -19,7 +19,7 @@ const CELLS = [
   { skill: 'yesno', kind: 'turn', task: 'Cal Raleigh hit <b>60</b> home runs in 2025. Is that <b>at least</b> 60? Put the right symbol in place of <code>___</code>. It is two symbols together: "bigger than" and "the same".<br>🔎 <b>Google it:</b> <code>python greater than or equal</code>',
     code: 'raleigh_hr = 60\n\nprint(raleigh_hr ___ 60)',
     hints: ['Look at the list of symbols above. Which one means "at least"?', 'The answer: <code>print(raleigh_hr &gt;= 60)</code>'],
-    check: ({ code, out }) => {
+    check: async ({ code, out }) => {
       const c = code.replace(/#.*/g, '');
       if (/raleigh_hr\s*>=\s*60/.test(c) && out.includes('True')) return { ok: true, msg: 'True! 60 is at least 60. <code>&gt;=</code> says yes when the number is bigger <b>or</b> the same.' };
       if (/raleigh_hr\s*==\s*60/.test(c)) return { msg: '<code>==</code> says True here, but it only asks "exactly 60?". With 61 home runs it would say False. Use the symbol for "at least".' };
@@ -44,9 +44,9 @@ const CELLS = [
   { skill: 'ifelse', kind: 'turn', task: '<b>Be the umpire.</b> Both times are 4.3: a tie! Fans say "tie goes to the runner", but our bot says Out. Fix it by changing <b>one symbol</b> in the <code>if</code> line. Do not change the numbers.',
     code: 'runner_time = 4.3\nthrow_time = 4.3\n\nif runner_time < throw_time:\n    print("Safe! 🙌")\nelse:\n    print("Out! ✊")',
     hints: ['Right now the bot asks "is the runner\'s time <b>smaller</b>?" On a tie it is not smaller.', 'Which symbol means "at most": smaller, <b>or the same</b>?', 'The <code>if</code> line should read: <code>if runner_time &lt;= throw_time:</code>'],
-    check: ({ code, out, g }) => {
+    check: async ({ code, out, g }) => {
       const c = code.replace(/#.*/g, '');
-      if (g('runner_time') !== g('throw_time')) return { msg: 'Keep both times the same, <code>4.3</code> and <code>4.3</code>. A tie is the whole point! Change only the symbol in the <code>if</code> line.' };
+      if ((await g('runner_time')) !== (await g('throw_time'))) return { msg: 'Keep both times the same, <code>4.3</code> and <code>4.3</code>. A tie is the whole point! Change only the symbol in the <code>if</code> line.' };
       if (/if\s+runner_time\s*==\s*throw_time/.test(c)) return { msg: 'With <code>==</code> the runner is safe <b>only</b> on an exact tie. A faster runner would be called out! Use the symbol that means "smaller, or the same".' };
       if (/if\s+runner_time\s*>=\s*throw_time/.test(c)) return { msg: 'Careful: <code>&gt;=</code> makes the <b>slower</b> runner safe. We want "smaller, or the same".' };
       if (!/if\s+runner_time\s*<=\s*throw_time\s*:/.test(c)) return { msg: out.includes('Out') ? 'The bot still says Out. In the <code>if</code> line, change <code>&lt;</code> to the symbol that means "at most".' : 'Change only one thing: the <code>&lt;</code> in the <code>if</code> line becomes the symbol for "at most".' };
@@ -65,8 +65,8 @@ const CELLS = [
   { skill: 'elif', kind: 'turn', task: 'Your turn: hit one <b>over the outfielders\' heads</b>, but not out of the park. Change <b>only the number</b> so the bot calls extra bases.',
     code: 'distance = 250   # change this number\n\n' + FLY,
     hints: ['Home runs start at 400 feet. Extra bases start at 300 feet.', 'Any number from 300 to 399 works. Try <code>distance = 350</code>.'],
-    check: ({ g, out }) => {
-      const d = g('distance');
+    check: async ({ g, out }) => {
+      const d = (await g('distance'));
       if (typeof d !== 'number') return { msg: 'The distance is a number, so it needs no quotes: <code>distance = 350</code>.' };
       if (d === 250) return { msg: 'Still 250 feet, and the outfielder caught it. Hit it farther: change the number on line 1.' };
       if (d >= 400) return { msg: `${d} feet is a home run: the first rule, <code>distance &gt;= 400</code>, is True, so Python stops there. Pick a number below 400.` };
@@ -84,13 +84,13 @@ const CELLS = [
   { skill: 'elif', kind: 'turn', data: true, task: 'Two jobs. <b>1.</b> Change the name to your favorite <b>hitter</b>, spelled exactly right. <b>2.</b> One word is missing: the one that means "else if". It is 4 letters. Write it in place of <code>___</code>.<br>🔎 <b>Google it:</b> <code>python else if</code><br>See a red <code>TypeError</code>? Then <code>best</code> is empty (<code>&lt;NA&gt;</code>): Python found no seasons for that name. Check the spelling.',
     code: 'name = "Aaron Judge"   # change to your favorite hitter\n\n' + RATE + '___' + RATE_END,
     hints: ['The missing word is short for "else if": 4 letters, starting with <code>el</code>.', 'That line should read <code>elif best &gt;= 30:</code>', 'A red TypeError means the name was not found. Capital letters matter, there are no accent marks, and sons end in Jr.: <code>"Vladimir Guerrero Jr."</code>'],
-    check: ({ code, g, q }) => {
+    check: async ({ code, g, q }) => {
       const c = code.replace(/#.*/g, '');
       if (/^if\s+best\s*>=\s*30/m.test(c)) return { msg: 'With a second <code>if</code>, Python asks <b>both</b> questions, so a 62-homer season would get two ratings. Use the 4-letter word that means "else if".' };
       if (!/^elif\s+best\s*>=\s*30\s*:/m.test(c)) return { msg: 'The line in the middle should start with the 4-letter word for "else if", and nothing else should change: <code>elif best &gt;= 30:</code>' };
-      const n = g('name');
+      const n = (await g('name'));
       if (n === 'Aaron Judge') return { msg: 'The missing word is right! Now job 1: change the name on line 1 to your own favorite hitter.' };
-      const b = q('int(best)');
+      const b = (await q('int(best)'));
       return { ok: true, msg: `${esc(String(n))}: best season ${b} home runs. ` + (b >= 50 ? 'The first rule was True, so Python stopped at the top.' : b >= 30 ? 'The first rule was False and the <code>elif</code> rule was True.' : 'Both rules were False, so Python went all the way down to <code>else</code>.') + ' Your bot rates any hitter in history now.' }; } },
 
   { md: '<h2>Part 5. Inside the <code>compare</code> machine 🔧</h2>Remember <code>compare</code> from Lab 2? Now you can read it. <code>def</code> teaches Python a new command that needs two players and a stat. Read the <code>total1</code> line from the inside out: ask every row "is this player 1?", keep the rows that said True, take the <code>stat</code> column, and <code>.sum()</code> adds it up. Then <code>if</code> and <code>else</code> pick the winner. Lines inside the machine are pushed in once (4 spaces). The <code>print</code> lines under <code>if</code> and <code>else</code> are inside the machine <b>and</b> inside the decision, so they are pushed in twice (8 spaces).' },
@@ -100,9 +100,9 @@ const CELLS = [
   { skill: 'machine', kind: 'turn', data: true, task: '<b>Fix the machine.</b> Replace the line <code># add your two lines here</code> with these two lines. The first has 4 spaces in front, the second has 8:<pre>    elif total1 == total2:\n        print("It\'s a tie! 🤝")</pre>The <code>elif</code> must sit after the <code>if</code> and before the <code>else</code>.',
     code: DEF + '    # add your two lines here\n' + DEF_END + '\n\ncompare("Aaron Judge", "Aaron Judge", "HR")\ncompare("Pete Alonso", "Kyle Schwarber", "HR")',
     hints: ['Type the two lines exactly where the <code>#</code> line is. The word <code>elif</code> should line up under the word <code>if</code>.', 'A red IndentationError? Count the spaces: 4 before <code>elif</code>, 8 before <code>print</code>.', 'The middle of the machine should read:<br><code>&nbsp;&nbsp;&nbsp;&nbsp;elif total1 == total2:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("It\'s a tie! 🤝")</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       const c = code.replace(/#.*/g, '');
-      const tie = q('_says(compare, "Aaron Judge", "Aaron Judge", "HR")'), real = q('_says(compare, "Kyle Schwarber", "Pete Alonso", "HR")'), back = q('_says(compare, "Pete Alonso", "Kyle Schwarber", "HR")');
+      const tie = (await q('_says(compare, "Aaron Judge", "Aaron Judge", "HR")')), real = (await q('_says(compare, "Kyle Schwarber", "Pete Alonso", "HR")')), back = (await q('_says(compare, "Pete Alonso", "Kyle Schwarber", "HR")'));
       if (!/elif/.test(c) && tie.includes('Winner')) return { msg: 'The machine still names a winner when the totals are the same. Replace the <code>#</code> line with the two new lines: <code>elif total1 == total2:</code> and its <code>print</code>.' };
       if (tie.includes('Winner')) return { msg: 'Still a winner on a tie. The question must be <code>total1 == total2</code>, with two equals signs, and the line must end with a colon.' };
       if (real.includes('Winner: Pete Alonso') || !real.includes('Winner: Kyle Schwarber') || !back.includes('Winner: Kyle Schwarber')) return { msg: 'The tie works, but now a normal matchup goes wrong. Use <code>elif</code>, not a second <code>if</code>, and keep the <code>if</code> and <code>else</code> lines as they were.' };

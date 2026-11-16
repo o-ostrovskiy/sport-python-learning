@@ -110,6 +110,42 @@
   {
    "text": "I could not open the stats. Check the internet connection and try again.",
    "style": "gentle"
+  },
+  {
+   "text": "Welcome back! Your code is still here. I am warming up Python…",
+   "style": "warm"
+  },
+  {
+   "text": "Trying again. Getting your playbook back…",
+   "style": "gentle"
+  },
+  {
+   "text": "Welcome back to the film room!",
+   "style": "warm"
+  },
+  {
+   "text": "That loop may never end! Press Stop, then look at your while line. What makes it stop?",
+   "style": "gentle"
+  },
+  {
+   "text": "This is taking a long time. If it never ends, press Stop.",
+   "style": "gentle"
+  },
+  {
+   "text": "Stopped! I am starting a fresh Python and getting your playbook back…",
+   "style": "gentle"
+  },
+  {
+   "text": "Ready again! Look at your while line: what makes the loop stop? Fix it, then press Run.",
+   "style": "warm"
+  },
+  {
+   "text": "Ready again! Press Run when you are ready.",
+   "style": "warm"
+  },
+  {
+   "text": "I could not check this box. Press Run again.",
+   "style": "gentle"
   }
  ],
  "starts": [
@@ -196,6 +232,14 @@
   {
    "text": "🚩 Foul ball!",
    "style": "gentle"
+  },
+  {
+   "text": "Welcome back!",
+   "style": "warm"
+  },
+  {
+   "text": "All set!",
+   "style": "warm"
   }
  ]
 }

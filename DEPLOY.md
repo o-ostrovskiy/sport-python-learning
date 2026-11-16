@@ -39,8 +39,9 @@ A content change (a lesson, a page, new voice files) needs no restart. From a cl
 the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for this computer, `rsync --delete` to
 `~/python-season/`, close SSH. Then open the site and check that a lesson runs and the answer keys give "Not found".
 
-Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson, and `node test-resume.mjs`
-(Playwright, Chromium) before every update that touches `play.html`.
+Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson. Before every update that
+touches `play.html`, `py-worker.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
+`node test-stop.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
 
 **Coach voice goes live by itself** (decided 2026-11-16): the daily scheduled task "Запись голоса тренера" records the next
 lines, commits only `site/assets/voice/`, pushes, and uploads that folder to `~/python-season/assets/voice/` (clips first,

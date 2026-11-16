@@ -10,17 +10,17 @@ const CELLS = [
     ok: 'That is a <b>list</b>: one box that holds many things, in order. Square brackets <code>[ ]</code> start and end it, and a <b>comma</b> sits between the players.' },
   { skill: 'lists', kind: 'predict', task: 'Why the commas? Look: this team has <b>no comma</b>. <b>Guess first:</b> how many players will Python count? Type a number, then run it.',
     code: 'no_comma = ["Aaron Judge" "Shohei Ohtani"]\nprint(no_comma)\nprint(len(no_comma))',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You saw it coming! ' : `You guessed ${esc(String(guess))}, but Python says 1. `) + 'No red error, but it is <b>wrong</b>: Python glued the two names into one player. The comma is what keeps players apart.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You saw it coming! ' : `You guessed ${esc(String(guess))}, but Python says 1. `) + 'No red error, but it is <b>wrong</b>: Python glued the two names into one player. The comma is what keeps players apart.' }) },
   { skill: 'lists', kind: 'turn', task: 'Put <b>your own</b> 3 favorite hitters on the team. Change only the names inside the quotes, and keep the commas.',
     code: 'my_team = ["Aaron Judge", "Shohei Ohtani", "Cal Raleigh"]   # put your own 3 players here\nprint(my_team)\nprint("Players on my team:", len(my_team))',
     hints: ['Each name needs its own quotes, and there must be a comma between players.', 'It should look like this: <code>["Name One", "Name Two", "Name Three"]</code>.'],
-    check: ({ q }) => {
-      if (!q('isinstance(my_team, list)')) return { msg: 'The team must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
-      const n = q('len(my_team)');
+    check: async ({ q }) => {
+      if (!(await q('isinstance(my_team, list)'))) return { msg: 'The team must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
+      const n = (await q('len(my_team)'));
       if (n < 3) return { msg: `Python counts only ${n} player${n === 1 ? '' : 's'} on your team. A comma is missing between two names, so they got glued together.` };
       if (n > 3) return { msg: `That is ${n} players. For now we want exactly 3.` };
-      if (q('my_team == ' + TEAM3)) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
-      return { ok: true, msg: `${esc(String(q('str(my_team[0])')))} at the top. Nice team! Three players, two commas, one list.` }; } },
+      if ((await q('my_team == ' + TEAM3))) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
+      return { ok: true, msg: `${esc(String((await q('str(my_team[0])'))))} at the top. Nice team! Three players, two commas, one list.` }; } },
 
   { md: '<h2>Part 2. Batting… 0th?! 🤯</h2>Now a real lineup: 9 batters. A list this long does not fit on one line, so we write <b>one player per line</b>. Python keeps reading until it finds the closing bracket <code>]</code>. The first batter is the <b>leadoff</b> hitter.' },
   { skill: 'index', kind: 'quiz', task: '<b>Guess first.</b> <code>lineup[1]</code> asks for one batter from the lineup. Which one will it show?',
@@ -37,7 +37,7 @@ const CELLS = [
   { skill: 'index', kind: 'turn', task: 'Who hits <b>cleanup</b> (4th)? Change the <code>0</code> to the right number. Careful, it is not 4!',
     code: 'print("Cleanup hitter:", lineup[0])   # change the 0',
     hints: ['Count the spots from the top, starting at 0: Ohtani is 0, Judge is 1…', 'The spot is one less than the batting order. 4th batter, so spot…?'],
-    check: ({ out }) => out.includes('Cal Raleigh') ? { ok: true, msg: 'Cal Raleigh! The 4th batter lives at spot 3. You are counting like Python now.' }
+    check: async ({ out }) => out.includes('Cal Raleigh') ? { ok: true, msg: 'Cal Raleigh! The 4th batter lives at spot 3. You are counting like Python now.' }
       : { msg: `That shows ${esc(out.replace('Cleanup hitter: ', ''))}. We want the 4th batter. Count from 0 at the top.` } },
 
   { md: '<h2>Part 3. Trade deadline 📞</h2>Your team just traded for a new player. <code>.append( )</code> means <b>"add to the end"</b>. The dot means "do this to that": <code>my_team.append("Juan Soto")</code> = "to <code>my_team</code>, add Juan Soto at the end".' },
@@ -54,10 +54,10 @@ const CELLS = [
   { skill: 'methods', kind: 'turn', task: 'The <b>trade machine</b>: if the player is already on the team, say so; otherwise, trade for him. Two words are missing. In the <code>if</code> line: the 2-letter word that asks "is it inside the list?". Under <code>else</code>: the 6-letter word that adds a player to the end.<br>🔎 <b>Google it:</b> <code>python check if item in list</code>',
     code: 'my_team = ["Aaron Judge", "Shohei Ohtani", "Cal Raleigh"]\nplayer = "Mookie Betts"   # change to any player\n\nif player ___ my_team:\n    print(player, "is already on my team ✅")\nelse:\n    my_team.___(player)\n    print("Traded for", player, "📞")\n\nprint(my_team)',
     hints: ['You used both words in the last few plays. One asks a True or False question, one adds to the end.', 'The <code>if</code> line should read: <code>if player in my_team:</code>', 'Under else: <code>my_team.append(player)</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/if\s+player\s+in\s+my_team\s*:/.test(code)) return { msg: 'Check the <code>if</code> line. The missing word asks "is it inside the list?" and has 2 letters.' };
       if (!/my_team\.append\(\s*player\s*\)/.test(code)) return { msg: 'Check the line under <code>else</code>. The missing word adds a player to the end of a list and has 6 letters.' };
-      if (!q('player in my_team')) return { msg: 'The player is still not on the team. Check the line under <code>else</code>.' };
+      if (!(await q('player in my_team'))) return { msg: 'The player is still not on the team. Check the line under <code>else</code>.' };
       return { ok: true, msg: 'The machine works! Now change <code>player</code> to <code>"Aaron Judge"</code> and run it again: nobody gets added, because he is already there. No team needs two Aaron Judges!' }; } },
 
   { md: '<h2>Part 4. The real top 5 📊</h2>Real teams build their rosters from stats. This is the table from Lab 2: one row is one player\'s <b>whole season</b>, and <code>HR</code> is home runs.' },
@@ -73,11 +73,11 @@ const CELLS = [
   { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final team.</b> It starts with the real top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
     code: 'my_team = list(names)               # start with the real top 5\nmy_team.append("Aaron Judge")       # change to your pick\nmy_team.append("Shohei Ohtani")     # change to your pick\n\nprint(my_team)\nprint("Players on my team:", len(my_team))\nprint("First on my list:", my_team[0])\nprint("Last on my list:", my_team[len(my_team) - 1])',
     hints: ['Change the names inside the quotes on lines 2 and 3. Keep <code>.append( )</code> and the quotes.'],
-    check: ({ q }) => {
-      const n = q('len(my_team)');
+    check: async ({ q }) => {
+      const n = (await q('len(my_team)'));
       if (n !== 7) return { msg: `Your team has ${n} players. We want 7: the top 5 plus your 2. Keep both <code>append</code> lines.` };
-      if (q('my_team[5] == "Aaron Judge" and my_team[6] == "Shohei Ohtani"')) return { msg: 'Those two are still my picks. Put your own two players in the <code>append</code> lines.' };
-      return { ok: true, msg: `Seven players, and your last one is ${esc(String(q('str(my_team[6])')))}, at spot 6: one less than <code>len( )</code>. Great lineup, Manager!` }; } }
+      if ((await q('my_team[5] == "Aaron Judge" and my_team[6] == "Shohei Ohtani"'))) return { msg: 'Those two are still my picks. Put your own two players in the <code>append</code> lines.' };
+      return { ok: true, msg: `Seven players, and your last one is ${esc(String((await q('str(my_team[6])'))))}, at spot 6: one less than <code>len( )</code>. Great lineup, Manager!` }; } }
 ];
 const REVIEW = [
   { skill: 'lists', q: 'Which one is a correct list of two players?', opts: ['["Juan Soto" "Pete Alonso"]', '["Juan Soto", "Pete Alonso"]', '"Juan Soto", "Pete Alonso"'], a: 1 },

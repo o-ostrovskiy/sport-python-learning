@@ -50,19 +50,19 @@ card["position"] = "center field"
 
 print(card)
 print("Facts on the card:", len(card))`,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 5, msg: (+guess === 5 ? 'Yes, 5! ' : `You guessed ${esc(guess)}, but the card has 5 facts. `) + '<code>"best season HR"</code> was a new key, so Python <b>added</b> a pair. <code>"position"</code> was already there, so Python <b>changed</b> its value. A key can be on the card only once.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 5, msg: (+guess === 5 ? 'Yes, 5! ' : `You guessed ${esc(guess)}, but the card has 5 facts. `) + '<code>"best season HR"</code> was a new key, so Python <b>added</b> a pair. <code>"position"</code> was already there, so Python <b>changed</b> its value. A key can be on the card only once.' }) },
   { skill: 'change', kind: 'turn', task: 'Make a card for <b>your own</b> favorite player. Change the four values, on the right side of each colon. Keep the keys and the commas.',
     code: CARD.trimEnd() + `   # change the four values to your player
 
 print(card["name"], "wears number", card["number"])`,
     hints: ['Change only what comes after each colon. Text keeps its quotes, the number has none.', 'For example: <code>"name": "Shohei Ohtani",</code> then <code>"team": "Los Angeles Dodgers",</code> then <code>"number": 17,</code>'],
-    check: ({ q }) => {
-      if (!q('isinstance(card, dict)')) return { msg: 'The card must be a dictionary. Keep the curly brackets <code>{ }</code> around the pairs.' };
-      const lost = q('next((k for k in ["name", "team", "number", "position"] if k not in card), "")');
+    check: async ({ q }) => {
+      if (!(await q('isinstance(card, dict)'))) return { msg: 'The card must be a dictionary. Keep the curly brackets <code>{ }</code> around the pairs.' };
+      const lost = (await q('next((k for k in ["name", "team", "number", "position"] if k not in card), "")'));
       if (lost) return { msg: `The key <code>"${esc(lost)}"</code> is gone from your card. Keep all four keys and change only the values after the colons.` };
-      if (q('card["name"] == "Aaron Judge"')) return { msg: 'That is still Aaron Judge\'s card. Put your own player after <code>"name":</code> and change the other three values too.' };
-      if (q('card["number"] == 99 and card["team"] == "New York Yankees"')) return { msg: 'New name, but still the Yankees and number 99. Change the team and the number to your player\'s.' };
-      return { ok: true, msg: `A card for ${esc(String(q('str(card["name"])')))}, number ${esc(String(q('str(card["number"])')))}. Four keys, four values, one dictionary.` }; } },
+      if ((await q('card["name"] == "Aaron Judge"'))) return { msg: 'That is still Aaron Judge\'s card. Put your own player after <code>"name":</code> and change the other three values too.' };
+      if ((await q('card["number"] == 99 and card["team"] == "New York Yankees"'))) return { msg: 'New name, but still the Yankees and number 99. Change the team and the number to your player\'s.' };
+      return { ok: true, msg: `A card for ${esc(String((await q('str(card["name"])'))))}, number ${esc(String((await q('str(card["number"])'))))}. Four keys, four values, one dictionary.` }; } },
 
   { md: '<h2>Part 2. The scorekeeper\'s secret code 🔢</h2>Baseball scorekeepers do not write "shortstop". They write a <b>number</b>. Every position on the field has one, 1 to 9. A dictionary is perfect for a code like that: the key is the number, the value is the position.' },
   { skill: 'lookup', kind: 'quiz', task: '<b>Guess first.</b> Here the keys are numbers, so they have no quotes. What will this show?',
@@ -84,8 +84,8 @@ for number in play:
 for number in play:
     print(number, positions[number])`,
     hints: ['Only the first number in the list changes.', 'The first line should be <code>play = [5, 4, 3]</code>.'],
-    check: ({ q, out }) => {
-      if (!q('play == [5, 4, 3]')) return { msg: 'The list should be <code>[5, 4, 3]</code>: three numbers with commas between them.' };
+    check: async ({ q, out }) => {
+      if (!(await q('play == [5, 4, 3]'))) return { msg: 'The list should be <code>[5, 4, 3]</code>: three numbers with commas between them.' };
       if (!out.includes('5 third baseman')) return { msg: 'Keep the two loop lines as they were, so each number gets looked up and shown.' };
       return { ok: true, msg: 'Third baseman to second baseman to first baseman: around the horn! You read the scorekeeper\'s code.' }; } },
   { skill: 'lookup', kind: 'run', task: 'You know <code>in</code> from Lab 4. With a dictionary it asks: "is this <b>key</b> in there?" Here it is inside a machine, like in Lab 6. <b>Guess first:</b> what will the two lines show?',
@@ -118,7 +118,7 @@ print(cards[1]["name"])`,
     code: `for card in cards:
     print(card[___], "plays for the", card[___])`,
     hints: ['Look at the cards above: which label holds the player? Which one holds his club?', 'Keys are text, so they need quotes: <code>card["name"]</code>.', 'The line is <code>print(card["name"], "plays for the", card["team"])</code>.'],
-    check: ({ out }) => {
+    check: async ({ out }) => {
       if (out.includes('New York Yankees plays for the Aaron Judge')) return { msg: 'So close: the two keys are the wrong way round. The player comes first, then his team.' };
       if (!out.includes('Aaron Judge plays for the New York Yankees') || !out.includes('Cal Raleigh plays for the Seattle Mariners')) return { msg: 'The first line should say "Aaron Judge plays for the New York Yankees". Use the keys <code>"name"</code> and <code>"team"</code>.' };
       return { ok: true, msg: 'Three cards, one loop, two keys. A list keeps the cards in order, and each dictionary keeps one player\'s facts by label.' }; } },
@@ -160,11 +160,11 @@ my_team = ["Aaron Judge", "Shohei Ohtani", "Hank Aaron"]   # put your own player
 for player in my_team:
     show_card(make_card(player))`,
     hints: ['Copy the <code>hits</code> line onto the next line, pushed in the same way. Then change the key and the stat.', 'For walks: <code>card["walks"] = seasons["BB"].sum()</code>. It must come before <code>return card</code>.'],
-    check: ({ q }) => {
-      const n = q('len(make_card("Aaron Judge"))');
+    check: async ({ q }) => {
+      const n = (await q('len(make_card("Aaron Judge"))'));
       if (n < 5) return { msg: 'Some facts went missing from the card. Keep the lines that were there and add one new line.' };
       if (n === 5) return { msg: 'The card still has 5 facts. Add a line like <code>card["walks"] = seasons["BB"].sum()</code> above <code>return card</code>, pushed in like the others.' };
-      const lost = q('next((str(p) for p in my_team if len(stats[stats["name"] == p]) == 0), "")');
+      const lost = (await q('next((str(p) for p in my_team if len(stats[stats["name"] == p]) == 0), "")'));
       if (lost) return { msg: `Your new line works! But the card for ${esc(lost)} says 0 seasons: Python did not find him. Check the spelling and the capital letters.` };
       return { ok: true, msg: `Your own card design, with ${n} facts on every card and a machine that prints them. Nice collection!` }; } }
 ];

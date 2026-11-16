@@ -9,17 +9,17 @@ const LAB4 = [
     ok: 'That is a <b>list</b>: one box that holds many things, in order. Square brackets <code>[ ]</code> start and end it, and a <b>comma</b> sits between the players.' },
   { skill: 'lists', kind: 'predict', task: 'Why the commas? Look: this board has <b>no comma</b>. <b>Guess first:</b> how many players will Python count? Type a number, then run it.',
     code: 'no_comma = ["Justin Jefferson" "Saquon Barkley"]\nprint(no_comma)\nprint(len(no_comma))',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You saw it coming! ' : `You guessed ${guess}, but Python says 1. `) + 'No red error, but it is <b>wrong</b>: Python glued the two names into one player. The comma is what keeps players apart.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You saw it coming! ' : `You guessed ${guess}, but Python says 1. `) + 'No red error, but it is <b>wrong</b>: Python glued the two names into one player. The comma is what keeps players apart.' }) },
   { skill: 'lists', kind: 'turn', task: 'Put <b>your own</b> top 3 players on the board. Change only the names inside the quotes, and keep the commas.',
     code: 'my_board = ["Justin Jefferson", "Saquon Barkley", "Josh Allen"]   # put your own 3 players here\nprint(my_board)\nprint("Players on my board:", len(my_board))',
     hints: ['Each name needs its own quotes, and there must be a comma between players.', 'It should look like this: <code>["Name One", "Name Two", "Name Three"]</code>.'],
-    check: ({ q }) => {
-      if (!q('isinstance(my_board, list)')) return { msg: 'The board must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
-      const n = q('len(my_board)');
+    check: async ({ q }) => {
+      if (!(await q('isinstance(my_board, list)'))) return { msg: 'The board must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
+      const n = (await q('len(my_board)'));
       if (n < 3) return { msg: `Python counts only ${n} player${n === 1 ? '' : 's'} on your board. A comma is missing between two names, so they got glued together.` };
       if (n > 3) return { msg: `That is ${n} players. For now we want exactly 3.` };
-      if (q('my_board == ' + BOARD3)) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
-      return { ok: true, msg: `${q('my_board[0]')} at the top. Nice board! Three players, two commas, one list.` }; } },
+      if ((await q('my_board == ' + BOARD3))) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
+      return { ok: true, msg: `${(await q('my_board[0]'))} at the top. Nice board! Three players, two commas, one list.` }; } },
   { md: '<h2>Part 2. Pick number... 0?! 🤯</h2>A bigger board. A list this long does not fit on one line, so we write <b>one player per line</b>. Python keeps reading until it finds the closing bracket <code>]</code>.' },
   { skill: 'index', kind: 'quiz', task: '<b>Guess first.</b> <code>my_board[1]</code> asks for one player from the board. Which one will it show?',
     code: 'my_board = [\n    "Justin Jefferson",\n    "Saquon Barkley",\n    "Josh Allen",\n    "Ja\'Marr Chase",\n    "Bijan Robinson",\n]\nprint(my_board[1])',
@@ -35,7 +35,7 @@ const LAB4 = [
   { skill: 'index', kind: 'turn', task: 'Show your <b>5th</b> pick: change the <code>0</code> to the right number. Careful, it is not 5!',
     code: 'print("Pick 5:", my_board[0])   # change the 0',
     hints: ['Count the spots from the top, starting at 0: Justin is 0, Saquon is 1…', 'The last spot is one less than the number of players. 5 players, so spot…?'],
-    check: ({ out }) => out.includes('Bijan Robinson') ? { ok: true, msg: 'Bijan Robinson! The 5th pick lives at spot 4. You are counting like Python now.' }
+    check: async ({ out }) => out.includes('Bijan Robinson') ? { ok: true, msg: 'Bijan Robinson! The 5th pick lives at spot 4. You are counting like Python now.' }
       : { msg: `That shows ${esc(out.replace('Pick 5: ', ''))}. We want the last player on the board. Count from 0 at the top.` } },
   { md: '<h2>Part 3. Draft day 📞</h2>You found a new player you like. <code>.append( )</code> means <b>"add to the end"</b>. The dot means "do this to that": <code>my_board.append("Lamar Jackson")</code> = "to <code>my_board</code>, add Lamar Jackson at the end".' },
   { skill: 'methods', kind: 'run', task: '<b>Guess first:</b> where on the board will Lamar go? Then run it.',
@@ -51,10 +51,10 @@ const LAB4 = [
   { skill: 'methods', kind: 'turn', task: 'The <b>draft-day machine</b>: if the player is already on the board, say so; otherwise, add him. Two words are missing. In the <code>if</code> line: the 2-letter word that asks "is it inside the list?". Under <code>else</code>: the 6-letter word that adds a player to the end.',
     code: 'my_board = ["Justin Jefferson", "Saquon Barkley", "Josh Allen"]\nplayer = "Patrick Mahomes"   # change to any player\n\nif player ___ my_board:\n    print(player, "is already on my board ✅")\nelse:\n    my_board.___(player)\n    print("Added", player, "to the end of my board 📋")\n\nprint(my_board)',
     hints: ['You used both words in the last few plays. One asks a True or False question, one adds to the end.', 'The <code>if</code> line should read: <code>if player in my_board:</code>', 'Under else: <code>my_board.append(player)</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/if\s+player\s+in\s+my_board\s*:/.test(code)) return { msg: 'Check the <code>if</code> line. The missing word asks "is it inside the list?" and has 2 letters.' };
       if (!/my_board\.append\(\s*player\s*\)/.test(code)) return { msg: 'Check the line under <code>else</code>. The missing word adds a player to the end of a list and has 6 letters.' };
-      if (!q('player in my_board')) return { msg: 'The player is still not on the board. Check the line under <code>else</code>.' };
+      if (!(await q('player in my_board'))) return { msg: 'The player is still not on the board. Check the line under <code>else</code>.' };
       return { ok: true, msg: 'The machine works! Now change <code>player</code> to <code>"Josh Allen"</code> and run it again: nobody gets added, because he is already there. That is how real teams avoid picking the same player twice.' }; } },
   { md: '<h2>Part 4. The real top 5 📊</h2>Real teams build their boards from stats. This is a <b>new file</b>: one row is <b>one whole season</b> of one player, already added up for you.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Run it to load the seasons. <code>.max()</code> finds the biggest number in the <code>season</code> column, so <code>newest</code> is the newest season in the data.',
@@ -69,11 +69,11 @@ const LAB4 = [
   { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final draft board.</b> It starts with the real top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
     code: 'my_board = list(names)              # start with the real top 5\nmy_board.append("Travis Kelce")     # change to your pick\nmy_board.append("Bijan Robinson")   # change to your pick\n\nprint(my_board)\nprint("Players on my board:", len(my_board))\nprint("My first pick:", my_board[0])\nprint("My last pick:", my_board[len(my_board) - 1])',
     hints: ['Change the names inside the quotes on lines 2 and 3. Keep <code>.append( )</code> and the quotes.'],
-    check: ({ q }) => {
-      const n = q('len(my_board)');
+    check: async ({ q }) => {
+      const n = (await q('len(my_board)'));
       if (n !== 7) return { msg: `Your board has ${n} players. We want 7: the top 5 plus your 2. Keep both <code>append</code> lines.` };
-      if (q('my_board[5] == "Travis Kelce" and my_board[6] == "Bijan Robinson"')) return { msg: 'Those two are still my picks. Put your own two players in the <code>append</code> lines.' };
-      return { ok: true, msg: `Seven players, and your last pick is ${esc(String(q('my_board[6]')))}, at spot 6: one less than <code>len( )</code>. Great draft, GM!` }; } }
+      if ((await q('my_board[5] == "Travis Kelce" and my_board[6] == "Bijan Robinson"'))) return { msg: 'Those two are still my picks. Put your own two players in the <code>append</code> lines.' };
+      return { ok: true, msg: `Seven players, and your last pick is ${esc(String((await q('my_board[6]'))))}, at spot 6: one less than <code>len( )</code>. Great draft, GM!` }; } }
 ];
 const REVIEW4 = [
   { skill: 'lists', q: 'Which one is a correct list of two players?', opts: ['["Josh Allen" "Saquon Barkley"]', '["Josh Allen", "Saquon Barkley"]', '"Josh Allen", "Saquon Barkley"'], a: 1 },

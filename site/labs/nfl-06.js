@@ -24,7 +24,7 @@ const LAB6 = [
     ok: 'Nothing! That is not a mistake. This box only <b>builds</b> the machine. <code>def</code> is short for "define": "Python, learn a new command". <code>cheer</code> is the name you gave it. The indented lines are what is <b>inside</b> the machine.' },
   { skill: 'build', kind: 'predict', task: 'To switch the machine on, write its name with round brackets. Programmers say "<b>call</b> the machine". <b>Guess first:</b> how many lines will this show? Type a number, then run it.',
     code: 'cheer()\ncheer()',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 4, msg: (+guess === 4 ? 'Four lines, you got it! ' : `You guessed ${esc(guess)}, but it shows 4 lines. `) + 'Each <code>cheer()</code> runs <b>both</b> lines inside the machine. You wrote the cheer once, and you can use it as often as you like.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 4, msg: (+guess === 4 ? 'Four lines, you got it! ' : `You guessed ${esc(guess)}, but it shows 4 lines. `) + 'Each <code>cheer()</code> runs <b>both</b> lines inside the machine. You wrote the cheer once, and you can use it as often as you like.' }) },
   { skill: 'build', kind: 'boom', expectError: 'NameError', task: '<b>Build first, then use.</b> What if we call a machine Python has never learned? Run it. It shows a red error <b>on purpose</b>.',
     code: 'celebrate()',
     ok: 'A <code>NameError</code>, your old friend from Lab 2: Python found a name it does not know. Nobody has built a machine called <code>celebrate</code> yet.' },
@@ -35,7 +35,7 @@ const LAB6 = [
   { skill: 'inputs', kind: 'turn', task: 'Call the machine for <b>your</b> team. Change only the name inside the quotes on the last line.',
     code: CHEER + '\ncheer("Vikings")   # change to your team',
     hints: ['Only the last line changes. Keep the quotes: <code>cheer("Bills")</code>.'],
-    check: ({ code, out }) => {
+    check: async ({ code, out }) => {
       if (!/^cheer\s*\(/m.test(code)) return { msg: 'Keep the last line that calls the machine: <code>cheer("Your Team")</code>.' };
       if (!out.includes('Go,')) return { msg: 'The machine did not cheer. Keep the <code>def</code> lines at the top the way they were.' };
       if (/^Go, Vikings !$/m.test(out)) return { msg: 'It still cheers for the Vikings. Type your own team between the quotes on the last line.' };
@@ -53,14 +53,14 @@ const LAB6 = [
     ok: '<code>None</code> is Python\'s word for "nothing". <code>print</code> only shows; <code>return</code> hands the answer back. If you ever see <code>None</code> where you wanted a number, look for a missing <code>return</code>.' },
   { skill: 'inputs', kind: 'predict', task: 'A machine can have two inputs, with a comma between them. A field goal is 3 points. The first line shows 24. <b>Guess first:</b> what will the <b>second</b> line show? Type a number, then run it.',
     code: 'def score(touchdowns, field_goals):\n    return touchdowns * 6 + field_goals * 3\n\nprint(score(3, 2))\nprint(score(2, 3))',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 21, msg: (+guess === 21 ? '21, exactly! ' : `You guessed ${esc(guess)}, Python says 21. `) + '<b>The order matters.</b> The first number goes into the first locker, the second into the second. <code>score(2, 3)</code> is 2 touchdowns and 3 field goals: 12 + 9.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 21, msg: (+guess === 21 ? '21, exactly! ' : `You guessed ${esc(guess)}, Python says 21. `) + '<b>The order matters.</b> The first number goes into the first locker, the second into the second. <code>score(2, 3)</code> is 2 touchdowns and 3 field goals: 12 + 9.' }) },
   { skill: 'inputs', kind: 'turn', task: '<b>Upgrade the machine.</b> After a touchdown the kicker can add an <b>extra point</b> (1 point). Change two places: <b>1.</b> in the <code>def</code> line add a third locker, <code>extra_points</code>. <b>2.</b> at the end of the <code>return</code> line add <code>+ extra_points * 1</code>. The scoreboard should say <b>27</b>.',
     code: 'def score(touchdowns, field_goals):\n    return touchdowns * 6 + field_goals * 3\n\nprint(score(3, 2, 3))',
     hints: ['Right now the machine has 2 lockers but the last line hands it 3 things. That is the red error.', 'The <code>def</code> line becomes: <code>def score(touchdowns, field_goals, extra_points):</code>', 'The <code>return</code> line becomes: <code>return touchdowns * 6 + field_goals * 3 + extra_points * 1</code>'],
-    check: ({ code, out, q }) => {
+    check: async ({ code, out, q }) => {
       if (!/def\s+score\s*\([^)]*extra_points[^)]*\)\s*:/.test(code)) return { msg: 'Add the third locker in the <code>def</code> line: a comma, then <code>extra_points</code>, inside the round brackets.' };
       if (out.trim() === '24') return { msg: 'The locker is there, but the <code>return</code> line is not using it yet. Add <code>+ extra_points * 1</code> at the end of that line.' };
-      if (q('score(1, 1, 1)') !== 10 || q('score(3, 2, 3)') !== 27) return { msg: `The scoreboard says ${esc(out.trim())}, we need 27. An extra point is worth 1, so add <code>+ extra_points * 1</code> to the <code>return</code> line.` };
+      if ((await q('score(1, 1, 1)')) !== 10 || (await q('score(3, 2, 3)')) !== 27) return { msg: `The scoreboard says ${esc(out.trim())}, we need 27. An extra point is worth 1, so add <code>+ extra_points * 1</code> to the <code>return</code> line.` };
       if (!out.includes('27')) return { msg: 'Keep the last line <code>print(score(3, 2, 3))</code> so we can see the score.' };
       return { ok: true, msg: '27, the same score as in Lab 1! Back then you typed the math by hand. Now a machine does it for any game.' }; } },
 
@@ -77,14 +77,14 @@ const LAB6 = [
   { skill: 'team', kind: 'turn', data: true, task: 'A loop (Lab 5) can call the machine once for every player in a list. Put <b>your own</b> players in the list. Running backs, receivers and tight ends work best.',
     code: 'my_players = ["Saquon Barkley", "Derrick Henry", "Ja\'Marr Chase"]   # put your own players here\n\nfor name in my_players:\n    print(name, "scored", fantasy_season(name, 2024), "fantasy points in 2024")',
     hints: ['Change the names inside the quotes on line 1. Keep the commas between them.', 'Like this: <code>my_players = ["Bijan Robinson", "Jahmyr Gibbs", "Justin Jefferson"]</code>'],
-    check: ({ q, out }) => {
-      if (!q('isinstance(my_players, list)')) return { msg: 'Keep <code>my_players</code> a list: square brackets, names in quotes, commas between.' };
-      if (q('my_players == ' + PLAYERS3)) return { msg: 'Henry beat Barkley by about one point! Those are still my three players, though. Put your own inside the quotes.' };
-      if (q('len(my_players)') < 2) return { msg: 'Put at least two players in the list, with a comma between them.' };
-      const zero = q('", ".join(str(n) for n in my_players if fantasy_season(n, 2024) == 0)');
+    check: async ({ q, out }) => {
+      if (!(await q('isinstance(my_players, list)'))) return { msg: 'Keep <code>my_players</code> a list: square brackets, names in quotes, commas between.' };
+      if ((await q('my_players == ' + PLAYERS3))) return { msg: 'Henry beat Barkley by about one point! Those are still my three players, though. Put your own inside the quotes.' };
+      if ((await q('len(my_players)')) < 2) return { msg: 'Put at least two players in the list, with a comma between them.' };
+      const zero = (await q('", ".join(str(n) for n in my_players if fantasy_season(n, 2024) == 0)'));
       if (zero) return { msg: `0.0 points for ${esc(zero)}: the machine found no rows. Check the spelling (capital letters matter), or maybe he did not play in 2024.` };
       if (!out.includes('fantasy points')) return { msg: 'Keep the <code>for</code> loop and its <code>print</code> line under the list.' };
-      return { ok: true, msg: `Your best scorer: ${esc(String(q('max(my_players, key=lambda n: fantasy_season(n, 2024))')))}. One loop, one machine, any list of players. (Quarterbacks score low here: our machine does not count passing.)` }; } },
+      return { ok: true, msg: `Your best scorer: ${esc(String((await q('max(my_players, key=lambda n: fantasy_season(n, 2024))'))))}. One loop, one machine, any list of players. (Quarterbacks score low here: our machine does not count passing.)` }; } },
 
   { md: '<h2>Part 4. Rebuild <code>compare</code> yourself ⚔️</h2>In Lab 3 you opened the <code>compare</code> machine and fixed its tie bug. Now you build it from scratch, your own way, out of two small machines.' },
   { skill: 'team', kind: 'run', data: true, task: '<b>Machine 1</b> adds up one player\'s whole career (every season since 1999) in one stat. Run it.',
@@ -93,22 +93,22 @@ const LAB6 = [
   { skill: 'ret', kind: 'turn', data: true, task: '<b>Machine 2</b> uses machine 1 twice, then decides. The old <code>compare</code> printed the winner. Yours will <b>hand back</b> the winner\'s name. Two words are missing: the 3-letter word that starts building a machine, and the 6-letter word that hands an answer back.',
     code: '___ compare(player1, player2, stat):\n' + COMPARE_BODY,
     hints: ['The first word is short for "define". The second one means "hand this back".', 'Line 1 should start with <code>def compare(</code>', 'Under the <code>if</code>: <code>return player1</code>'],
-    check: ({ code, g }) => {
+    check: async ({ code, g }) => {
       if (!/^def\s+compare\s*\(/m.test(code)) return { msg: 'Check line 1. The word that starts building a machine has 3 letters and is short for "define".' };
       if (/^\s+print\s*\(?\s*player1\s*\)?\s*$/m.test(code)) return { msg: '<code>print</code> only shows the name. Then <code>winner</code> gets <code>None</code>! Use the 6-letter word that <b>hands the name back</b>.' };
       if (!/^\s+return\s+player1\s*$/m.test(code)) return { msg: 'Check the line under <code>if</code>. The word that hands an answer back has 6 letters.' };
-      if (g('winner') !== 'Tom Brady') return { msg: 'The machine did not hand back Tom Brady. Keep the other lines the way they were.' };
+      if ((await g('winner')) !== 'Tom Brady') return { msg: 'The machine did not hand back Tom Brady. Keep the other lines the way they were.' };
       return { ok: true, msg: 'Winner: Tom Brady! Your <code>compare</code> is shorter than the old one: the long line with all the brackets lives inside <code>career_total</code>, written once. A machine stops as soon as it reaches a <code>return</code>.' }; } },
   { skill: 'team', kind: 'turn', data: true, task: '<b>Settle an argument</b> with your own machine. Change the two names and the stat: <code>"passing_yards"</code>, <code>"passing_tds"</code>, <code>"rushing_yards"</code>, <code>"rushing_tds"</code>, <code>"receptions"</code>, <code>"receiving_yards"</code> or <code>"receiving_tds"</code>.',
     code: 'winner = compare("Justin Jefferson", "Ja\'Marr Chase", "receiving_yards")   # change the names and the stat\nprint("Winner:", winner, "🏆")',
     hints: ['Change the names inside the quotes. Each keeps its own quotes, with commas between.', 'For example: <code>winner = compare("Derrick Henry", "Saquon Barkley", "rushing_tds")</code>'],
-    check: ({ code, out, g }) => {
+    check: async ({ code, out, g }) => {
       if (!/compare\s*\(/.test(code)) return { msg: 'Use your machine: <code>winner = compare("Name One", "Name Two", "stat")</code>.' };
       if (out.includes('Justin Jefferson') && out.includes("Ja'Marr Chase")) return { msg: 'Jefferson wins that one, 7,432 yards to 5,425. Now put in two players <b>you</b> would argue about.' };
       const zero = out.split('\n').find(l => /:\s*0$/.test(l.trim()));
       if (zero) return { msg: `"${esc(zero.split(' :')[0])}" has a total of 0. The name is spelled wrong (capital letters matter), or he never had that stat. Fix it so the fight is fair.` };
-      if (typeof g('winner') !== 'string') return { msg: 'Keep <code>winner =</code> in front, so the machine\'s answer lands in a locker.' };
-      return { ok: true, msg: `The winner is ${esc(g('winner'))}, and the answer is saved in <code>winner</code>, because your machine <b>returns</b> it. Machine built, Engineer! 🏆` }; } }
+      if (typeof (await g('winner')) !== 'string') return { msg: 'Keep <code>winner =</code> in front, so the machine\'s answer lands in a locker.' };
+      return { ok: true, msg: `The winner is ${esc((await g('winner')))}, and the answer is saved in <code>winner</code>, because your machine <b>returns</b> it. Machine built, Engineer! 🏆` }; } }
 ];
 const REVIEW6 = [
   { skill: 'build', q: 'What does this box show when you run it?', code: 'def cheer():\n    print("Go team!")', opts: ['Go team!', 'nothing: it only builds the machine', 'a red error'], a: 1 },

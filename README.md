@@ -76,6 +76,7 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | Where | What |
 |---|---|
 | `site/index.html`, `about.html`, `play.html` | home page with the calendar, About, the game |
+| `site/py-worker.js` | Python (Pyodide) in a Web Worker for the game page, so an endless loop can be stopped with ⏹ Stop |
 | `site/labs/` | one file per lab; [`site/labs/README.md`](site/labs/README.md) explains the format |
 | `site/data/` | trimmed copies of the open data, small enough for a browser |
 | `site/season.js` | the two seasons: weeks, stadiums, map positions, stadium facts |
@@ -84,6 +85,8 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/keys.local.js` | not in git: the public Mapbox key for the map, copied to the host with the site |
 | `site/tools/check-lab.mjs` | plays a lab from start to finish in real Python and fails if any box, hint path or answer misbehaves |
 | `site/tools/test-resume.mjs` | browser test (Playwright): half-play Week 1, reload, Continue, and the boxes and Python's memory are back |
+| `site/tools/test-stop.mjs` | browser test: ⏹ Stop ends `while True: pass` and the next boxes run; `input( )` asks in the page |
+| `site/tools/playthrough.mjs` | plays every lab through the real page in Chromium with the answer keys, film review included |
 | `server/` | for home use only: `local.mjs` runs the site on this computer, `handler.mjs` is the coach-question API that keeps the Gemini key private |
 | [`DEPLOY.md`](DEPLOY.md) | where the public site lives, how to update it, and the launch checklist |
 

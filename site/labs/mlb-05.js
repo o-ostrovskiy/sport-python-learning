@@ -26,7 +26,7 @@ for batter in lineup:
     code: `for batter in lineup:
     print("Now batting:", batter)
 print("Play ball!")`,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You read it right! ' : `You guessed ${esc(guess)}, but it shows up only once. `) + '<code>print("Play ball!")</code> is not pushed in, so it is <b>not inside</b> the loop. Python finishes all 9 trips around the loop first, then moves on.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You read it right! ' : `You guessed ${esc(guess)}, but it shows up only once. `) + '<code>print("Play ball!")</code> is not pushed in, so it is <b>not inside</b> the loop. Python finishes all 9 trips around the loop first, then moves on.' }) },
   { skill: 'loops', kind: 'boom', expectError: 'IndentationError', task: 'What if you forget to push the line in? Run it. It shows a red error <b>on purpose</b>.',
     code: `for batter in lineup:
 print(batter)`,
@@ -37,11 +37,11 @@ print(batter)`,
 for player in my_team:
     print("Let's go,", player, "!")`,
     hints: ['Change the three names on the first line. Each name keeps its quotes, with a comma between players.', 'Leave the two loop lines alone. The first line should look like <code>my_team = ["Name One", "Name Two", "Name Three"]</code>.'],
-    check: ({ q, out }) => {
-      if (!q('isinstance(my_team, list)')) return { msg: 'The team must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
-      const n = q('len(my_team)');
+    check: async ({ q, out }) => {
+      if (!(await q('isinstance(my_team, list)'))) return { msg: 'The team must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
+      const n = (await q('len(my_team)'));
       if (n !== 3) return { msg: `Python counts ${n} player${n === 1 ? '' : 's'} on your team. We want 3, with a comma between them.` };
-      if (q('my_team == ' + TEAM3)) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
+      if ((await q('my_team == ' + TEAM3))) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
       if ((out.match(/Let's go,/g) || []).length !== 3) return { msg: 'I should see three cheers. Keep the two loop lines just as they were: <code>for player in my_team:</code> and the pushed-in <code>print</code>.' };
       return { ok: true, msg: 'Three players, three cheers, one <code>print</code> line. Here the box is called <code>player</code>, not <code>batter</code>: it is your box, you name it.' }; } },
 
@@ -66,7 +66,7 @@ for player in my_team:
 for inning in range(3):     # change the 3
     print("Inning", inning + 1, ":", dodgers[inning], "runs")`,
     hints: ['How many innings are in the list? That is the number <code>range( )</code> needs.', 'Change <code>range(3)</code> to <code>range(9)</code>.'],
-    check: ({ out }) => {
+    check: async ({ out }) => {
       const n = out.split('\n').filter(l => l.startsWith('Inning')).length;
       if (n < 9) return { msg: `That shows ${n} inning${n === 1 ? '' : 's'}. A game has 9. Make the number in <code>range( )</code> bigger.` };
       if (n > 9 || !out.includes('Inning 9 : 0 runs')) return { msg: 'We want exactly innings 1 to 9. Keep the loop as it was and change only the 3.' };
@@ -82,7 +82,7 @@ for runs in dodgers:
     print("Score so far:", total)
 
 print("Final score:", total)`,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 7, msg: (+guess === 7 ? 'Yes, 7! ' : `You guessed ${esc(guess)}. The Dodgers scored 7. `) + '<code>total = total + runs</code> looks strange, but one <code>=</code> means "put into the box". Python does the <b>right side first</b>: take what is in <code>total</code>, add <code>runs</code>, then put the answer back into <code>total</code>. That is a <b>running total</b>.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 7, msg: (+guess === 7 ? 'Yes, 7! ' : `You guessed ${esc(guess)}. The Dodgers scored 7. `) + '<code>total = total + runs</code> looks strange, but one <code>=</code> means "put into the box". Python does the <b>right side first</b>: take what is in <code>total</code>, add <code>runs</code>, then put the answer back into <code>total</code>. That is a <b>running total</b>.' }) },
   { skill: 'totals', kind: 'turn', task: 'Now the Yankees, same game. Two things are missing: what the scoreboard shows <b>before</b> the game starts (a number), and what to add each time around (which box holds the runs of one inning?).',
     code: `yankees = [3, 1, 1, 0, 0, 1, 0, 0, 0]
 
@@ -92,10 +92,10 @@ for runs in yankees:
 
 print("Yankees:", total)`,
     hints: ['Before the first inning, a scoreboard shows zero.', 'Look at the <code>for</code> line: the box after <code>for</code> holds one inning\'s runs. Add that box.', 'The two lines are <code>total = 0</code> and <code>total = total + runs</code>.'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/total\s*=\s*0\s*(#.*)?\n/.test(code)) return { msg: 'Check the first blank. Before the game starts, the scoreboard shows zero.' };
       if (!/total\s*=\s*total\s*\+\s*runs\b/.test(code)) return { msg: 'Check the second blank. Each time around, add the box from the <code>for</code> line: the one that holds this inning\'s runs.' };
-      if (q('int(total)') !== 6) return { msg: 'The total should come out as 6. Keep the list of innings as it was.' };
+      if ((await q('int(total)')) !== 6) return { msg: 'The total should come out as 6. Keep the list of innings as it was.' };
       return { ok: true, msg: 'Yankees 6! Your scoreboard works. Dodgers 7, Yankees 6: the Dodgers won the World Series by one run.' }; } },
   { skill: 'totals', kind: 'run', data: true, task: 'A game has 9 innings. A <b>career</b> has many seasons. Same loop! First run this to load every MLB season. One row is one player\'s whole season.',
     code: `import pandas as pd
@@ -114,7 +114,7 @@ for hr in judge["HR"]:
     print(hr, "home runs. Career so far:", total)
 
 print("Career home runs:", total)`,
-    check: ({ guess }) => { const off = Math.abs(+guess - 386);
+    check: async ({ guess }) => { const off = Math.abs(+guess - 386);
       return { ok: true, missed: !(off <= 40), msg: (off === 0 ? 'Exactly right, wow! ' : off <= 40 ? `You guessed ${esc(guess)}: very close! ` : `You guessed ${esc(guess)}. `) + 'Through 2026, Judge has hit <b>386</b>. It is the scoreboard loop again: only the names changed. <code>runs</code> became <code>hr</code>, and the list became the column <code>judge["HR"]</code>.' }; } },
   { skill: 'totals', kind: 'run', data: true, task: 'In Lab 2 you added up a column with <code>.sum()</code>. Check that it gives the same answer as your loop.',
     code: 'print(judge["HR"].sum())',
@@ -128,7 +128,7 @@ for hr in judge["HR"]:
         count = count + 1
 
 print("Seasons with 30 or more home runs:", count)`,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 6, msg: (+guess === 6 ? 'Yes, 6! ' : `You guessed ${esc(guess)}, and Python counted 6. `) + 'The <code>if</code> is inside the loop, so it is pushed in once. <code>count = count + 1</code> is inside the <code>if</code>, so it is pushed in <b>twice</b>. It runs only for the big seasons.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 6, msg: (+guess === 6 ? 'Yes, 6! ' : `You guessed ${esc(guess)}, and Python counted 6. `) + 'The <code>if</code> is inside the loop, so it is pushed in once. <code>count = count + 1</code> is inside the <code>if</code>, so it is pushed in <b>twice</b>. It runs only for the big seasons.' }) },
   { skill: 'counting', kind: 'turn', data: true, task: '<b>50</b> home runs in a season is super rare. Change <b>one number</b> to count Judge\'s 50-homer seasons.',
     code: `count = 0
 for hr in judge["HR"]:
@@ -137,9 +137,9 @@ for hr in judge["HR"]:
 
 print("Big seasons:", count)`,
     hints: ['The number that decides "big enough" is on the <code>if</code> line.', 'Change <code>if hr >= 30:</code> to <code>if hr >= 50:</code>.'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/if\s+hr\s*>=\s*50\s*:/.test(code)) return { msg: 'Change the 30 on the <code>if</code> line to 50, and keep the <code>>=</code>.' };
-      if (q('int(count)') !== 4) return { msg: 'I expected 4 big seasons. Keep the other lines as they were, and start with <code>count = 0</code>.' };
+      if ((await q('int(count)')) !== 4) return { msg: 'I expected 4 big seasons. Keep the other lines as they were, and start with <code>count = 0</code>.' };
       return { ok: true, msg: 'Four! 52, 62, 58 and 53 home runs. Only Babe Ruth, Mark McGwire and Sammy Sosa have four seasons like that too.' }; } },
   { skill: 'counting', kind: 'turn', data: true, task: '<b>Your player\'s career report.</b> One loop does both jobs: it adds up the career <b>and</b> counts the big seasons. Change the name to any player you like. You can change <code>big</code> too.',
     code: `player = "Shohei Ohtani"   # change to any player
@@ -158,10 +158,10 @@ print(player, "played", len(seasons), "seasons")
 print("Career home runs:", total)
 print("Seasons with", big, "or more:", count)`,
     hints: ['Change the name inside the quotes on the first line. Try <code>"Hank Aaron"</code> or <code>"Babe Ruth"</code>.', 'Spell the name exactly, with capital letters: <code>player = "Hank Aaron"</code>.'],
-    check: ({ q }) => {
-      if (q('player == "Shohei Ohtani"')) return { msg: 'That is still my player. Put another name inside the quotes on the first line.' };
-      if (q('len(seasons)') === 0) return { msg: `Python found 0 seasons for ${esc(String(q('str(player)')))}, so the loop had nothing to walk through. Check the spelling and the capital letters.` };
-      return { ok: true, msg: `${esc(String(q('str(player)')))}: ${q('len(seasons)')} seasons and ${q('int(total)')} home runs. The loop does not care if it is 9 seasons or 23: it is the same few lines. That's the ballgame!` }; } }
+    check: async ({ q }) => {
+      if ((await q('player == "Shohei Ohtani"'))) return { msg: 'That is still my player. Put another name inside the quotes on the first line.' };
+      if ((await q('len(seasons)')) === 0) return { msg: `Python found 0 seasons for ${esc(String((await q('str(player)'))))}, so the loop had nothing to walk through. Check the spelling and the capital letters.` };
+      return { ok: true, msg: `${esc(String((await q('str(player)'))))}: ${(await q('len(seasons)'))} seasons and ${(await q('int(total)'))} home runs. The loop does not care if it is 9 seasons or 23: it is the same few lines. That's the ballgame!` }; } }
 ];
 const REVIEW = [
   { skill: 'loops', q: 'How many times does this print "Go!"?', code: 'team = ["Judge", "Soto", "Ohtani"]\nfor player in team:\n    print("Go!")', opts: ['1', '3', '0'], a: 1 },

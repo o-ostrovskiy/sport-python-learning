@@ -23,6 +23,23 @@ def _fig():
     b = io.BytesIO(); plt.savefig(b, format="png", dpi=110, bbox_inches="tight"); plt.close("all")
     return base64.b64encode(b.getvalue()).decode()
 `;
+// Same as py-worker.js: what check( ) gets back from g( ) and q( ), and input( ) shows its question and the answer.
+const HELPERS = `
+import builtins, js
+def _plain(x):
+    return x.item() if type(x).__module__ == "numpy" and hasattr(x, "item") else x
+def _q(expr): return _plain(eval(expr, globals()))
+def _g(name): return _plain(globals().get(name))
+def _input(prompt=""):
+    a = str(js._nextInput()); print(str(prompt) + a); return a
+builtins.input = _input
+`;
+function plain(v) {
+  if (!v || typeof v !== 'object' || typeof v.toJs !== 'function') return v;
+  try { return v.toJs({ dict_converter: Object.fromEntries, create_pyproxies: false }); }
+  catch { return String(v); }
+  finally { v.destroy(); }
+}
 const words = h => String(h || '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
 
 async function checkLab(name) {
@@ -41,7 +58,7 @@ async function checkLab(name) {
   const py = await loadPyodide(); let out = [], inputs = [];
   py.setStdout({ batched: s => out.push(s) }); py.setStderr({ batched: () => {} });
   globalThis._nextInput = () => { if (!inputs.length) throw new Error('the code asked for input() but the answers file gives no more "inputs"'); return inputs.shift(); };
-  py.runPython('import builtins, js\nbuiltins.input = lambda prompt="": js._nextInput()');
+  py.runPython(HELPERS);
   const needData = plays.some(c => c.data);
   if (needData) {
     await py.loadPackage(['pandas', 'matplotlib'], { messageCallback: () => {} }); py.runPython(BASE);
@@ -59,8 +76,9 @@ async function checkLab(name) {
       return { out: out.join('\n'), rich };
     } catch (e) { return { out: out.join('\n'), err: String(e.message).trim().split('\n').pop() }; }
   };
-  const ctx = (code, r, guess) => ({ code, out: r.out, guess, g: n => py.globals.get(n), q: x => py.runPython(x) });
-  const safe = (label, fn) => { try { return fn(); } catch (e) { fail(`${label}: check() crashed: ${e.message}`); return {}; } };
+  const ctx = (code, r, guess) => ({ code, out: r.out, guess, g: async n => plain(py.globals.get('_g')(n)), q: async x => plain(py.globals.get('_q')(x)) });
+  // check( ) is async (on the site, Python runs in a worker), so every call is awaited.
+  const safe = async (label, fn) => { try { return await fn(); } catch (e) { fail(`${label}: check() crashed: ${e.message}`); return {}; } };
 
   for (const [i, c] of plays.entries()) {
     const n = i + 1, tag = `play ${n} (${c.kind})`, a = answers[n] || {};
@@ -76,24 +94,25 @@ async function checkLab(name) {
       continue;
     }
     if (typeof c.code !== 'string') { fail(`${tag}: no code`); continue; }
+    if (c.check && c.check.constructor.name !== 'AsyncFunction') fail(`${tag}: check must be async: check: async ({ g, q }) => …, with await before g( ) and q( )`);
     if (c.kind === 'run') { const r = await run(c.code, a.inputs); if (r.err) fail(`${tag}: starting code errors: ${r.err}`); if (!c.ok && !c.check) fail(`${tag}: no ok line`);
-      if (c.check && !r.err) { const v = safe(tag, () => c.check(ctx(c.code, r))); if (!v.ok) fail(`${tag}: check() rejects the given code: ${v.msg}`); } }
+      if (c.check && !r.err) { const v = await safe(tag, () => c.check(ctx(c.code, r))); if (!v.ok) fail(`${tag}: check() rejects the given code: ${v.msg}`); } }
     else if (c.kind === 'boom') { const r = await run(c.code, a.inputs);
       if (!r.err) fail(`${tag}: expected ${c.expectError} but the code ran fine`); else if (!r.err.includes(c.expectError)) fail(`${tag}: expected ${c.expectError}, got ${r.err}`); }
     else if (c.kind === 'predict') { const r = await run(c.code, a.inputs); if (r.err) { fail(`${tag}: code errors: ${r.err}`); continue; }
       if (a.answer === undefined) { fail(`${tag}: answers file needs { "answer": number }`); continue; }
-      const good = safe(tag, () => c.check(ctx(c.code, r, String(a.answer)))), bad = safe(tag, () => c.check(ctx(c.code, r, String(Number(a.answer) + 7919))));
+      const good = await safe(tag, () => c.check(ctx(c.code, r, String(a.answer)))), bad = await safe(tag, () => c.check(ctx(c.code, r, String(Number(a.answer) + 7919))));
       if (!good.ok || good.missed) fail(`${tag}: the right guess ${a.answer} is not accepted as right`);
       if (!bad.ok || !bad.missed) fail(`${tag}: a wrong guess must still finish the play, with missed: true`); }
     else if (c.kind === 'turn') {
       if (!c.check) { fail(`${tag}: no check()`); continue; }
       if (!c.hints?.length) warn(`${tag}: no hints`);
       if (!c.code.includes('___')) { const r = await run(c.code, a.inputs);
-        if (!r.err) { const v = safe(tag, () => c.check(ctx(c.code, r))); if (v.ok) fail(`${tag}: the starting code already passes, so there is nothing to do`); else if (!v.msg) fail(`${tag}: check() gave no tip for the starting code`); } }
+        if (!r.err) { const v = await safe(tag, () => c.check(ctx(c.code, r))); if (v.ok) fail(`${tag}: the starting code already passes, so there is nothing to do`); else if (!v.msg) fail(`${tag}: check() gave no tip for the starting code`); } }
       if (!a.solution) { fail(`${tag}: answers file needs { "solution": "code" }`); continue; }
       const r = await run(a.solution, a.inputs); if (r.err) { fail(`${tag}: the solution errors: ${r.err}`); continue; }
-      const v = safe(tag, () => c.check(ctx(a.solution, r))); if (!v.ok) fail(`${tag}: the solution is rejected: ${v.msg}`); else if (!v.msg) fail(`${tag}: no message on success`);
-      for (const w of a.wrong || []) { const rw = await run(w, a.inputs); if (rw.err) continue; const vw = safe(tag, () => c.check(ctx(w, rw))); if (vw.ok) fail(`${tag}: a wrong answer is accepted: ${w.slice(0, 60)}`); }
+      const v = await safe(tag, () => c.check(ctx(a.solution, r))); if (!v.ok) fail(`${tag}: the solution is rejected: ${v.msg}`); else if (!v.msg) fail(`${tag}: no message on success`);
+      for (const w of a.wrong || []) { const rw = await run(w, a.inputs); if (rw.err) continue; const vw = await safe(tag, () => c.check(ctx(w, rw))); if (vw.ok) fail(`${tag}: a wrong answer is accepted: ${w.slice(0, 60)}`); }
       await run(a.solution, a.inputs);   // leave Python in the solved state for the next play
     } else fail(`${tag}: unknown kind`);
   }

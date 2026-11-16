@@ -13,7 +13,7 @@ const CELLS = [
   { skill: 'def', kind: 'predict', task: 'To switch the machine on, write its name with round brackets: <code>cheer()</code>. <b>Guess first:</b> how many lines will show up? Type a number, then run it.',
     code: `cheer()
 cheer()`,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 4, msg: (+guess === 4 ? 'Yes, 4! ' : `You guessed ${esc(guess)}, but there are 4. `) + 'The machine ran <b>twice</b>, and each run does both <code>print</code> lines. Using a machine is called <b>calling</b> it.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 4, msg: (+guess === 4 ? 'Yes, 4! ' : `You guessed ${esc(guess)}, but there are 4. `) + 'The machine ran <b>twice</b>, and each run does both <code>print</code> lines. Using a machine is called <b>calling</b> it.' }) },
   { skill: 'def', kind: 'boom', expectError: 'IndentationError', task: 'The lines inside a machine are <b>pushed in</b> 4 spaces, like under <code>if</code> and <code>for</code>. What if you forget? Run it. It shows a red error <b>on purpose</b>.',
     code: `def cheer():
 print("Let's go, Yankees!")`,
@@ -31,7 +31,7 @@ cheer("Mariners")`,
 
 announce("Aaron Judge", 99)   # change to your player and his number`,
     hints: ['Only the last line changes. Put another name in the quotes and another number after the comma.', 'It should look like this: <code>announce("Shohei Ohtani", 17)</code>.'],
-    check: ({ code, out }) => {
+    check: async ({ code, out }) => {
       if (!/def\s+announce\s*\(\s*player\s*,\s*number\s*\)\s*:/.test(code)) return { msg: 'Keep the first two lines, the machine itself, just as they were. Change only the last line.' };
       if (!out.includes('Now batting, number')) return { msg: 'Nothing was announced. The last line must call the machine: <code>announce("Name", 17)</code>.' };
       if (out.includes(': Aaron Judge !')) return { msg: 'That is still Aaron Judge. Put your own player and his number on the last line.' };
@@ -70,12 +70,12 @@ if judge > other:
 else:
     print("The other player had the better batting average")`,
     hints: ['Change only the two numbers on the second line: hits first, then at-bats.', 'The second line should be <code>other = batting_average(147, 596)</code>.'],
-    check: ({ q }) => {
-      const other = q('float(other)');
+    check: async ({ q }) => {
+      const other = (await q('float(other)'));
       if (other === 0.282) return { msg: 'Those are still Ohtani\'s numbers. Put Raleigh\'s in: 147 hits, 596 at-bats.' };
       if (other === 4.054) return { msg: 'The order matters! Hits go first, then at-bats: <code>batting_average(147, 596)</code>.' };
       if (other !== 0.247) return { msg: `That gives ${other}. Raleigh had 147 hits in 596 at-bats, so I expect 0.247. Check both numbers.` };
-      if (q('float(judge)') !== 0.331) return { msg: 'Keep Judge\'s line as it was: <code>judge = batting_average(179, 541)</code>.' };
+      if ((await q('float(judge)')) !== 0.331) return { msg: 'Keep Judge\'s line as it was: <code>judge = batting_average(179, 541)</code>.' };
       return { ok: true, msg: 'Judge 0.331, Raleigh 0.247. Judge had the best average in baseball in 2025. But Raleigh hit 60 home runs that year: a batting average does not tell you everything!' }; } },
 
   { md: '<h2>Part 3. Rebuild compare 🏗️</h2>Time to rebuild the <code>compare</code> machine from Lab 2, and make it better: this one will <b>hand back</b> the winner.' },
@@ -109,10 +109,10 @@ print(career_total("Hank Aaron", "HR"))`,
 winner = compare("Aaron Judge", "Kyle Schwarber", "HR")
 print("Winner:", winner, "🏆")`,
     hints: ['Look at the <code>total1</code> line: it adds up <code>player1</code>. So the <code>total2</code> line adds up…?', 'The word that hands back an answer is the one you learned in Part 2. It is already on two other lines of this machine.', 'The two lines are <code>total2 = career_total(player2, stat)</code> and <code>return player1</code>.'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/total2\s*=\s*career_total\(\s*player2\s*,\s*stat\s*\)/.test(code)) return { msg: 'Check the <code>total2</code> line. It should add up the <b>second</b> player\'s career. Which input box holds him?' };
       if (!/if\s+total1\s*>\s*total2\s*:\s*\n\s+return\s+player1\b/.test(code)) return { msg: 'Check the line under <code>if</code>. The missing word hands the answer back, and it has 6 letters.' };
-      if (q('str(winner)') !== 'Aaron Judge') return { msg: 'The winner should be Aaron Judge, 386 to 385. Keep the last two lines as they were.' };
+      if ((await q('str(winner)')) !== 'Aaron Judge') return { msg: 'The winner should be Aaron Judge, 386 to 385. Keep the last two lines as they were.' };
       return { ok: true, msg: 'Judge 386, Schwarber 385: one home run apart! Your machine <b>prints</b> the totals and <b>returns</b> the winner. Only one <code>return</code> line ever runs: the one under the rule that is true.' }; } },
   { skill: 'combo', kind: 'run', data: true, task: 'Try your machine on other players. <b>Guess first:</b> who wins each one? The second line is the tie test from Lab 3.',
     code: `print("Winner:", compare("Hank Aaron", "Babe Ruth", "HR"))
@@ -153,12 +153,12 @@ my_team = ["Aaron Judge", "Shohei Ohtani", "Cal Raleigh"]   # put your own playe
 for player in my_team:
     print(player, "best season:", best_season(player, "HR"), "| career average:", career_average(player))`,
     hints: ['Change the names inside the quotes on the <code>my_team</code> line. Any number of players is fine.', 'Spell each name exactly, with capital letters, like <code>["Juan Soto", "Mookie Betts", "Mike Trout"]</code>.'],
-    check: ({ q }) => {
-      if (!q('isinstance(my_team, list) and len(my_team) > 0')) return { msg: 'Keep <code>my_team</code> a list with at least one player in square brackets.' };
-      if (q('my_team == ' + TEAM3)) return { msg: 'Those are still my three players. Put your own inside the quotes.' };
-      const lost = q('next((str(p) for p in my_team if len(stats[stats["name"] == p]) == 0), "")');
+    check: async ({ q }) => {
+      if (!(await q('isinstance(my_team, list) and len(my_team) > 0'))) return { msg: 'Keep <code>my_team</code> a list with at least one player in square brackets.' };
+      if ((await q('my_team == ' + TEAM3))) return { msg: 'Those are still my three players. Put your own inside the quotes.' };
+      const lost = (await q('next((str(p) for p in my_team if len(stats[stats["name"] == p]) == 0), "")'));
       if (lost) return { msg: `Python found no seasons for ${esc(lost)}, so his numbers came out empty. Check the spelling and the capital letters.` };
-      return { ok: true, msg: `A scouting report for ${q('len(my_team)')} players, built from four machines you made yourself. Machine built, Engineer!` }; } }
+      return { ok: true, msg: `A scouting report for ${(await q('len(my_team)'))} players, built from four machines you made yourself. Machine built, Engineer!` }; } }
 ];
 const REVIEW = [
   { skill: 'def', q: 'What does this box show when you run it?', code: 'def cheer():\n    print("Go!")', opts: ['Go!', 'nothing yet', 'a red error'], a: 1 },

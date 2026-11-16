@@ -91,7 +91,7 @@ th{color:var(--soft);font-weight:600}
     <p>For the grown-ups who like to look under the hood. The whole site is plain files: web pages, a few scripts, pictures and small data tables. There is no app server, no database and no accounts behind it.</p>
     <ul>
       <li><b>Pages:</b> plain HTML, CSS and JavaScript, with no framework and no build step.</li>
-      <li><b>Python in the page:</b> <a href="https://pyodide.org">Pyodide</a>, the real Python language (with the pandas and matplotlib tools) made to run inside a web browser. Your child's code runs on your own device.</li>
+      <li><b>Python in the page:</b> <a href="https://pyodide.org">Pyodide</a>, the real Python language (with the pandas and matplotlib tools) made to run inside a web browser. Your child's code runs on your own device, in a separate background worker: a loop that never ends cannot freeze the page, and a ⏹ Stop button ends it. When Python asks a question with <code>input( )</code>, the child answers in a box on the page.</li>
       <li><b>Lessons:</b> one small file per game day holds its missions, hints and checks. When your child presses Run, the page compares the result with what the lesson expects and picks the coach's line.</li>
       <li><b>Data:</b> trimmed copies of the open NFL and MLB data, small enough for a browser to load.</li>
       <li><b>Map:</b> <a href="https://leafletjs.com">Leaflet</a> with Mapbox map pictures.</li>

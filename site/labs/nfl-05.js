@@ -11,17 +11,17 @@ const LAB5 = [
     ok: 'Read it like a sentence: "<b>for</b> each player <b>in</b> my board, print the player." <code>player</code> is a locker Python fills for you: Justin in round 1, Saquon in round 2, Josh in round 3. The colon means "here is what to do each round", and the indented line is the part that <b>repeats</b>.' },
   { skill: 'loops', kind: 'predict', task: 'Only the <b>indented</b> lines belong to the loop. <b>Guess first:</b> how many times will <code>Draft is over!</code> show up? Type a number, then run it.',
     code: BOARD3 + '\n\nfor player in my_board:\n    print("The pick is in:", player)\n\nprint("Draft is over!")',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You got it: once! ' : `You guessed ${esc(guess)}, but it shows up only once. `) + 'The last <code>print</code> is not indented, so it is <b>outside</b> the loop. Python runs it one time, after all three rounds are done.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 1, msg: (+guess === 1 ? 'You got it: once! ' : `You guessed ${esc(guess)}, but it shows up only once. `) + 'The last <code>print</code> is not indented, so it is <b>outside</b> the loop. Python runs it one time, after all three rounds are done.' }) },
   { skill: 'loops', kind: 'boom', expectError: 'IndentationError', task: 'What if we forget the indent? Run it. It shows a red error <b>on purpose</b>.',
     code: BOARD3 + '\n\nfor player in my_board:\nprint("The pick is in:", player)',
     ok: '<code>IndentationError</code>, the same error as with <code>if</code> in Lab 3. Python saw the colon, so it expected a line pushed to the right. Without the push, it cannot tell what to repeat.' },
   { skill: 'loops', kind: 'turn', task: 'Put <b>your own</b> players in the list, as many as you like. Change only the names inside the quotes, and keep the commas.',
     code: 'my_team = ["Justin Jefferson", "Saquon Barkley", "Josh Allen"]   # put your own players here\n\nfor player in my_team:\n    print(player, "is on my team!")\n\nprint("That\'s", len(my_team), "players.")',
     hints: ['Each name needs its own quotes, with a comma between players.', 'Like this: <code>my_team = ["Lamar Jackson", "Derrick Henry", "CeeDee Lamb", "Travis Kelce"]</code>'],
-    check: ({ q, out }) => {
-      if (!q('isinstance(my_team, list)')) return { msg: 'The team must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
-      if (q('my_team == ' + TEAM3)) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
-      const n = q('len(my_team)');
+    check: async ({ q, out }) => {
+      if (!(await q('isinstance(my_team, list)'))) return { msg: 'The team must be a list. Keep the square brackets <code>[ ]</code> around the names.' };
+      if ((await q('my_team == ' + TEAM3))) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
+      const n = (await q('len(my_team)'));
       if (n < 2) return { msg: `Python counts only ${n} player. Put at least two on the team, with a comma between them.` };
       const lines = out.split('\n').filter(l => l.includes('is on my team!')).length;
       if (lines !== n) return { msg: `You have ${n} players, but the loop printed ${lines} line${lines === 1 ? '' : 's'}. Keep the <code>for</code> line and the indented <code>print</code> under it.` };
@@ -33,11 +33,11 @@ const LAB5 = [
     ok: 'Five rounds, but it started at <b>0</b> and stopped at <b>4</b>! Remember Lab 4: Python counts from 0. <code>range(5)</code> means "5 numbers, starting at 0".' },
   { skill: 'range', kind: 'predict', task: 'There is no "Week 0" in the NFL. So we give <code>range</code> two numbers: where to <b>start</b> and where to <b>stop</b>. <b>Guess first:</b> what is the <b>last</b> week this box shows? Type a number, then run it.',
     code: 'for week in range(1, 6):\n    print("Week", week)',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 5, msg: (+guess === 5 ? 'Yes, Week 5! ' : `You guessed ${esc(guess)}, but the last one is Week 5. `) + '<code>range(1, 6)</code> means: start at 1 and stop <b>before</b> 6. The stop number is never included.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 5, msg: (+guess === 5 ? 'Yes, Week 5! ' : `You guessed ${esc(guess)}, but the last one is Week 5. `) + '<code>range(1, 6)</code> means: start at 1 and stop <b>before</b> 6. The stop number is never included.' }) },
   { skill: 'range', kind: 'turn', task: 'The NFL regular season has <b>18 weeks</b>. Make this box print Week 1, Week 2… all the way to <b>Week 18</b>. One number is missing: where <code>range</code> should stop. Careful, it is not 18!',
     code: 'for week in range(1, ___):\n    print("Week", week)',
     hints: ['<code>range</code> stops <b>before</b> the stop number. So the stop number is one more than the last week you want.', 'The line should read: <code>for week in range(1, 19):</code>'],
-    check: ({ out }) => {
+    check: async ({ out }) => {
       const lines = out.trim().split('\n'), last = lines[lines.length - 1] || '', n = +last.replace('Week ', '');
       if (lines[0] !== 'Week 1') return { msg: `It starts at "${esc(lines[0] || 'nothing')}". Keep the 1 as the start number: <code>range(1, …)</code>.` };
       if (n === 17) return { msg: 'It stopped at Week 17. <code>range</code> stops <b>before</b> the stop number, so 18 is left out. Go one higher.' };
@@ -70,24 +70,24 @@ const LAB5 = [
   { md: '<h2>Part 4. Count the big games 💯</h2>For a running back, <b>100 yards</b> in a game is a big day. To count the big days we need a loop <b>and</b> a decision: an <code>if</code> (Lab 3) inside the <code>for</code>.<br><br>"For each game: if the yards are at least 100, add 1 to the counter." The counter line is inside the loop <b>and</b> inside the <code>if</code>, so it is pushed in twice: 8 spaces.' },
   { skill: 'count', kind: 'predict', data: true, task: 'Here are Saquon\'s 16 games again. <b>Guess first:</b> how many had <b>at least 100</b> yards? Count them in the list, type your number, then run it.',
     code: 'print(yards_list)\n\nbig_games = 0\n\nfor yards in yards_list:\n    if yards >= 100:\n        big_games = big_games + 1\n\nprint("100-yard games:", big_games)',
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 11, msg: (+guess === 11 ? 'Exactly 11! You counted like the loop does. ' : `You guessed ${esc(guess)}, Python counted 11. `) + 'The <code>if</code> asks its question again for every game. The counter only grows in the rounds where the answer is True.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 11, msg: (+guess === 11 ? 'Exactly 11! You counted like the loop does. ' : `You guessed ${esc(guess)}, Python counted 11. `) + 'The <code>if</code> asks its question again for every game. The counter only grows in the rounds where the answer is True.' }) },
   { skill: 'count', kind: 'turn', data: true, task: 'In 2024 <b>Ja\'Marr Chase</b> led the whole NFL in catches, receiving yards and touchdown catches. This box counts his 100-yard games. One word is missing: the 3-letter word that starts a loop.',
     code: 'name = "Ja\'Marr Chase"\n\ngames = stats[stats["player_display_name"] == name]\nseason = games[games["season"] == 2024]\nyards_list = list(season["receiving_yards"])\n\nbig_games = 0\n\n___ yards in yards_list:\n    if yards >= 100:\n        big_games = big_games + 1\n\nprint(name, "had", big_games, "games with 100 yards or more")',
     hints: ['Look at any loop above. Which little word comes first?', 'The line should read: <code>for yards in yards_list:</code>'],
-    check: ({ code, g }) => {
+    check: async ({ code, g }) => {
       if (!/^for\s+yards\s+in\s+yards_list\s*:/m.test(code)) return { msg: 'Check the line that had the <code>___</code>. A loop starts with a 3-letter word, and the line reads "… each yards in yards_list".' };
-      if (g('big_games') !== 5) return { msg: `The counter says ${esc(String(g('big_games')))}, but Chase had 5 big games. Keep the <code>if</code> and the counter line the way they were.` };
+      if ((await g('big_games')) !== 5) return { msg: `The counter says ${esc(String((await g('big_games'))))}, but Chase had 5 big games. Keep the <code>if</code> and the counter line the way they were.` };
       return { ok: true, msg: 'Five games with 100 yards or more, and one of them was 264 yards! Your loop works.' }; } },
   { skill: 'count', kind: 'turn', data: true, task: '<b>Your player\'s season report.</b> Change the lines at the top: <code>name</code>, <code>stat</code> and <code>year</code> (1999 to 2024). For a quarterback use <code>"passing_yards"</code> and <code>big = 300</code>.',
     code: 'name = "Justin Jefferson"   # change to your player\nstat = "receiving_yards"    # or "rushing_yards" or "passing_yards"\nyear = 2022                 # change to a season he played\nbig = 100                   # a "big game" is this many yards or more\n\ngames = stats[stats["player_display_name"] == name]\nseason = games[games["season"] == year]\nyards_list = list(season[stat])\n\ntotal = 0\nbig_games = 0\n\nfor yards in yards_list:\n    total = total + yards\n    if yards >= big:\n        big_games = big_games + 1\n\nprint(name, "in", year)\nprint("Games:", len(yards_list))\nprint("Total:", total, "yards")\nprint("Big games:", big_games)',
     hints: ['Change the name between the quotes on line 1. You can also change the stat and the year.', 'For example: <code>name = "Josh Allen"</code>, <code>stat = "passing_yards"</code>, <code>year = 2024</code>, <code>big = 300</code>.'],
-    check: ({ g, q }) => {
-      const n = g('name'), y = g('year'), s = g('stat');
+    check: async ({ g, q }) => {
+      const n = (await g('name')), y = (await g('year')), s = (await g('stat'));
       if (typeof n !== 'string') return { msg: 'The name is text, so it needs quotes: <code>name = "Josh Allen"</code>.' };
       if (n === 'Justin Jefferson' && y === 2022 && s === 'receiving_yards') return { msg: 'That is Justin Jefferson in 2022: 1,809 yards and 10 big games. Now change the top lines to your own player.' };
-      if (!q('len(yards_list)')) return { msg: `Games: 0. The list is empty, so the loop had nothing to walk through. Check the spelling of "${esc(n)}" (capital letters matter), and that he played in ${esc(String(y))}. This box only has players with lots of yards.` };
-      if (!q('total == sum(yards_list)')) return { msg: 'The total does not match his games. Keep the line <code>total = total + yards</code> inside the loop.' };
-      return { ok: true, msg: `${esc(n)} in ${esc(String(y))}: ${q('len(yards_list)')} games, ${q('int(total)').toLocaleString('en-US')} yards, ${q('int(big_games)')} big games. A list, a loop, a running total and a counter: that is a real program. Final whistle! 🏆` }; } }
+      if (!(await q('len(yards_list)'))) return { msg: `Games: 0. The list is empty, so the loop had nothing to walk through. Check the spelling of "${esc(n)}" (capital letters matter), and that he played in ${esc(String(y))}. This box only has players with lots of yards.` };
+      if (!(await q('total == sum(yards_list)'))) return { msg: 'The total does not match his games. Keep the line <code>total = total + yards</code> inside the loop.' };
+      return { ok: true, msg: `${esc(n)} in ${esc(String(y))}: ${(await q('len(yards_list)'))} games, ${(await q('int(total)')).toLocaleString('en-US')} yards, ${(await q('int(big_games)'))} big games. A list, a loop, a running total and a counter: that is a real program. Final whistle! 🏆` }; } }
 ];
 const REVIEW5 = [
   { skill: 'loops', q: 'How many lines does this print?', code: 'team = ["Allen", "Cook", "Kincaid"]\nfor player in team:\n    print(player)\nprint("Go Bills!")', opts: ['3', '4', '6'], a: 1 },

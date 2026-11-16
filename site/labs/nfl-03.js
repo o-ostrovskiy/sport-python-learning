@@ -37,7 +37,7 @@ const LAB3 = [
   { skill: 'compare', kind: 'turn', task: 'Patrick Mahomes threw <b>50</b> touchdown passes in 2018. Is that <b>at least</b> 50? Put the right symbol in place of <code>___</code>. It is two symbols: "bigger than" and "the same".',
     code: 'mahomes_tds = 50\n\nprint(mahomes_tds ___ 50)',
     hints: ['Look at the list of question symbols above. Which one means "at least"?', 'The line should read: <code>print(mahomes_tds &gt;= 50)</code>'],
-    check: ({ code, out }) => {
+    check: async ({ code, out }) => {
       if (/mahomes_tds\s*>=\s*50/.test(code) && out.includes('True')) return { ok: true, msg: 'True! 50 is at least 50. Mahomes hit it exactly.' };
       if (/mahomes_tds\s*=>\s*50/.test(code)) return { msg: 'So close: the symbols are in the wrong order. "Bigger than" comes first, then "the same": <code>&gt;=</code>.' };
       if (/mahomes_tds\s*==\s*50/.test(code)) return { msg: '<code>==</code> asks "is it exactly the same?". That says True here, but it would say False for 51. We want "at least": bigger, <b>or</b> the same.' };
@@ -61,8 +61,8 @@ const LAB3 = [
   { skill: 'ifelse', kind: 'turn', task: '<b>Be the referee.</b> It is 3rd and 2, and the runner gains 3 yards. Change <b>only the two numbers</b>: <code>yards_to_go = 2</code> and <code>yards_gained = 3</code>. Guess the call before you run it!',
     code: 'yards_to_go = 10    # change this number\nyards_gained = 7    # change this number\n\n' + REF,
     hints: ['Change the 10 on line 1 to 2, and the 7 on line 2 to 3. Leave everything else.'],
-    check: ({ g, out }) => {
-      const tg = g('yards_to_go'), yg = g('yards_gained');
+    check: async ({ g, out }) => {
+      const tg = (await g('yards_to_go')), yg = (await g('yards_gained'));
       if (tg === 10 && yg === 7) return { msg: 'Those are still the old numbers. Make line 1 <code>yards_to_go = 2</code> and line 2 <code>yards_gained = 3</code>.' };
       if (tg !== 2) return { msg: `<code>yards_to_go</code> is ${esc(String(tg))}. It is 3rd and 2, so it should be 2.` };
       if (yg !== 3) return { msg: `<code>yards_gained</code> is ${esc(String(yg))}. The runner gained 3 yards.` };
@@ -81,10 +81,10 @@ const LAB3 = [
   { skill: 'elif', kind: 'turn', task: '<b>Coach a play.</b> Change <b>only the two numbers</b> so the bot says <b>Kick a field goal!</b>',
     code: 'yards_to_go = 1          # change this number\nyards_to_end_zone = 60   # change this number\n\n' + COACH,
     hints: ['The field goal rule needs <code>yards_to_end_zone</code> to be 35 or less. But the first rule must be False, or it wins.', 'Try <code>yards_to_go = 8</code> and <code>yards_to_end_zone = 20</code>.'],
-    check: ({ g, out }) => {
-      if (out.includes('field goal')) return { ok: true, msg: `Field goal! With ${esc(String(g('yards_to_go')))} yards to go the first rule was False, so Python moved on, and ${esc(String(g('yards_to_end_zone')))} is at most 35. (Real coaches also think about the score and the clock.)` };
-      if (out.includes('Go for it')) return { msg: `The bot says "Go for it", because <code>yards_to_go</code> is ${esc(String(g('yards_to_go')))}: that is 1 or less, and the first rule wins. Make <code>yards_to_go</code> bigger than 1.` };
-      if (out.includes('Punt')) return { msg: `The bot punts: ${esc(String(g('yards_to_end_zone')))} yards is too far for a kick. Make <code>yards_to_end_zone</code> 35 or less.` };
+    check: async ({ g, out }) => {
+      if (out.includes('field goal')) return { ok: true, msg: `Field goal! With ${esc(String((await g('yards_to_go'))))} yards to go the first rule was False, so Python moved on, and ${esc(String((await g('yards_to_end_zone'))))} is at most 35. (Real coaches also think about the score and the clock.)` };
+      if (out.includes('Go for it')) return { msg: `The bot says "Go for it", because <code>yards_to_go</code> is ${esc(String((await g('yards_to_go'))))}: that is 1 or less, and the first rule wins. Make <code>yards_to_go</code> bigger than 1.` };
+      if (out.includes('Punt')) return { msg: `The bot punts: ${esc(String((await g('yards_to_end_zone'))))} yards is too far for a kick. Make <code>yards_to_end_zone</code> 35 or less.` };
       return { msg: 'The bot said nothing. Keep the <code>if</code>, <code>elif</code> and <code>else</code> lines and change only the two numbers.' }; } },
   { md: 'Now let\'s use <code>if</code> on real stats: we find a player\'s best game, like in Lab 2, and then <b>rate</b> it. 200 yards or more is a monster game, 100 or more is a big game.' },
   { skill: 'elif', kind: 'run', data: true, task: 'First load the table, the same way as in Lab 2. Run it.',
@@ -93,12 +93,12 @@ const LAB3 = [
   { skill: 'elif', kind: 'turn', data: true, task: 'Two jobs. <b>1.</b> Change the name to your favorite <b>receiver or tight end</b>. <b>2.</b> One word is missing: the one that means "else if". It is 4 letters. Type it in place of <code>___</code>. (Running back? Also change <code>"receiving_yards"</code> to <code>"rushing_yards"</code>.)',
     code: 'name = "Travis Kelce"   # change to your favorite receiver or tight end\n\ngames = stats[stats["player_display_name"] == name]\nbest = games["receiving_yards"].max()\nprint(name, "best game:", best, "yards")\n\nif best >= 200:\n    print("MONSTER GAME! 🔥")\n___ best >= 100:\n    print("Big game! 💥")\nelse:\n    print("Solid, but no 100-yard game yet.")',
     hints: ['The missing word is short for "else if": the first 2 letters of "else", then "if".', 'That line should read: <code>elif best &gt;= 100:</code>', 'Then change the name on line 1, like <code>name = "Justin Jefferson"</code>.'],
-    check: ({ code, g, q, out }) => {
-      const n = g('name');
+    check: async ({ code, g, q, out }) => {
+      const n = (await g('name'));
       if (!/^elif\s+best\s*>=\s*100\s*:/m.test(code)) return { msg: 'Check the line that had the <code>___</code>. The word that means "else if" has 4 letters, and the line still ends with a colon.' };
-      if (!q('len(games)')) return { msg: `It says "nan yards". <code>nan</code> means <b>empty</b>: Python found no games for "${esc(String(n))}", so the rating is wrong. Check the spelling. Capital letters matter.` };
+      if (!(await q('len(games)'))) return { msg: `It says "nan yards". <code>nan</code> means <b>empty</b>: Python found no games for "${esc(String(n))}", so the rating is wrong. Check the spelling. Capital letters matter.` };
       if (n === 'Travis Kelce') return { msg: 'The <code>elif</code> is right: Kelce\'s best is 191 yards, a big game. Now change the name on line 1 to your own player.' };
-      const b = q('int(best)');
+      const b = (await q('int(best)'));
       return { ok: true, msg: `${esc(String(n))}'s best game: ${b} yards. ${out.includes('MONSTER') ? 'A monster game!' : out.includes('Big game') ? 'A big game!' : 'No 100-yard game yet.'} Python checked 200 first, then 100, top to bottom.` }; } },
 
   { md: '<h2>Part 4. Inside the <code>compare</code> machine 🔧</h2>Remember <code>compare</code> from Lab 2? Now you can read it.<br><br><code>def compare(player1, player2, stat):</code> teaches Python a new command that needs two players and a stat.<br>The <code>total1</code> line, from the inside out: ask every row "is this player 1?", keep the True rows, take the <code>stat</code> column, <code>.sum()</code> adds it up, and <code>=</code> puts the answer in <code>total1</code>.<br>Then <code>if</code> and <code>else</code> pick the winner. Their <code>print</code> lines are inside the machine <b>and</b> inside the decision, so they are pushed in twice: 8 spaces.' },
@@ -108,7 +108,7 @@ const LAB3 = [
   { skill: 'debug', kind: 'turn', data: true, task: '<b>Fix the machine.</b> Replace the line <code># add your two lines here</code> with these two lines. The first has 4 spaces in front, the second has 8:<br><code>&nbsp;&nbsp;&nbsp;&nbsp;elif total1 == total2:</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("It\'s a tie! 🤝")</code>',
     code: TOP + '    # add your two lines here\n' + BOTTOM + '\ncompare("Tom Brady", "Tom Brady", "passing_tds")',
     hints: ['<code>elif</code> has to come after the <code>if</code> part and before <code>else</code>. That is exactly where the note is.', 'The <code>elif</code> line starts under the <code>i</code> of <code>if</code> (4 spaces). Its <code>print</code> starts under the other <code>print</code> lines (8 spaces).', 'Two equals signs: <code>elif total1 == total2:</code> asks "are they the same?"'],
-    check: ({ code, out }) => {
+    check: async ({ code, out }) => {
       if (/tie/i.test(out) && !out.includes('Winner')) return { ok: true, msg: 'It\'s a tie! You found a bug and fixed it, like a real programmer. The <code>elif</code> sits between <code>if</code> and <code>else</code>, so Python checks it before giving up and picking player 2. 🎉' };
       if (!/elif/.test(code)) return { msg: 'The machine still picks Tom Brady over Tom Brady. Replace the <code># add your two lines here</code> line with the <code>elif</code> line and its <code>print</code> line.' };
       if (/elif\s+total1\s*>=?\s*total2/.test(code)) return { msg: 'Your <code>elif</code> asks "is it bigger?". For a tie we ask "are they the same?": <code>elif total1 == total2:</code>' };

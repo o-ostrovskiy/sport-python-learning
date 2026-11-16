@@ -46,13 +46,27 @@ A table (the last line of the box is a DataFrame or Series) and any matplotlib c
 
 ### `check(ctx)`
 
+`check` is **async**, because Python runs in a Web Worker (`site/py-worker.js`) and every question to it is a message:
+
+```js
+check: async ({ g, q, out }) => {
+  const n = await g('number');                       // await before every g( ) and q( )
+  if (!(await q('isinstance(my_board, list)'))) return { msg: '…' };
+  return { ok: true, msg: `Number ${n}!` }; }
+```
+
+Write `(await q('…'))` with brackets when you use the result right away (`(await q('…')).length`). A helper that calls
+`g` or `q` must be `async` too and be awaited (see `chart` in `mlb-09.js`). `check-lab.mjs` fails a lab whose `check` is not async.
+
 Runs after the child's code ran without an error. Return `{ ok: true, msg }` to finish the play, or `{ msg }` to
 send them back with a tip. Make tips specific: say what is wrong and what to try, never just "wrong".
 
 - `ctx.code`: the text in the box. `ctx.out`: everything it printed.
-- `ctx.g('name')`: a Python variable as a JS value (numbers, strings, booleans only).
-- `ctx.q('python expression')`: evaluate Python and get the result. Use this for lists, tables and anything not simple,
-  e.g. `q('len(my_board)')`, `q('isinstance(my_board, list)')`.
+- `await ctx.g('name')`: a Python variable as a JS value. Numbers, strings and True/False come back as they are
+  (numpy numbers too); lists and dicts as JS arrays and objects; a missing name as `undefined`; anything else (a table)
+  as its text.
+- `await ctx.q('python expression')`: evaluate one Python **expression** and get the result, converted the same way.
+  Use this for lists, tables and anything not simple, e.g. `q('len(my_board)')`, `q('isinstance(my_board, list)')`.
 - `ctx.guess`: the typed guess (`predict` only).
 - `esc(text)`: escape anything the child typed before putting it in `msg`.
 
@@ -70,8 +84,13 @@ mistake was made.
 - A box containing `___` will not run: the child is told to fill in the blanks. At most 2–3 blanks per lab.
 - Python errors are translated to plain words for the child (NameError, SyntaxError, IndexError, KeyError,
   TypeError, IndentationError, AttributeError, ZeroDivisionError). Others show the last line of the error.
-- `input( )` opens the browser's own prompt box. An endless `while` loop freezes the page, so every loop a
-  child can edit must be bounded (count the tries).
+- `input( )` shows Python's question in a box under the code, and the child answers there. The question and the answer
+  are printed in the output, like in a terminal. It works only in the main code, not inside a `def` (the child gets
+  a plain-words error). Do not override `input` in `setup`.
+- Python runs in a Web Worker, so an endless `while` loop no longer freezes the page: after about 3 seconds a
+  ⏹ Stop button appears, Stop starts a fresh Python, and the finished boxes run again. Still keep every loop a child
+  can edit bounded (count the tries).
+- `setup` names must not clash with the engine's own helpers: `_run`, `_ask`, `_q`, `_g`, `_plain`, `_show`, `_fig`.
 - No internet from Python. Data comes from `site/data/` only, read with `pd.read_csv("file.csv")`.
   Keep each data file under about 3 MB: trim columns and rows in a build step.
 

@@ -8,7 +8,7 @@ const LABELS = 'plt.xlabel("Season")\nplt.ylabel("Home runs   (taller = more)")\
 const LINE_LABELS = 'plt.xlabel("Season")\nplt.ylabel("Home runs   (higher = more)")\nplt.show()';
 
 // What the last chart looked like (written down by the lab's setup code each time a chart is shown).
-const chart = q => JSON.parse(q('_json.dumps(_chart)'));
+const chart = async q => JSON.parse((await q('_json.dumps(_chart)')));
 const has = (text, part) => String(text).toLowerCase().includes(String(part).toLowerCase());
 
 const CELLS = [
@@ -26,9 +26,9 @@ const CELLS = [
   { skill: 'bars', kind: 'turn', data: true, task: '<b>The lying chart.</b> These are <b>Shohei Ohtani\'s</b> home runs, but the title still says Aaron Judge! A chart with the wrong words is worse than no words. Fix the title.',
     code: 'seasons = [2022, 2023, 2024, 2025, 2026]\nhomers = [34, 44, 54, 55, 30]   # Shohei Ohtani\'s home runs\n\nplt.bar(seasons, homers, color="dodgerblue")\nplt.title("Aaron Judge: home runs each season")   # fix this line\n' + LABELS,
     hints: ['Change only the name inside the quotes on the <code>plt.title</code> line.', 'Like this: <code>plt.title("Shohei Ohtani: home runs each season")</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (!/plt\.bar\(/.test(code)) return { msg: 'Keep the <code>plt.bar</code> line, so there is a chart to look at.' };
-      const c = chart(q);
+      const c = await chart(q);
       if (has(c.title, 'judge')) return { msg: 'The title still says Aaron Judge, but these are Ohtani\'s numbers. Change the name in the <code>plt.title</code> line.' };
       if (!has(c.title, 'ohtani')) return { msg: c.title ? `The title says "${esc(c.title)}". It should say whose home runs these are: Shohei Ohtani.` : 'The chart has no title now. Keep the <code>plt.title("...")</code> line and put Shohei Ohtani in it.' };
       if (!c.xlabel || !c.ylabel) return { msg: 'Keep the <code>plt.xlabel</code> and <code>plt.ylabel</code> lines too. Every chart needs all three.' };
@@ -37,27 +37,27 @@ const CELLS = [
   { md: '<h2>Part 2. Straight from the data 🗂️</h2>Typing numbers into lists by hand is slow. The table <code>stats</code> already has every season of every player. A <b>column</b> of the table works just like a list, so we can give columns straight to <code>plt.bar</code>.' },
   { skill: 'data', kind: 'predict', data: true, task: 'This opens the stats and draws <b>all 11</b> of Aaron Judge\'s seasons. <b>Guess first:</b> which season has the tallest bar? Type the year, then run it.',
     code: 'import pandas as pd\nimport matplotlib.pyplot as plt\n\nstats = pd.read_csv("mlb_batting.csv").convert_dtypes()\n\nname = "Aaron Judge"\ncareer = stats[stats["name"] == name]\n\nplt.bar(career["season"], career["HR"])\nplt.title(name + ": home runs each season")\n' + LABELS,
-    check: ({ guess }) => ({ ok: true, missed: +guess !== 2022, msg: (+guess === 2022 ? 'You called it: 2022! ' : `You guessed ${esc(String(guess))}, but the tallest bar is 2022. `) + 'That is his 62 home runs. And <code>name + ": home runs each season"</code> glues the name into the title, so this title can <b>never lie</b>.' }) },
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 2022, msg: (+guess === 2022 ? 'You called it: 2022! ' : `You guessed ${esc(String(guess))}, but the tallest bar is 2022. `) + 'That is his 62 home runs. And <code>name + ": home runs each season"</code> glues the name into the title, so this title can <b>never lie</b>.' }) },
   { skill: 'data', kind: 'turn', data: true, task: 'Draw <b>your</b> favorite player\'s home runs. Change only the name. (If the chart comes out <b>empty</b>, the name is misspelled: it needs capital letters, exactly like in the data.)',
     code: 'name = "Aaron Judge"   # change to your favorite player\ncareer = stats[stats["name"] == name]\n\nplt.bar(career["season"], career["HR"])\nplt.title(name + ": home runs each season")\n' + LABELS,
     hints: ['Change only what is between the quotes on line 1.', 'Like this: <code>name = "Mike Trout"</code>. Capital letters matter.'],
-    check: ({ code, g, q }) => {
-      const name = g('name');
+    check: async ({ code, g, q }) => {
+      const name = (await g('name'));
       if (typeof name !== 'string') return { msg: 'The name must be text, in quotes: <code>name = "Mike Trout"</code>.' };
       if (name === 'Aaron Judge') return { msg: 'That is still Aaron Judge. Type your own favorite player between the quotes on line 1.' };
-      const n = q('len(career)');
+      const n = (await q('len(career)'));
       if (n === 0) return { msg: `The chart is empty: I can't find "${esc(name)}" in the stats. Check the spelling and the capital letters, like <code>"Mike Trout"</code>. (Pitchers are not in this table.)` };
       if (!/plt\.bar\(/.test(code)) return { msg: 'Keep the <code>plt.bar</code> line, so we get a bar chart.' };
-      const c = chart(q);
+      const c = await chart(q);
       if (!has(c.title, name)) return { msg: 'Keep the <code>plt.title(name + ...)</code> line, so the chart says whose home runs these are.' };
-      return { ok: true, msg: `${esc(name)}: ${n} ${n === 1 ? 'season' : 'seasons'}, ${n === 1 ? 'one bar' : 'one bar for each'}. His best was ${q('int(career["HR"].max())')} home runs. And the title changed all by itself!` }; } },
+      return { ok: true, msg: `${esc(name)}: ${n} ${n === 1 ? 'season' : 'seasons'}, ${n === 1 ? 'one bar' : 'one bar for each'}. His best was ${(await q('int(career["HR"].max())'))} home runs. And the title changed all by itself!` }; } },
   { skill: 'data', kind: 'turn', data: true, task: 'Any stat, with the right words. The table uses short codes like <code>"SB"</code>. A <b>dictionary</b> (Lab 7) turns each code into plain words for the chart. One piece is missing: the 6-letter command that writes words along the <b>left side</b>. Fill it in.',
     code: WORDS + '\n\nname = "Shohei Ohtani"\nstat = "SB"\ncareer = stats[stats["name"] == name]\n\nplt.bar(career["season"], career[stat], color="dodgerblue")\nplt.title(name + ": " + words[stat] + " each season")\nplt.xlabel("Season")\nplt.___(words[stat] + "   (taller = more)")\nplt.show()',
     hints: ['You ran it in Part 1. It is the twin of <code>xlabel</code>, for the line that goes <b>up</b>.', 'The line should start with: <code>plt.ylabel(</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (/plt\.xlabel\(\s*words/.test(code)) return { msg: 'Almost! <code>xlabel</code> writes under the bottom line, and that line is already there. We need the one for the <b>left side</b>: y, not x.' };
       if (!/plt\.ylabel\(/.test(code)) return { msg: 'The missing command writes words along the left side of the chart. It has 6 letters and starts with <code>y</code>.' };
-      const c = chart(q);
+      const c = await chart(q);
       if (!c.ylabel) return { msg: 'The left side of the chart has no words yet. The line should be <code>plt.ylabel(words[stat] + "   (taller = more)")</code>.' };
       return { ok: true, msg: `The side now says "${esc(c.ylabel)}", not "SB". <code>words[stat]</code> looked the code up in the dictionary. Change <code>stat</code> to <code>"H"</code> later: the bars <b>and</b> the words change together.` }; } },
   { skill: 'data', kind: 'quiz', task: '<b>Read your chart.</b> Ohtani is famous for home runs. But in which season did he steal the most bases?',
@@ -76,10 +76,10 @@ const CELLS = [
   { skill: 'lines', kind: 'turn', data: true, task: 'Draw <b>Hank Aaron\'s</b> career as a line. The command is missing: it has 4 letters, and it draws a line.',
     code: 'name = "Hank Aaron"\ncareer = stats[stats["name"] == name]\n\nplt.___(career["season"], career["HR"], marker="o")\nplt.title(name + ": home runs each season")\n' + LINE_LABELS,
     hints: ['You ran it in the Babe Ruth box. <code>plt.bar</code> draws bars; which one draws a line?', 'The line should start with: <code>plt.plot(</code>'],
-    check: ({ code, q }) => {
+    check: async ({ code, q }) => {
       if (/plt\.bar\(/.test(code)) return { msg: 'That draws bars. We want a <b>line</b> this time: the 4-letter command from the Babe Ruth box.' };
       if (!/plt\.plot\(/.test(code)) return { msg: 'The missing command draws a line chart. It has 4 letters and starts with <code>p</code>.' };
-      const c = chart(q);
+      const c = await chart(q);
       if (c.lines !== 1) return { msg: 'I expected exactly one line on the chart. Keep the rest of the box as it was.' };
       return { ok: true, msg: 'Compare the shapes. Ruth\'s line has giant mountains. Aaron\'s never goes above 47, but it stays high for almost <b>20 seasons</b> in a row. Two different ways to become a home run king!' }; } },
   { skill: 'lines', kind: 'quiz', task: 'You want to show how a player\'s hits went <b>up and down over his career</b>. Which chart fits best?',
@@ -100,14 +100,14 @@ const CELLS = [
   { skill: 'compare', kind: 'turn', data: true, task: '<b>Make it yours: your own match-up.</b> Pick <b>two players</b> and <b>one stat</b>. Change only the three lines at the top. The dictionary <code>words</code> writes the right words for you.',
     code: 'player1 = "Babe Ruth"     # change to any player\nplayer2 = "Aaron Judge"   # change to any player\nstat = "HR"               # change to "SB", "H", "BB", "SO" or "G"\n\n' + WORDS + '\n\nfor name in [player1, player2]:\n    career = stats[stats["name"] == name]\n    number = range(1, len(career) + 1)\n    plt.plot(number, career[stat], marker="o", label=name)\n\nplt.legend()\nplt.title(player1 + " and " + player2 + ": " + words[stat])\nplt.xlabel("Season of his career   (1 = his first season)")\nplt.ylabel(words[stat] + "   (higher = more)")\nplt.show()',
     hints: ['Change the names inside the quotes on lines 1 and 2. You may keep <code>"HR"</code> or pick another stat.', 'Like this: <code>player1 = "Rickey Henderson"</code>, <code>player2 = "Shohei Ohtani"</code>, <code>stat = "SB"</code>'],
-    check: ({ code, g, q }) => {
-      const p1 = g('player1'), p2 = g('player2');
+    check: async ({ code, g, q }) => {
+      const p1 = (await g('player1')), p2 = (await g('player2'));
       if (typeof p1 !== 'string' || typeof p2 !== 'string') return { msg: 'Both players must be text, in quotes: <code>player1 = "Mike Trout"</code>.' };
       if (p1 === 'Babe Ruth' && p2 === 'Aaron Judge') return { msg: 'That is still my match-up. Put your own players in the quotes on lines 1 and 2.' };
       if (p1 === p2) return { msg: 'Those are the same player twice. Pick two different players to compare.' };
-      for (const p of [p1, p2]) if (!q(`len(stats[stats["name"] == ${JSON.stringify(p)}])`)) return { msg: `I can't find "${esc(p)}" in the stats, so his line is missing. Check the spelling and the capital letters. (Pitchers are not in this table.)` };
+      for (const p of [p1, p2]) if (!(await q(`len(stats[stats["name"] == ${JSON.stringify(p)}])`))) return { msg: `I can't find "${esc(p)}" in the stats, so his line is missing. Check the spelling and the capital letters. (Pitchers are not in this table.)` };
       if (!/plt\.plot\(/.test(code)) return { msg: 'Keep the <code>plt.plot</code> line inside the loop.' };
-      const c = chart(q);
+      const c = await chart(q);
       if (c.lines !== 2) return { msg: 'I expected two lines on the chart, one for each player. Keep the loop as it was.' };
       if (c.legend.length !== 2) return { msg: 'Keep <code>label=name</code> and <code>plt.legend()</code>, or nobody can tell who is who.' };
       if (!c.title || !c.xlabel || !c.ylabel) return { msg: 'A chart without words is a mystery! Keep the title and both label lines.' };
