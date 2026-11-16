@@ -2,8 +2,8 @@
 //   GET  /api/status  -> { ask, voice }
 //   POST /api/ask     -> { kind: 'answer' | 'offtopic' | 'adult' | 'private' | 'limit' | 'error', text? }
 //   POST /api/speak   -> audio/wav
-// Written against the web-standard Request/Response, so the same file runs under Node (server/local.mjs),
-// Cloudflare Pages Functions (functions/api/[[path]].js) and other fetch-style hosts.
+// Written against the web-standard Request/Response; server/local.mjs runs it on this computer.
+// It is not part of the public site: there the question box and live voice are off (DEPLOY.md, "Children's privacy").
 
 const GEMINI = 'https://generativelanguage.googleapis.com/v1beta/interactions';
 

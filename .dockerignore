@@ -1,9 +1,0 @@
-.git
-.claude
-_build
-football
-baseball
-server/.env
-site/tools/node_modules
-site/labs/answers
-**/.DS_Store

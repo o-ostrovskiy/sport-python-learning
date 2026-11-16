@@ -57,8 +57,10 @@ The folder [`site/`](site/) holds the same 20 labs as an interactive website for
 - **A season of game days.** Each lab is a week in a real stadium on a map; a home page shows the season calendar.
 - **Real Python in the page.** Code runs in the browser with [Pyodide](https://pyodide.org); there is nothing to install and no account.
 - **A coach who checks every box.** He says what went wrong in plain words, gives hints step by step, and ends each lab with a short review.
-- **Nothing is collected from a child.** No accounts, no ads, no tracking; the code a child types never leaves the browser.
-- **For home experiments only, off by default:** typed questions to the coach, answered by Google's Gemini through a small server.
+- **Nothing is asked of a child.** No accounts, no ads, nowhere to type a message; the code a child types never leaves the browser.
+  Visits are counted with Google Analytics, with its advertising features off (the About page's Privacy section says exactly what it sees).
+- **Static files, no server.** The public site is the `site/` folder as plain files, served from a small cloud server; nothing runs there but the file server.
+- **For home experiments only, off by default:** typed questions to the coach, answered by Google's Gemini through a small local server (`server/`).
   It is not part of the public children's site (see `DEPLOY.md`, "Children's privacy").
 
 Try it on your computer (needs [Node.js](https://nodejs.org) 20 or newer):
@@ -75,9 +77,13 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/index.html`, `about.html`, `play.html` | home page with the calendar, About, the game |
 | `site/labs/` | one file per lab; [`site/labs/README.md`](site/labs/README.md) explains the format |
 | `site/data/` | trimmed copies of the open data, small enough for a browser |
+| `site/season.js` | the two seasons: weeks, stadiums, map positions, stadium facts |
+| `site/assets/` | coach pictures, recorded coach voice (`voice/`), fonts and the map code (`vendor/`, served from the site itself) |
+| `site/analytics.js` | Google Analytics visit counting, on the public address only |
+| `site/keys.local.js` | not in git: the public Mapbox key for the map, copied to the host with the site |
 | `site/tools/check-lab.mjs` | plays a lab from start to finish in real Python and fails if any box, hint path or answer misbehaves |
-| `site/functions/`, `server/` | the small API that keeps the key private and checks the coach's answers |
-| [`DEPLOY.md`](DEPLOY.md) | how to publish it, and what to settle first |
+| `server/` | for home use only: `local.mjs` runs the site on this computer, `handler.mjs` is the coach-question API that keeps the Gemini key private |
+| [`DEPLOY.md`](DEPLOY.md) | where the public site lives, how to update it, and the launch checklist |
 
 ## How to use the notebooks
 

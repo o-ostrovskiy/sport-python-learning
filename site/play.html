@@ -489,7 +489,7 @@ const LABS = { nfl: {}, mlb: {} };
 function registerLab(sp, n, lab) { LABS[sp][n - 1] = lab; }
 
 /* ---------- ask the coach: Python questions only ---------- */
-// The rules for the coach's answers live on the server (functions/_handler.mjs), where a child cannot change them.
+// The rules for the coach's answers live on the server (server/handler.mjs), where a child cannot change them.
 const ASK_OFF = 'Good question for another day! In the film room I can only talk about <b>Python and this lab</b>. Ask me about your code, an error, or what a word like <code>append</code> means.';
 const ASK_ADULT = 'That sounds important. Please talk to your mom, dad or another grown-up you trust right now. I am only a coding coach, but they can really help.';
 const ASK_PRIVATE = 'Careful! Never type private things like your address, phone, email or passwords here. Ask me a Python question instead.';

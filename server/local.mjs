@@ -1,11 +1,11 @@
-// Runs the whole site on one port: the pages from site/ plus the /api/* routes that hide the Gemini key.
+// Runs the site on this computer: the pages from site/ plus the /api/* routes that hide the Gemini key.
 //   node server/local.mjs            (reads server/.env; PORT defaults to 8765)
-// The same file works on any Node host (Cloud Run, Render, Fly): set the variables there instead of .env.
+// For home use only. The public site (python.mystoryland.ai) is the site/ folder as static files, with no server.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { handle } from '../site/functions/_handler.mjs';
+import { handle } from './handler.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url)), SITE = path.resolve(HERE, '..', 'site');
 const env = { ...process.env };
