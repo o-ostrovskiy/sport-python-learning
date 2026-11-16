@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Python Season</title>
-<link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="assets/vendor/fonts/fonts.css">
 <script src="analytics.js"></script>
 <style>
@@ -40,19 +39,32 @@ body:has(#game.on) #sched{display:none}   /* no week buttons during a game: a st
 .wk.won .n{background:#d9f7e4}
 .wk.locked{opacity:.6}
 
-/* map */
-main{flex:1;position:relative;min-width:0}
-#map{position:absolute;inset:0;background:#cfe3ee}
-.pin{width:46px;height:46px;border-radius:14px;rotate:-6deg;display:grid;place-items:center;font-size:22px;background:#fff;border:4px solid var(--ink);box-shadow:0 4px 0 #0003;transition:transform .15s}
-.leaflet-marker-icon{transition:opacity .3s}
-.pin:hover{transform:scale(1.2) rotate(-8deg)}
-.pin.next{border-color:var(--gold);animation:pulse 1.2s infinite}
-.pin.won{border-color:var(--ok)}
-.pin.locked{filter:grayscale(1);opacity:.8}
-@keyframes pulse{50%{box-shadow:0 0 0 12px #ff9f1c66,0 4px 0 #0003}}
-.leaflet-container{font-family:inherit}
-
-#whole{display:none;position:absolute;top:14px;left:14px;z-index:1000;background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:14px;padding:8px 14px;font-size:15px;font-weight:600}
+/* map: one drawing of the 48 states, made once by tools/build-map.mjs; no map service, no pan and zoom */
+:root{--sea:#bfe0f0;--land:#fff4dc}
+main{flex:1;position:relative;min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;background:var(--sea);
+ background-image:radial-gradient(circle at 20px 20px,#ffffff55 2px,#0000 3px);background-size:46px 46px}
+#map{position:relative;min-width:0;min-height:0}
+#map svg{position:absolute;inset:6px;width:calc(100% - 12px);height:calc(100% - 12px)}
+#map .shadow{fill:var(--ink);opacity:.9}
+#map .land{fill:var(--land);stroke:var(--ink);stroke-width:4;stroke-linejoin:round}
+#map .borders{fill:none;stroke:#e3cfa3;stroke-width:1.6;stroke-dasharray:1 5;stroke-linecap:round}
+#map .route{fill:none;stroke:var(--ink);stroke-width:3.5;stroke-dasharray:2 11;stroke-linecap:round;opacity:.75}
+#map .route.done{stroke:var(--grass);opacity:1}
+.pin{cursor:pointer;outline:none}
+.pin .tile{fill:#fff;stroke:var(--ink);stroke-width:4;filter:drop-shadow(0 4px 0 #0003);transition:stroke-width .15s}
+.pin:hover .tile{stroke-width:6}.pin:focus-visible .tile{stroke:var(--gold);stroke-width:7}
+.pin .num{font:700 22px Fredoka,system-ui,sans-serif;text-anchor:middle;fill:var(--ink)}.pin .emo{font-size:24px;text-anchor:middle}
+.pin.won .tile{fill:#d9f7e4;stroke:var(--ok)}
+.pin.next .tile{fill:var(--gold)}
+.pin.locked{opacity:.75}.pin.locked .tile{fill:#e4e9f2}
+.pin .glow{fill:#ff9f1c55;animation:glow 1.3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes glow{50%{transform:scale(1.35);opacity:.3}}
+.pin .flag{display:none}.pin.show .flag{display:inline}
+.flag rect{fill:var(--ink)}.flag text{font:700 15px Fredoka,system-ui,sans-serif;fill:#fff;text-anchor:middle}
+#map .mball{font-size:30px;pointer-events:none}
+#map .title{font:700 26px Fredoka,system-ui,sans-serif;fill:var(--ink)}#map .sub{font:600 14px Fredoka,system-ui,sans-serif;fill:#5b6b88}
+#map .compass text{font:700 15px Fredoka,system-ui,sans-serif;fill:var(--ink);text-anchor:middle}
+@media(prefers-reduced-motion:reduce){.pin .glow{animation:none}}
 /* coach */
 #coach{position:absolute;right:18px;bottom:14px;z-index:1200;display:flex;flex-direction:row-reverse;align-items:flex-end;gap:6px;pointer-events:none;max-width:calc(100% - 36px)}
 #coach img{width:170px;height:170px;flex:none;pointer-events:auto;cursor:pointer;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 0 #0003);transform-origin:50% 100%}
@@ -68,6 +80,14 @@ main{flex:1;position:relative;min-width:0}
 .lid{animation:blink 4s infinite;transform-origin:75px 74px}
 @keyframes blink{0%,94%,100%{transform:scaleY(0)}97%{transform:scaleY(1)}}
 .bubble{pointer-events:auto;background:#fff;color:var(--ink);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:22px 22px 4px 22px;padding:12px 16px;margin-bottom:38px;font-size:17px;line-height:1.35;max-width:430px}
+#coach:not(.lab){position:relative;right:auto;bottom:auto;max-width:none;z-index:1;flex-direction:row-reverse;align-items:flex-end;padding:8px 12px 10px;background:#eef3fb;border-top:3px solid #d3deef}
+#coach:not(.lab) img{width:96px;height:96px}
+#coach:not(.lab) .bubble{flex:1;min-width:0;max-width:none;margin:0;font-size:15px}
+@media (min-width:1000px) and (min-aspect-ratio:5/4){
+ main{grid-template-rows:minmax(0,1fr);grid-template-columns:minmax(0,1fr) 340px}
+ #coach:not(.lab){flex-direction:column-reverse;justify-content:flex-start;padding:14px 16px;background:none;border:0}
+ #coach:not(.lab) img{width:150px;height:150px}
+ #coach:not(.lab) .bubble{flex:none;border-radius:22px 4px 22px 22px;font-size:16px}}
 .bubble .who{display:inline-block;background:var(--grass);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 8px;border-radius:8px;margin-bottom:4px}
 .bubble code{font-family:"JetBrains Mono",monospace;background:#e7efff;padding:1px 6px;border-radius:6px;color:#2a4d8f}
 .bubble .go{display:block;margin-top:10px;background:var(--gold);color:var(--ink);border:0;border-radius:12px;padding:9px 16px;font-size:16px;font-weight:700;box-shadow:0 4px 0 #c46f00}
@@ -165,7 +185,6 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
 
 <main>
   <div id="map"></div>
-  <button id="whole">🗺 Whole map</button>
 
   <section id="game">
     <div class="board">
@@ -187,10 +206,9 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
   </div>
 </main>
 
-<script src="keys.local.js"></script>
 <script src="season.js"></script>
 <script src="assets/voice/index.js"></script>
-<script src="assets/vendor/leaflet/leaflet.js"></script>
+<script src="assets/usa-map.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const store = { get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
@@ -328,46 +346,60 @@ $('#coachSvg').onclick = () => say(['Hey, that tickles!', 'I am a ball. I do not
 /* ---------- map ---------- */
 const params = new URLSearchParams(location.search);
 let sport = params.get('sport') === 'mlb' ? 'mlb' : 'nfl', wantWeek = (parseInt(params.get('week')) || 0) - 1, won = loadWins();
-const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([38.5, -96], 4);
-L.control.zoom({ position: 'topright' }).addTo(map);
-// Map pictures come from Mapbox when keys.local.js (not in git) sets window.MAPBOX_TOKEN. Use a PUBLIC key
-// (it starts with "pk.") that is limited to this site's address in the Mapbox account. Without the file,
-// the old test servers are used.
-const MAPBOX_TOKEN = window.MAPBOX_TOKEN || '';
-const MB_CREDIT = '&copy; <a href="https://www.mapbox.com/about/maps">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://apps.mapbox.com/feedback/" target="_blank" rel="noopener">Improve this map</a></strong>';
-const MB_SIZE = { tileSize: 512, zoomOffset: -1, maxZoom: 18, minZoom: 3 };
-const street = (MAPBOX_TOKEN
-  ? L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/512/{z}/{x}/{y}?access_token=' + MAPBOX_TOKEN, { ...MB_SIZE, attribution: MB_CREDIT })
-  : L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, minZoom: 3, attribution: '&copy; OpenStreetMap contributors' })).addTo(map);
-const photo = MAPBOX_TOKEN
-  ? L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/512/{z}/{x}/{y}?access_token=' + MAPBOX_TOKEN, { ...MB_SIZE, attribution: MB_CREDIT + ' &copy; <a href="https://www.maxar.com/">Maxar</a>' })
-  : L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, attribution: 'Imagery &copy; Esri' });
-if (MAPBOX_TOKEN) { // Mapbox asks for its name on the map as well as the small print
-  const logo = L.control({ position: 'bottomleft' });
-  logo.onAdd = () => { const a = L.DomUtil.create('a'); a.href = 'https://www.mapbox.com/'; a.target = '_blank'; a.rel = 'noopener';
-    a.setAttribute('aria-label', 'Mapbox'); a.style.cssText = 'display:block;width:88px;height:23px;background:url(assets/mapbox-logo.svg) no-repeat 0 0/88px 23px'; return a; };
-  logo.addTo(map);
+// A gentle arc between two spots, for the route and for the ball's flight.
+const arc = (a, b) => { const mx = (a[0] + b[0]) / 2, my = (a[1] + b[1]) / 2, dx = b[0] - a[0], dy = b[1] - a[1];
+  return `M${a[0]},${a[1]} Q${Math.round(mx - dy * .18)},${Math.round(my + dx * .18)} ${b[0]},${b[1]}`; };
+// won: a trophy; next: the first playable week not won yet, glowing; later: playable, waiting its turn; locked: coming soon.
+function status(i) {
+  const W = SEASON[sport].weeks;
+  if (won[sport].includes(i)) return 'won';
+  if (!W[i].ready) return 'locked';
+  return i === W.findIndex((w, k) => w.ready && !won[sport].includes(k)) ? 'next' : 'later';
 }
-map.on('zoomend', () => { const close = map.getZoom() >= 13;
-  if (close && !map.hasLayer(photo)) { photo.addTo(map); map.removeLayer(street); }
-  if (!close && !map.hasLayer(street)) { street.addTo(map); map.removeLayer(photo); }
-  $('#whole').style.display = map.getZoom() > 5 ? 'block' : 'none'; });
-const layer = L.layerGroup().addTo(map);
-
-function status(i) { return won[sport].includes(i) ? 'won' : SEASON[sport].weeks[i].ready ? 'next' : 'locked'; }
+const pinFace = (st, i) => st === 'won' ? '🏆' : st === 'locked' ? '🔒' : String(i + 1);
+let ballAt = 0;   // the stadium the ball stands next to
+const BALL = [32, 16];   // the ball sits at the bottom right of a stadium's tile, clear of the name flag
 function draw() {
-  const S = SEASON[sport]; layer.clearLayers();
-  L.polyline(S.weeks.map(w => w.at), { color: '#10203a', weight: 4, dashArray: '2 12', lineCap: 'round' }).addTo(layer);
+  const S = SEASON[sport], M = window.USA_MAP, xy = S.weeks.map(w => w.xy), st = S.weeks.map((w, i) => status(i));
+  const show = picked >= 0 ? picked : st.indexOf('next');
+  ballAt = picked >= 0 ? picked : won[sport].length ? won[sport][won[sport].length - 1] : 0;
+  const legs = xy.slice(1).map((p, i) => `<path class="route${won[sport].includes(i) ? ' done' : ''}" d="${arc(xy[i], p)}"/>`).join('');
+  const pins = S.weeks.map((w, i) => `<g class="pin ${st[i]}${i === show ? ' show' : ''}" data-i="${i}" transform="translate(${xy[i]})" tabindex="0" role="button"
+      aria-label="Week ${i + 1}: ${w.city}, ${w.stadium}${st[i] === 'won' ? ', won' : st[i] === 'locked' ? ', coming soon' : ''}">
+    ${st[i] === 'next' ? '<circle class="glow" r="30"/>' : ''}<rect x="-23" y="-23" width="46" height="46" rx="12" transform="rotate(-6)" class="tile"/>
+    <text y="${st[i] === 'won' ? 8 : 9}" class="${/\d/.test(pinFace(st[i], i)) ? 'num' : 'emo'}">${pinFace(st[i], i)}</text>
+    <g class="flag" transform="translate(0,-42)"><rect x="${-(14 + w.city.length * 4.6)}" y="-16" width="${28 + w.city.length * 9.2}" height="28" rx="8"/><text y="4">${w.city}</text></g></g>`).join('');
+  $('#map').innerHTML = `<svg viewBox="0 0 ${M.W} ${M.H}" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Map of the ${sport === 'mlb' ? 'baseball' : 'football'} season">
+    <path class="shadow" d="${M.land}" transform="translate(6,7)"/><path class="land" d="${M.land}"/><path class="borders" d="${M.borders}"/>
+    ${legs}${pins}<text class="mball" aria-hidden="true">${S.ball}</text>
+    <g class="compass" aria-hidden="true" transform="translate(${M.W - 70},${M.H - 70})"><circle r="26" fill="#fff" stroke="#10203a" stroke-width="3"/><path d="M0,-18 L6,0 L0,18 L-6,0Z" fill="#ff5a4f" stroke="#10203a" stroke-width="2"/><text y="-32">N</text></g>
+    <text class="title" x="40" y="${M.H - 52}">${sport === 'mlb' ? 'Baseball' : 'Football'} road trip</text><text class="sub" x="40" y="${M.H - 30}">${S.weeks.length} stadiums · ${won[sport].length} won</text></svg>`;
+  $('#map').querySelectorAll('.pin').forEach(g => { const i = +g.dataset.i; g.onclick = () => tap(i);
+    g.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tap(i); } }; });
+  setBall(xy[ballAt]);
   $('#sched').innerHTML = '';
   S.weeks.forEach((w, i) => {
-    const st = status(i), face = st === 'won' ? '✅' : st === 'locked' ? '🔒' : S.ball;
-    L.marker(w.at, { icon: L.divIcon({ className: '', iconSize: [46, 46], iconAnchor: [23, 23], html: `<div class="pin ${st}">${face}</div>` }) })
-      .addTo(layer).on('click', () => tap(i));
-    const b = document.createElement('button'); b.className = 'wk ' + st;
-    b.innerHTML = `<span class="n">${face}</span><span>Week ${i + 1} · ${w.city}<small>${w.stadium}</small></span>`;
+    const b = document.createElement('button'); b.className = 'wk ' + st[i];
+    b.innerHTML = `<span class="n">${st[i] === 'won' || st[i] === 'locked' ? pinFace(st[i], i) : S.ball}</span><span>Week ${i + 1} · ${w.city}<small>${w.stadium}</small></span>`;
     b.onclick = () => tap(i); $('#sched').appendChild(b);
   });
   $('#rec').textContent = `${won[sport].length}–0`;
+}
+function setBall(p) { const b = $('#map .mball'); if (b) { b.setAttribute('x', p[0] + BALL[0] - 15); b.setAttribute('y', p[1] + BALL[1] + 10); } }
+// The trip to a stadium: the ball flies along an arc from where it stands, in about a second.
+let flight = 0;
+function flyBall(to) {
+  const xy = SEASON[sport].weeks.map(w => w.xy), from = ballAt; ballAt = to;
+  const off = p => [p[0] + BALL[0], p[1] + BALL[1]], n = ++flight;
+  if (calm || from === to) return setBall(xy[to]);
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path'); path.setAttribute('d', arc(off(xy[from]), off(xy[to])));
+  const len = path.getTotalLength(), t0 = performance.now(), ms = 1100;
+  (function step(t) {
+    if (n !== flight) return;
+    const k = Math.min(1, (t - t0) / ms), e = k < .5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2, pt = path.getPointAtLength(e * len);
+    setBall([pt.x - BALL[0], pt.y - BALL[1]]);
+    if (k < 1) requestAnimationFrame(step);
+  })(t0);
 }
 // First tap flies to the stadium; a second tap on the same one starts its lab.
 let picked = -1;
@@ -375,7 +407,7 @@ function tap(i) { const w = SEASON[sport].weeks[i]; if (picked === i && w.ready)
 function pick(i) {
   picked = i;
   const w = SEASON[sport].weeks[i], st = status(i);
-  map.flyTo(w.at, 16, { duration: 2.2 });
+  $('#map').querySelectorAll('.pin').forEach(g => g.classList.toggle('show', +g.dataset.i === i)); flyBall(i);
   const card = stadiumLine(w);
   if (!w.ready) return say(`${card}<br><br>${playbookLine(w, i)} This game is coming soon!`);
   loadBase().catch(() => {});   // start loading Python now, while the child looks at the stadium
@@ -388,10 +420,9 @@ function pick(i) {
   }
   say(`${card}<br><br>${playbookLine(w, i)} Tap the ball again or press Kick off!`, 'jump', { label: st === 'won' ? 'Play again' : 'Kick off!', go: () => startGame(w, i) });
 }
-$('#whole').onclick = () => { picked = -1; map.flyTo([38.5, -96], 4, { duration: 1.5 }); say('Here is the whole season. Tap a stadium to fly there!'); };
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
-  sport = t.dataset.sport; picked = -1; draw(); map.flyTo([38.5, -96], 4);
+  sport = t.dataset.sport; picked = -1; draw();
   say(sport === 'mlb' ? 'Baseball season! Same Python, different ballpark. These games are coming soon.' : 'Back to the gridiron! Tap a stadium on the map.');
 });
 
@@ -782,7 +813,7 @@ function report() {
   say(weak.length ? `Great game! Next time we will warm up with <b>${weak.join(' and ')}</b>.`
                   : 'A perfect game! Every skill locked in.', 'win', { label: 'Back to the map', go: leave });
 }
-function leave() { saveNow(); keepSaving = false; $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); $('#whole').onclick(); }
+function leave() { saveNow(); keepSaving = false; $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); picked = -1; draw(); say('Here is the whole season. Tap a stadium to fly there!'); }
 $('#quit').onclick = () => { saveNow(); keepSaving = false; $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); say('Back on the map. Tap a stadium to play.'); };
 
 // On narrow screens the playbook ends where the coach's strip begins.

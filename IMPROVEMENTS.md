@@ -28,7 +28,7 @@ The weak spots, all fixed below:
 
 ## Must do
 
-### 1. Save the lesson in progress (the owner's own complaint)
+### 1. Save the lesson in progress (the owner's own complaint) — DONE 2026-11-16
 **Today:** only finished weeks are saved (`localStorage` key `wins`). Leave a lab half way, come back, and every box
 is back to its starting code, the ball is at the start, and the hints and the review are reset.
 
@@ -74,7 +74,7 @@ Either way, add a line to `DEPLOY.md` saying which route was chosen. Also expect
 roughly 25–30 MB when all ~900 lines are recorded. That is fine for git. Git LFS is only worth it if more sports and
 voices come.
 
-### 3. Run Python off the main thread, with a Stop button
+### 3. Run Python off the main thread, with a Stop button — DONE 2026-11-16 (the simple way: Stop restarts the worker)
 **Today:** `py.runPythonAsync(code)` runs on the page's main thread (`runBox` in `play.html`). A child who writes
 `while True:` in the loops lab (Week 5) or the guessing game (Week 8) freezes the whole page. There is no way out but
 closing the tab, and the lesson is lost with it, until item 1 is done.
@@ -94,7 +94,7 @@ closing the tab, and the lesson is lost with it, until item 1 is done.
 
 **Done when:** a test runs `while True: pass` in a box, presses Stop within 5 seconds, then runs the next box successfully.
 
-### 4. Replace the map with a drawn one (the owner's idea, and it is the better choice)
+### 4. Replace the map with a drawn one (the owner's idea, and it is the better choice) — DONE 2026-11-16
 **Today:** Leaflet plus Mapbox street and satellite pictures. That means:
 - a key in `keys.local.js` that must be kept out of git and copied to the host by hand;
 - a third party that sees every child's internet address;

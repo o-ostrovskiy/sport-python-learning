@@ -9,9 +9,8 @@ hosted, how to update it, and what was settled before launch.
 |---|---|---|
 | Pages: home + calendar, About, the game | `site/index.html`, `site/about.html`, `site/play.html`, `site/season.js`, `site/pages.css` | Yes, static files |
 | Lessons | `site/labs/<sport>-<NN>.js` (a week becomes playable when its file exists) | Yes |
-| Data, pictures, recorded voice, fonts, map code | `site/data/*.csv`, `site/assets/` (`voice/`, `vendor/`) | Yes |
+| Data, pictures, recorded voice, fonts, the drawn map | `site/data/*.csv`, `site/assets/` (`voice/`, `vendor/`, `usa-map.js`) | Yes |
 | Python | Runs in the child's browser (Pyodide, loaded from jsDelivr) | Yes, nothing on our side |
-| Map pictures | Mapbox, with the public key in `site/keys.local.js` (not in git) | Yes |
 | Visit counting | `site/analytics.js` (Google Analytics, public address only) | Yes |
 | Answer keys and the lesson checker | `site/labs/answers/`, `site/tools/` | **No**, never uploaded |
 | Coach questions and live voice | `server/handler.mjs` (the API), `server/local.mjs` (runs pages + API on this computer) | **No**, home use only |
@@ -35,13 +34,13 @@ On the Storyland Lightsail box (decided 2026-11-15, live 2026-11-16), as a secon
 ## Updating the site
 
 A content change (a lesson, a page, new voice files) needs no restart. From a clean copy of `site/` without
-`tools/`, `labs/answers/` and `*.md`, with `keys.local.js` next to `play.html`, sync it to the box. The commands are in
+`tools/`, `labs/answers/` and `*.md`, sync it to the box. The commands are in
 the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for this computer, `rsync --delete` to
 `~/python-season/`, close SSH. Then open the site and check that a lesson runs and the answer keys give "Not found".
 
 Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson. Before every update that
-touches `play.html`, `py-worker.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
-`node test-stop.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
+touches `play.html`, `py-worker.js`, `season.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
+`node test-stop.mjs`, `node test-map.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
 
 **Coach voice goes live by itself** (decided 2026-11-16): the daily scheduled task "Запись голоса тренера" records the next
 lines, commits only `site/assets/voice/`, pushes, and uploads that folder to `~/python-season/assets/voice/` (clips first,
@@ -70,9 +69,9 @@ Must do
       Both are now off unless `ASK=on` / `VOICE=on` is set on the server; the box is hidden when off; recorded voice still plays.
       Why: (1) Google's Gemini API terms forbid using it in a site "directed towards or likely to be accessed by" people under 18
       (https://aistudio.google.com/docs/terms); (2) under COPPA (amended rule, in force since 2026-04-22) free text typed by a
-      child under 13 and passed to another company needs a parent's verifiable consent. Fonts and the map code are now served
-      from `site/assets/vendor/` so pages no longer call Google Fonts or unpkg. Still outside our site: map pictures and jsDelivr
-      (Python engine); both are named in the Privacy section of `about.html`. This is not a lawyer's opinion.
+      child under 13 and passed to another company needs a parent's verifiable consent. Fonts are served from
+      `site/assets/vendor/` so pages no longer call Google Fonts or unpkg, and the map is our own drawing (2026-11-16: no Mapbox,
+      no map key). Still outside our site: jsDelivr (Python engine), named in the Privacy section of `about.html`. This is not a lawyer's opinion.
       To bring the question box back later: another AI provider whose terms allow children's products, parental consent, and a lawyer.
 - [x] **Visit counting.** Decided by the owner 2026-11-15: Google Analytics (property "Python Season", `G-KVVSBG2CE6`, loaded by
       `site/analytics.js` on the public address only). In the property: Google signals off, ads personalization off in all regions,
@@ -80,11 +79,9 @@ Must do
       personal is collected and there is no behavioural advertising; the Privacy section of `about.html` now says this plainly.
       Never link this property to Google Ads. This is not a lawyer's opinion.
 - [x] **Privacy contact.** Decided 2026-11-15: the About page sends parents to the project's GitHub page; no email address.
-- [ ] **Map pictures.** The map uses Mapbox for both the street map and the satellite view (2026-11-15; the key is in `site/keys.local.js`,
-      which is not in git: GitHub refuses pushes that contain it. Copy that file to the host with the site. Read by `play.html`, free for 200,000 map pictures a month).
-      The map shows on the live site (checked 2026-11-16), so the key accepts the public address. Still open:
-      check in the Mapbox account that the key's "URL restrictions" list only `python.mystoryland.ai` and `localhost`,
-      and in the billing page whether a bank card is attached.
+- [x] **Map.** Since 2026-11-16 the map is one drawing of the 48 states (`site/assets/usa-map.js`, made by
+      `node site/tools/build-map.mjs` from US Census Bureau outlines). No map service and no key. The old Mapbox key can be deleted
+      in the Mapbox account.
 - [ ] **A separate Gemini key with a spending cap.** The public site uses no key; the key in `server/.env` is used at home
       (the home server and `record-voice.mjs`). Give it its own Google Cloud project with a monthly spending cap, and never reuse another project's key.
 - [x] **Facts check.** Stadium facts and seat numbers in `site/season.js` checked against sources on 2026-11-15; 7 lines corrected. Check Camden Yards seats again after Opening Day 2027.
