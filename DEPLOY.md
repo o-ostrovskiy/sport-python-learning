@@ -41,6 +41,10 @@ the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for thi
 
 Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson.
 
+**Coach voice goes live by itself** (decided 2026-11-16): the daily scheduled task "Запись голоса тренера" records the next
+lines, commits only `site/assets/voice/`, pushes, and uploads that folder to `~/python-season/assets/voice/` (clips first,
+then the index files, never `--delete`). Its prompt lives in `~/.claude/scheduled-tasks/record-coach-voice/SKILL.md`.
+
 ## The home server (not on the public site)
 
 `node server/local.mjs` serves the pages plus `/api/*`. With `ASK=on` / `VOICE=on` in `server/.env` it offers typed
