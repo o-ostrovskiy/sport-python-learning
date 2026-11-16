@@ -6,10 +6,12 @@
 <title>Python Season</title>
 <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="assets/vendor/fonts/fonts.css">
+<script src="analytics.js"></script>
 <style>
 :root{--navy:#0d1b2e;--navy2:#16294a;--gold:#ff9f1c;--grass:#2f8f3a;--grass2:#27792f;--ink:#10203a;--red:#ff5a4f;--ok:#31c46b}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
+html,body,aside,main,button,a,#game,#game *,#coach,#coach *{touch-action:manipulation}   /* a quick second tap must not zoom the page on an iPad */
 body{font-family:Fredoka,system-ui,sans-serif;display:flex;flex-direction:column;background:#fff;color:var(--ink);overflow:hidden}
 button{font-family:inherit;cursor:pointer}
 
@@ -27,6 +29,7 @@ aside{flex:none;display:grid;grid-template-columns:auto auto 1fr;align-items:cen
 .record b{font-family:"JetBrains Mono",monospace;background:var(--ink);color:var(--gold);font-size:20px;padding:2px 12px;border-radius:8px}
 h4{display:none}
 #sched{grid-column:1/-1;display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px}
+body:has(#game.on) #sched{display:none}   /* no week buttons during a game: a stray tap would start another one */
 .wk{flex:none;display:flex;align-items:center;gap:10px;text-align:left;padding:7px 14px 7px 8px;border-radius:12px;border:3px dashed #c3cfe4;background:#fff;color:var(--ink);font-size:15px;font-weight:600;transition:transform .15s}
 .wk:hover{transform:translateY(-3px) rotate(-1deg)}
 .wk .n{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#eef3fb;font-size:19px;flex:none}
@@ -72,10 +75,9 @@ main{flex:1;position:relative;min-width:0}
 
 #ask{display:none;order:1;pointer-events:auto;width:100%;flex-wrap:wrap;gap:6px;margin-bottom:2px}
 #coach.lab #ask{display:flex}
-#askIn{flex:1;min-width:0;font-family:inherit;font-size:15px;padding:9px 12px;border-radius:14px;border:3px solid var(--ink);color:var(--ink);background:#fff}
+#askIn{flex:1;min-width:0;font-family:inherit;font-size:16px;padding:9px 12px;border-radius:14px;border:3px solid var(--ink);color:var(--ink);background:#fff}
 #ask button{width:42px;border-radius:14px;border:3px solid var(--ink);background:var(--gold);color:var(--ink);font-size:16px;box-shadow:3px 3px 0 var(--ink)}
 #askMsg{flex-basis:100%;font-size:13px;font-weight:600;color:#b3261e;min-height:16px}
-@media(max-width:820px){#coach.lab #ask{display:none}}
 body:not(.ask-on) #ask{display:none!important}   /* the question box shows only when the server offers it */
 /* lab notebook */
 #game{position:absolute;inset:0;z-index:1100;display:none;flex-direction:column;background:#eef3fb;color:var(--ink)}
@@ -110,6 +112,8 @@ textarea.code:focus{outline-color:var(--gold)}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
 .run{background:var(--ok);color:#fff;border:0;border-radius:14px;padding:10px 22px;font-size:17px;font-weight:700;box-shadow:0 5px 0 #1f8e4b}
 .run:active{transform:translateY(3px);box-shadow:0 2px 0 #1f8e4b}
+.run.busy{background-image:linear-gradient(45deg,rgba(255,255,255,.28) 25%,transparent 25% 50%,rgba(255,255,255,.28) 50% 75%,transparent 75%);background-size:28px 28px;animation:stripes .8s linear infinite}
+@keyframes stripes{to{background-position:28px 0}}
 .hint{background:#fff;color:var(--ink);border:3px solid #d5deee;border-radius:14px;padding:8px 16px;font-size:16px;font-weight:600}
 .key{color:#7a8aa6;font-size:13px}
 .guess{font-family:"JetBrains Mono",monospace;font-size:18px;width:110px;padding:8px 12px;border-radius:12px;border:3px solid #b9c6de;color:var(--ink)}
@@ -132,7 +136,10 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
 .confetti{position:absolute;top:-20px;width:12px;height:18px;z-index:1300;animation:fall linear forwards;pointer-events:none}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 @media(max-width:1000px){.record span{display:none}}
-@media(max-width:820px){#coach img{width:104px;height:104px}.bubble{font-size:15px}#nb{padding:16px 14px 250px}#coach.lab{flex-direction:row-reverse;align-items:flex-end;width:auto;top:auto;bottom:10px}#coach.lab .bubble{max-width:none;max-height:40vh;border-radius:22px 22px 4px 22px}}
+@media(max-width:820px){#coach img{width:104px;height:104px}.bubble{font-size:15px}#nb{padding:16px 14px 40px}
+ /* narrow screens (an iPad held upright): the coach sits in his own strip under the playbook and covers nothing */
+ #coach.lab{flex-direction:row-reverse;flex-wrap:wrap;align-items:flex-end;width:auto;max-width:none;top:auto;left:0;right:0;bottom:0;padding:8px 12px 10px;gap:6px 8px;background:#eef3fb;border-top:3px solid #d3deef;pointer-events:auto}
+ #coach.lab img{width:76px;height:76px}#coach.lab .bubble{flex:1;min-width:0;max-width:none;max-height:150px;margin:0;border-radius:22px 22px 4px 22px}#coach.lab #askMsg{min-height:0}}
 </style>
 </head>
 <body>
@@ -165,12 +172,13 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
   </section>
 
   <div id="coach">
-    <img id="coachSvg" src="assets/coach-wave.png" alt="Coach Andrew" width="170" height="170">
+    <img id="coachSvg" src="assets/coach-wave.webp" alt="Coach Andrew" width="170" height="170">
     <div class="bubble"><span class="who">COACH ANDREW</span><div id="say"></div></div>
     <form id="ask" autocomplete="off"><input id="askIn" maxlength="200" placeholder="Ask me about Python…" aria-label="Ask Coach Andrew about Python"><button aria-label="Send question">➤</button><div id="askMsg"></div></form>
   </div>
 </main>
 
+<script src="keys.local.js"></script>
 <script src="season.js"></script>
 <script src="assets/voice/index.js"></script>
 <script src="assets/vendor/leaflet/leaflet.js"></script>
@@ -223,10 +231,42 @@ addEventListener('pointerdown', () => { if (actx?.state === 'suspended') actx.re
 const loadClip = url => { const el = new Audio(url); el.preload = 'auto'; return wire(el); };
 const playClip = el => new Promise((done, fail) => { audio = el; el.onended = done; el.onerror = () => fail(new Error('clip did not load')); el.play().catch(fail); });
 let level = 0;
+// Mouth and eyes. Next to each coach picture sit three more: -talk (the other mouth), -blink and -talkblink.
+// The mouth follows the loudness of his voice, and he blinks every few seconds.
+let pose = 'assets/coach-wave', frame = '', mouthOpen = false, blinkAt = performance.now() + 3000;
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches, frames = {};
+function setPose(p) {
+  pose = p; frame = ''; $('#coachSvg').src = p + '.webp';
+  if (!calm) for (const f of ['-talk', '-blink', '-talkblink']) (frames[p + f] ??= new Image()).src = p + f + '.webp';
+}
+// A reaction (cheer, flag, hint) is brief: once the line has been read or spoken he goes back to his resting picture.
+// He also goes back at once when the child presses the bubble's button or starts typing. The trophy stays until the next line.
+let restStem = 'assets/coach-wave', restAt = 0;   // say() keeps restStem in step with the sport
+const restPose = () => restStem;
+function rest() {
+  restAt = 0; const c = $('#coach');
+  if (c.classList.contains('win') || pose === restPose()) return;
+  c.classList.remove('jump', 'flag', 'hint', 'talk'); setPose(restPose());
+}
+function face(t) {
+  if (restAt && t > restAt && level < .02 && !window.speechSynthesis?.speaking && !(audio && !audio.paused && !audio.ended)) rest();
+  if (calm) return;
+  // With the computer's own voice, or with the voice off, there is no sound to measure: the mouth keeps a steady rhythm.
+  const steady = window.speechSynthesis?.speaking || (!voiceOn && $('#coach').classList.contains('talk'));
+  const speaking = level > .02 || steady;
+  mouthOpen = level > .02 ? level > (mouthOpen ? .12 : .2) : steady && t % 280 < 150;
+  const restsOpen = !/flag|watch/.test(pose);   // the flag and watching pictures rest with a closed mouth
+  if (t > blinkAt + 140) blinkAt = t + 2500 + Math.random() * 3500;
+  const m = speaking && mouthOpen !== restsOpen, b = t > blinkAt;
+  const f = m && b ? '-talkblink' : m ? '-talk' : b ? '-blink' : '';
+  if (f === frame || (f && !(frames[pose + f]?.complete && frames[pose + f].naturalWidth))) return;   // a picture still loading: keep the current one
+  frame = f; $('#coachSvg').src = pose + f + '.webp';
+}
 (function bounce() {
   requestAnimationFrame(bounce); let now = 0;
   if (meter && audio && !audio.paused && !audio.ended) { meter.getByteTimeDomainData(amp); let sum = 0; for (const v of amp) sum += ((v - 128) / 128) ** 2; now = Math.min(1, 4.5 * Math.sqrt(sum / amp.length)); }
   level += (now - level) * (now > level ? .55 : .18);
+  face(performance.now());
   const img = $('#coachSvg').style;
   if (level < .01) { if (img.scale) img.scale = img.translate = ''; return; }
   img.scale = `${1 - .04 * level} ${1 + .09 * level}`; img.translate = `0 ${-7 * level}px`;
@@ -259,15 +299,20 @@ async function speak(text) {
 function say(html, mood = '', btn) {
   const c = $('#coach'), box = $('#say');
   const lab = c.classList.contains('lab'); c.className = mood; void c.offsetWidth; c.classList.add('talk'); c.classList.toggle('lab', lab);
-  $('#coachSvg').src = 'assets/coach-' + (sport === 'mlb' ? 'baseball' : { jump: 'cheer', flag: 'flag', hint: 'hint', win: 'trophy' }[mood] || 'wave') + '.png';
+  // Resting picture: waving hello on the map, hands on hips and watching inside a lab.
+  restStem = 'assets/coach-' + (sport === 'mlb' ? (lab ? 'baseball-watch' : 'baseball') : (lab ? 'watch' : 'wave'));
+  const react = { jump: 'cheer', flag: 'flag', hint: 'hint', win: 'trophy' }[mood];
+  setPose(react ? 'assets/coach-' + (sport === 'mlb' ? 'baseball-' : '') + react : restStem);
   box.innerHTML = html;
-  if (btn) { const b = document.createElement('button'); b.className = 'go'; b.textContent = btn.label; b.onclick = btn.go; box.appendChild(b); }
+  if (btn) { const b = document.createElement('button'); b.className = 'go'; b.textContent = btn.label; b.onclick = () => { rest(); btn.go(); }; box.appendChild(b); }
+  restAt = ['jump', 'flag', 'hint'].includes(mood) ? performance.now() + Math.min(8000, 2000 + box.textContent.length * 50) : 0;
   clearTimeout(typer); typer = setTimeout(() => c.classList.remove('talk'), Math.min(4000, 600 + box.textContent.length * 45));
   if (voiceOn) { const t = document.createElement('div'); t.innerHTML = html.replace(/<br\s*\/?>/gi, ' '); speak(t.textContent.replace(/[^\p{L}\p{N}\p{P}\p{Zs}+=<>*\/]/gu, ' ')); }
 }
 function setVoice(on) { voiceOn = on; const b = $('#voice'); b.classList.toggle('on', on); b.textContent = on ? '🔊' : '🔈'; try { localStorage.setItem('voice', on ? '1' : '0'); } catch {} }
 $('#voice').onclick = () => { setVoice(!voiceOn); if (voiceOn) say('Voice is on! I will talk you through the plays.', 'jump'); else hush(); };
 try { if (localStorage.getItem('voice') === '1') setVoice(true); } catch {}
+$('#nb').addEventListener('input', rest);   // typing in a play: the coach stops celebrating and watches
 let pokes = 0;
 $('#coachSvg').onclick = () => say(['Hey, that tickles!', 'I am a ball. I do not have a belly button.', 'Less poking, more coding!'][pokes++ % 3], 'jump');
 
@@ -276,8 +321,24 @@ const params = new URLSearchParams(location.search);
 let sport = params.get('sport') === 'mlb' ? 'mlb' : 'nfl', wantWeek = (parseInt(params.get('week')) || 0) - 1, won = loadWins();
 const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([38.5, -96], 4);
 L.control.zoom({ position: 'topright' }).addTo(map);
-const street = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, minZoom: 3, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
-const photo = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, attribution: 'Imagery &copy; Esri' });
+// Map pictures come from Mapbox when keys.local.js (not in git) sets window.MAPBOX_TOKEN. Use a PUBLIC key
+// (it starts with "pk.") that is limited to this site's address in the Mapbox account. Without the file,
+// the old test servers are used.
+const MAPBOX_TOKEN = window.MAPBOX_TOKEN || '';
+const MB_CREDIT = '&copy; <a href="https://www.mapbox.com/about/maps">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://apps.mapbox.com/feedback/" target="_blank" rel="noopener">Improve this map</a></strong>';
+const MB_SIZE = { tileSize: 512, zoomOffset: -1, maxZoom: 18, minZoom: 3 };
+const street = (MAPBOX_TOKEN
+  ? L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/512/{z}/{x}/{y}?access_token=' + MAPBOX_TOKEN, { ...MB_SIZE, attribution: MB_CREDIT })
+  : L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, minZoom: 3, attribution: '&copy; OpenStreetMap contributors' })).addTo(map);
+const photo = MAPBOX_TOKEN
+  ? L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/512/{z}/{x}/{y}?access_token=' + MAPBOX_TOKEN, { ...MB_SIZE, attribution: MB_CREDIT + ' &copy; <a href="https://www.maxar.com/">Maxar</a>' })
+  : L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, attribution: 'Imagery &copy; Esri' });
+if (MAPBOX_TOKEN) { // Mapbox asks for its name on the map as well as the small print
+  const logo = L.control({ position: 'bottomleft' });
+  logo.onAdd = () => { const a = L.DomUtil.create('a'); a.href = 'https://www.mapbox.com/'; a.target = '_blank'; a.rel = 'noopener';
+    a.setAttribute('aria-label', 'Mapbox'); a.style.cssText = 'display:block;width:88px;height:23px;background:url(assets/mapbox-logo.svg) no-repeat 0 0/88px 23px'; return a; };
+  logo.addTo(map);
+}
 map.on('zoomend', () => { const close = map.getZoom() >= 13;
   if (close && !map.hasLayer(photo)) { photo.addTo(map); map.removeLayer(street); }
   if (!close && !map.hasLayer(street)) { street.addTo(map); map.removeLayer(photo); }
@@ -308,6 +369,7 @@ function pick(i) {
   map.flyTo(w.at, 16, { duration: 2.2 });
   const card = stadiumLine(w);
   if (!w.ready) return say(`${card}<br><br>${playbookLine(w, i)} This game is coming soon!`);
+  loadBase().catch(() => {});   // start loading Python now, while the child looks at the stadium
   say(`${card}<br><br>${playbookLine(w, i)} Tap the ball again or press Kick off!`, 'jump', { label: st === 'won' ? 'Play again' : 'Kick off!', go: () => startGame(w, i) });
 }
 $('#whole').onclick = () => { picked = -1; map.flyTo([38.5, -96], 4, { duration: 1.5 }); say('Here is the whole season. Tap a stadium to fly there!'); };
@@ -318,42 +380,91 @@ document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
 });
 
 /* ---------- real Python in the browser ---------- */
+const PY = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/';
+// Progress for the child: we count the bytes of the big Python files as they arrive. Sizes are the unpacked sizes, in bytes.
+const SIZES = { 'pyodide.asm.wasm': 10088051, 'python_stdlib.zip': 2341872, pandas: 23759073, numpy: 11959269, matplotlib: 15742868, fonttools: 4266602, pillow: 3042026 };
+const PARTS = { py: ['pyodide.asm.wasm', 'python_stdlib.zip'], tables: ['pandas', 'numpy'], charts: ['matplotlib', 'fonttools', 'pillow'] };
+const got = {}, part = { py: 0, tables: 0, charts: 0 };   // got: bytes so far; part: 0 = not loaded, 1 = loading, 2 = ready
+let lastFile = 0;   // when the last piece arrived
+const realFetch = window.fetch;
+window.fetch = async (...a) => {
+  const r = await realFetch(...a);
+  try {   // read a copy of the download on the side; the real one goes to Python untouched
+    const u = String(a[0]?.url || a[0]), f = u.startsWith(PY) ? u.slice(PY.length) : '', k = f && Object.keys(SIZES).find(k => f === k || f.startsWith(k + '-'));
+    if (k && r.ok && r.body) { got[k] = 0; const rd = r.clone().body.getReader();
+      (async () => { for (;;) { const { done, value } = await rd.read(); if (done) break; got[k] += value.length; lastFile = Date.now(); } })().catch(() => {}); }
+  } catch {}
+  return r;
+};
+const pct = p => part[p] === 2 ? 100 : Math.min(99, Math.round(100 * PARTS[p].reduce((n, k) => n + Math.min(got[k] || 0, SIZES[k]), 0) / PARTS[p].reduce((n, k) => n + SIZES[k], 0)));
+// A broken download must not be remembered: forget it, so the next try starts again.
+const forget = p => { part[p] = 0; PARTS[p].forEach(k => delete got[k]); };
+
 let pyReady;
 function loadPy() {
   return pyReady ??= new Promise((res, rej) => {
-    const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
-    s.onload = () => loadPyodide().then(res, rej); s.onerror = rej; document.head.appendChild(s);
+    part.py = 1; let dead = false;
+    const stream = WebAssembly.instantiateStreaming;
+    const fail = e => { if (dead || part.py === 2) return; dead = true; pyReady = undefined; forget('py'); WebAssembly.instantiateStreaming = stream; rej(e); };
+    // If the biggest Python file breaks half way, Pyodide waits forever and says nothing. So we watch that one download ourselves.
+    if (stream) WebAssembly.instantiateStreaming = (...a) => { const p = stream.apply(WebAssembly, a); p.catch(fail); return p; };
+    const boot = () => loadPyodide().then(py => { if (dead) return; part.py = 2; WebAssembly.instantiateStreaming = stream; res(py); }, fail);
+    if (window.loadPyodide) return boot();
+    const s = document.createElement('script'); s.src = PY + 'pyodide.js';
+    s.onload = boot; s.onerror = () => { s.remove(); fail(new Error('pyodide.js did not load')); }; document.head.appendChild(s);
   });
 }
-let baseReady; const dataFiles = new Set();
+// Pyodide only logs a package that failed to download; the import right after it is what tells us.
+const QUIET = { messageCallback() {}, errorCallback() {} };
+let baseReady, chartsReady; const dataFiles = new Map();   // file name -> its download
 function loadBase() {
   return baseReady ??= (async () => {
-    const py = await loadPy(); await py.loadPackage(['pandas', 'matplotlib']);
+    const py = await loadPy(); part.tables = 1; await py.loadPackage('pandas', QUIET);
     py.runPython(`
 import warnings; warnings.filterwarnings("ignore")
-import matplotlib; matplotlib.use("Agg")
-import io, base64, pandas as _pd
+import sys, io, base64, pandas as _pd
 def _show(x):
     if isinstance(x, _pd.Series): x = x.to_frame()
     if isinstance(x, _pd.DataFrame): return x.to_html(max_rows=12, max_cols=10, border=0, na_rep="NaN")
     return None
 def _fig():
-    import matplotlib.pyplot as plt
-    if not plt.get_fignums(): return None
+    plt = sys.modules.get("matplotlib.pyplot")
+    if plt is None or not plt.get_fignums(): return None
     b = io.BytesIO(); plt.savefig(b, format="png", dpi=110, bbox_inches="tight"); plt.close("all")
     return base64.b64encode(b.getvalue()).decode()
 `);
-    return true;
-  })();
+    part.tables = 2; return true;
+  })().catch(e => { baseReady = undefined; forget('tables'); throw e; });
+}
+// The drawing tools are big (about 7 MB), so they load only for a lab that draws charts.
+const CHART = /matplotlib|\bplt\b|\.plot\b|\.hist\(/;
+function loadCharts() {
+  return chartsReady ??= (async () => {
+    await loadBase(); const py = await loadPy(); part.charts = 1; await py.loadPackage('matplotlib', QUIET);
+    py.runPython('import matplotlib; matplotlib.use("Agg")'); part.charts = 2; return true;
+  })().catch(e => { chartsReady = undefined; forget('charts'); throw e; });
 }
 // Loads pandas, then this lab's own data files and helper code (each only once).
 async function loadData() {
   await loadBase(); const py = await loadPy(), lab = LABS[sport][week];
-  for (const f of lab.data || []) if (!dataFiles.has(f)) {
-    const r = await fetch('data/' + f); if (!r.ok) throw new Error('missing data file ' + f);
-    py.FS.writeFile(f, new Uint8Array(await r.arrayBuffer())); dataFiles.add(f); }
+  await Promise.all((lab.data || []).map(f => { if (!dataFiles.has(f)) dataFiles.set(f, fetch('data/' + f).then(async r => {
+    if (!r.ok) throw new Error('missing data file ' + f); py.FS.writeFile(f, new Uint8Array(await r.arrayBuffer())); }).catch(e => { dataFiles.delete(f); throw e; }));
+    return dataFiles.get(f); }));
   if (lab.setup && !lab.setupDone) { py.runPython(lab.setup); lab.setupDone = true; }
   return true;
+}
+// Waits for everything one box needs. While it waits, the Run button says what is loading and how far it is.
+async function ready(c, btn, code = c.code || '') {
+  const steps = [[loadPy, () => `Loading Python ${pct('py')}%`]];
+  if (c.data) steps.push([loadData, () => part.tables < 2 ? `Loading table tools ${pct('tables')}%` : 'Opening the stats']);
+  if (c.data && CHART.test(code)) steps.push([loadCharts, () => `Loading chart tools ${pct('charts')}%`]);
+  const since = Date.now(); let told = false;
+  for (const [load, text] of steps) {
+    const show = () => { if (btn) btn.textContent = '⏳ ' + text();
+      if (!told && Date.now() - Math.max(since, lastFile) > 45000) { told = true; say('The internet is slow right now. I am still loading. Keep this page open!'); } };
+    show(); const t = setInterval(show, 400);
+    try { await load(); } finally { clearInterval(t); }
+  }
 }
 function friendly(e) {
   const t = String(e.message || e).trim(), last = t.split('\n').pop();
@@ -407,7 +518,8 @@ $('#ask').onsubmit = async e => {
   if (PRIVATE.some(p => p.test(qn))) return say(ASK_PRIVATE, 'flag');
   if (++askCount > 25) return say(ASK_LIMIT);
   if (Date.now() - askLast < 3000) return note.textContent = 'One question at a time. Wait a moment.';
-  askBusy = true; askLast = Date.now(); inp.value = ''; say('Hmm, good question. Let me think…');
+  askBusy = true; askLast = Date.now(); inp.value = ''; inp.blur();   // closes the iPad keyboard, which would cover the answer
+  say('Hmm, good question. Let me think…');
   try {
     const res = await askCoach(qn);
     if (res.kind === 'answer') { const a = String(res.text).slice(0, 600); askLog.push({ q: qn, a });
@@ -447,7 +559,7 @@ async function startGame(w, i) {
     const n = cells.length + 1, label = { run: 'RUN IT', turn: SEASON[sport].ball + ' YOUR TURN', boom: 'ERROR ON PURPOSE', quiz: c.vote ? 'YOUR GUESS' : 'QUICK QUESTION', predict: 'GUESS FIRST' }[c.kind];
     let h = `<span class="tag ${c.kind === 'turn' ? 'turn' : ''}">PLAY ${n} · ${label}</span><div class="task">${c.task}</div>`;
     if (c.kind === 'quiz') h += `${c.code ? `<pre class="show">${esc(c.code)}</pre>` : ''}<div class="opts">${c.opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div>`;
-    else h += `<textarea class="code" spellcheck="false" autocapitalize="off" rows="${c.code.split('\n').length}">${esc(c.code)}</textarea>
+    else h += `<textarea class="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" rows="${c.code.split('\n').length}">${esc(c.code)}</textarea>
       <div class="row">${c.kind === 'predict' ? '<input class="guess" inputmode="numeric" placeholder="guess">' : ''}<button class="run">▶ Run</button>
       ${c.hints ? '<button class="hint">💡 Hint</button>' : ''}<span class="key">or Shift + Enter</span><span class="msg"></span></div><div class="out"></div>`;
     el.innerHTML = h; nb.appendChild(el); cells.push(cell);
@@ -457,7 +569,10 @@ async function startGame(w, i) {
       else { o.classList.add('wrong'); o.disabled = true; miss(cell); say(`<b>🚩 ${words().oops}</b> ${c.tips[i]} Try again.`, 'flag'); } });
     else {
       const ta = el.querySelector('textarea'), fit = () => ta.rows = ta.value.split('\n').length;
-      ta.oninput = () => { fit(); el.querySelector('.msg').textContent = ''; };
+      ta.oninput = () => {
+        // Tablets like to turn " and ' into curly quotes, which Python cannot read: put the straight ones back.
+        if (/[“”„‘’]/.test(ta.value)) { const at = ta.selectionStart; ta.value = ta.value.replace(/[“”„]/g, '"').replace(/[‘’]/g, "'"); ta.setSelectionRange(at, at); }
+        fit(); el.querySelector('.msg').textContent = ''; };
       ta.onkeydown = e => { if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); run(cell); }
         if (e.key === 'Tab') { e.preventDefault(); ta.setRangeText('    ', ta.selectionStart, ta.selectionEnd, 'end'); } };
       el.querySelector('.run').onclick = () => run(cell);
@@ -468,25 +583,33 @@ async function startGame(w, i) {
   });
   cells[0].el.classList.remove('wait'); moveBall();
   say('Welcome to the locker room! This is our playbook. Run the first box. I am warming up Python…');
-  loadPy().then(() => { loadData().catch(() => {}); return doneCount === 0 && say('Python is ready. Press <b>▶ Run</b> on Play 1!', 'jump'); },
-                () => say('I could not load Python. Check the internet connection and open the game again.', 'flag'));
+  // Say "ready" only when Play 1 can really run. Then load the rest of this lab in the background: tables, stats, chart tools.
+  const lab = LABS[sport][i], here = () => week === i && $('#game').classList.contains('on') && doneCount === 0;
+  const warm = () => ready(cells[0]).then(() => { if (here() && !cells[0].running) say('Python is ready. Press <b>▶ Run</b> on Play 1!', 'jump');
+      loadData().then(() => lab.cells.some(c => c.code && CHART.test(c.code)) && loadCharts()).catch(() => {}); },
+    () => here() && say('I could not load Python. Check the internet connection, then press <b>Try again</b>.', 'flag',
+      { label: 'Try again', go: () => { say('Trying again. I am warming up Python…'); warm(); } }));
+  warm();
 }
-async function run(c) {
+async function run(c) { if (c.running) return; c.running = true; try { await runBox(c); } finally { c.running = false; } }
+async function runBox(c) {
   const el = c.el, msg = el.querySelector('.msg'), out = el.querySelector('.out'), btn = el.querySelector('.run'), code = el.querySelector('textarea').value;
   let guess; msg.textContent = '';
   if (c.kind === 'predict' && !c.done) { guess = el.querySelector('.guess').value.trim();
     if (!guess || isNaN(+guess)) { msg.textContent = 'Type your guess as a number first.'; return; } }
   if (!code.replace(/#.*/g, '').trim()) { msg.textContent = 'Write some code first.'; return; }
   if (code.includes('___')) { msg.textContent = 'Fill in every ___ first.'; return; }
-  btn.textContent = '⏳ Running'; let py;
-  try { py = await loadPy(); } catch { btn.textContent = '▶ Run'; return say('I could not load Python. Check the internet connection.', 'flag'); }
-  if (c.data) { btn.textContent = '⏳ Opening the archive';
-    try { await loadData(); } catch { btn.textContent = '▶ Run'; return say('I could not open the stats. Check the internet connection and try again.', 'flag'); } }
+  let py; btn.classList.add('busy');
+  const wait = setTimeout(() => say('I am still loading what this box needs. The button shows how far I am. Your box will run by itself when it is ready.'), 2500);
+  try { await ready(c, btn, code); py = await loadPy(); }
+  catch { btn.textContent = '▶ Run'; return say('I could not load what this box needs. Check the internet connection, then press <b>▶ Run</b> again.', 'flag'); }
+  finally { clearTimeout(wait); btn.classList.remove('busy'); }
+  btn.textContent = '⏳ Running';
   const lines = []; py.setStdout({ batched: s => lines.push(s) }); let rich = '';
   try { const res = await py.runPythonAsync(code);
     if (c.data) { const t = py.globals.get('_show')(res); if (t) rich += `<div class="tbl">${t}</div>`;
       const f = py.globals.get('_fig')(); if (f) rich += `<img alt="chart" src="data:image/png;base64,${f}">`; } }
-  catch (e) { btn.textContent = '▶ Run'; if (c.data) { try { py.runPython('import matplotlib.pyplot as _plt; _plt.close("all")'); } catch {} }   // no half-drawn chart may leak into the next box
+  catch (e) { btn.textContent = '▶ Run'; if (c.data) { try { py.runPython('_p = sys.modules.get("matplotlib.pyplot"); _p and _p.close("all")'); } catch {} }   // no half-drawn chart may leak into the next box
     out.className = 'out on err'; out.textContent = (String(e.message).trim().split('\n').filter(l => !/^See https?:/.test(l)).pop() || '').replace(/https?:\/\/\S+/g, '');
     if (c.expectError && String(e.message).includes(c.expectError)) { if (!c.done) finish(c, c.ok); return; }
     if (!c.done) miss(c); return say(`<b>🚩 ${words().flag}</b> ${friendly(e)}`, 'flag'); }
@@ -538,6 +661,10 @@ function report() {
 }
 function leave() { $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); $('#whole').onclick(); }
 $('#quit').onclick = () => { $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); say('Back on the map. Tap a stadium to play.'); };
+
+// On narrow screens the playbook ends where the coach's strip begins.
+const dock = () => { const c = $('#coach'); $('#game').style.bottom = c.classList.contains('lab') && innerWidth <= 820 ? c.offsetHeight + 'px' : ''; };
+new ResizeObserver(dock).observe($('#coach')); addEventListener('resize', dock);
 
 draw();
 // A week is playable once its lab file exists in labs/.

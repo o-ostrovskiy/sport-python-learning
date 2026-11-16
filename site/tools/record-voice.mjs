@@ -20,7 +20,9 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url)), SITE = path.resolve(HERE, '..'), OUT = path.join(SITE, 'assets', 'voice');
 const env = { ...process.env };
 try { for (const line of fs.readFileSync(path.resolve(SITE, '..', 'server', '.env'), 'utf8').split('\n')) { const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/); if (m && !(m[1] in process.env)) env[m[1]] = m[2]; } } catch {}
-const MODEL = env.TTS_MODEL || 'gemini-3.8-flash-tts', VOICE = env.TTS_VOICE || 'Achird', BITRATE = '32k';
+// Each model has its own daily allowance: when the first one is used up for the day, the tool carries on with the next.
+const MODELS = [...new Set([env.TTS_MODEL || 'gemini-3.8-flash-tts', env.TTS_MODEL_2 || 'gemini-3.8-flash-lite-tts'])]; let model = 0;
+const VOICE = env.TTS_VOICE || 'Achird', BITRATE = '32k';
 const flag = f => process.argv.includes(f);
 
 // The same clean-up the page does before speaking: HTML to plain text, drop emoji and symbols, squeeze spaces.
@@ -90,7 +92,8 @@ function msgText(src) {
   return { out, whole, partly, live };
 }
 
-const labs = fs.readdirSync(path.join(SITE, 'labs')).filter(f => /^(nfl|mlb)-\d\d\.js$/.test(f)).sort().map(f => f.slice(0, -3));
+const labs = fs.readdirSync(path.join(SITE, 'labs')).filter(f => /^(nfl|mlb)-\d\d\.js$/.test(f)).map(f => f.slice(0, -3))
+  .sort((a, b) => a.slice(4).localeCompare(b.slice(4)) || b.localeCompare(a));   // first labs first: nfl-01, mlb-01, nfl-02, mlb-02 ...
 const report = [], broken = [];
 globalThis.esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); globalThis.myVote = 0;
 for (const name of labs) {
@@ -128,7 +131,7 @@ const redo = flag('--redo') ? norm(process.argv[process.argv.indexOf('--redo') +
 async function record(l) {
   const r = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', { method: 'POST',
     headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
-    body: JSON.stringify({ model: MODEL,
+    body: JSON.stringify({ model: MODELS[model],
       input: [{ type: 'user_input', content: [{ type: 'text', text: l.text, annotations: [{ type: 'speech_metadata', style: l.style }] }] }],
       response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice: VOICE }] } }) });
   if (!r.ok) throw new Error(`gemini ${r.status}: ${(await r.text()).slice(0, 200)}`);
@@ -158,7 +161,7 @@ function writeLists() {
 }
 
 if (flag('--lists')) { writeLists(); console.log('Lists rewritten.'); process.exit(0); }
-let made = 0, failed = 0, inRow = 0;
+let made = 0, failed = 0, inRow = 0, spent = false;
 const todo = lines.filter((l, i) => (l.text === redo || !have(l)) && lines.findIndex(x => x.file === l.file) === i);
 const wait = ms => new Promise(res => setTimeout(res, ms));
 // One at a time and unhurried: the speech model allows only about 10 requests a minute.
@@ -166,8 +169,13 @@ for (const l of todo) {
   const began = Date.now();
   for (let attempt = 1; ; attempt++) {
     try { await record(l); made++; inRow = 0; console.log(`recorded ${made}/${todo.length}  ${l.group}  ${l.file}`); break; }
-    catch (e) { if (attempt === 4) { failed++; inRow++; console.error(`FAILED    ${l.text}: ${e.message}`); break; } await wait(/ 429/.test(e.message) ? 61000 : 3000 * attempt); }
+    catch (e) {
+      if (/ 429/.test(e.message) && /per day/.test(e.message)) {
+        if (model < MODELS.length - 1) { console.log(`${MODELS[model]} is used up for today; carrying on with ${MODELS[++model]}`); attempt = 0; continue; }
+        console.error('The daily limit is used up on every model. Stopping; run again tomorrow to continue.'); spent = true; break; }
+      if (attempt === 4) { failed++; inRow++; console.error(`FAILED    ${l.text}: ${e.message}`); break; } await wait(/ 429/.test(e.message) ? 61000 : 3000 * attempt); }
   }
+  if (spent) break;
   if (inRow >= 3) { console.error('Three lines in a row failed (daily limit?). Stopping; run again later to continue.'); break; }
   if (made % 20 === 0) writeLists();
   await wait(Math.max(0, (Number(env.TTS_PAUSE_MS) || 6300) - (Date.now() - began)));

@@ -6,7 +6,7 @@ and answers it with open data, so kids learn Python and how to look at data on t
 Made for my 10-year-old, an NFL fan. There are **10 labs for football and 10 for baseball**, in two forms:
 
 - **Colab notebooks** (below): everything runs in Google Colab in the browser, nothing to install, the data downloads itself.
-- **A website, Python Season** ([`site/`](site/)): the same labs as game days in real stadiums. Python runs inside the page,
+- **A website, Python Season**: play it at **https://python.mystoryland.ai** (code in [`site/`](site/)). The same labs as game days in real stadiums. Python runs inside the page,
   and a coach checks every answer and gives hints. See [The website](#the-website-python-season).
 
 ## Football (NFL)

@@ -8,3 +8,4 @@ baseball/answers/
 site/tools/node_modules/
 site/labs/answers/
 server/.env
+site/keys.local.js
