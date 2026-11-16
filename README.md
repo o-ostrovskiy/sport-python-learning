@@ -57,6 +57,7 @@ The folder [`site/`](site/) holds the same 20 labs as an interactive website for
 - **A season of game days.** Each lab is a week in a real stadium on a map; a home page shows the season calendar.
 - **Real Python in the page.** Code runs in the browser with [Pyodide](https://pyodide.org); there is nothing to install and no account.
 - **A coach who checks every box.** He says what went wrong in plain words, gives hints step by step, and ends each lab with a short review.
+- **Stop any time.** A game in progress is saved in the browser; coming back, the coach offers to continue where the child stopped or start over.
 - **Nothing is asked of a child.** No accounts, no ads, nowhere to type a message; the code a child types never leaves the browser.
   Visits are counted with Google Analytics, with its advertising features off (the About page's Privacy section says exactly what it sees).
 - **Static files, no server.** The public site is the `site/` folder as plain files, served from a small cloud server; nothing runs there but the file server.
@@ -82,6 +83,7 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/analytics.js` | Google Analytics visit counting, on the public address only |
 | `site/keys.local.js` | not in git: the public Mapbox key for the map, copied to the host with the site |
 | `site/tools/check-lab.mjs` | plays a lab from start to finish in real Python and fails if any box, hint path or answer misbehaves |
+| `site/tools/test-resume.mjs` | browser test (Playwright): half-play Week 1, reload, Continue, and the boxes and Python's memory are back |
 | `server/` | for home use only: `local.mjs` runs the site on this computer, `handler.mjs` is the coach-question API that keeps the Gemini key private |
 | [`DEPLOY.md`](DEPLOY.md) | where the public site lives, how to update it, and the launch checklist |
 

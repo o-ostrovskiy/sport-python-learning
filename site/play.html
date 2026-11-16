@@ -72,6 +72,7 @@ main{flex:1;position:relative;min-width:0}
 .bubble code{font-family:"JetBrains Mono",monospace;background:#e7efff;padding:1px 6px;border-radius:6px;color:#2a4d8f}
 .bubble .go{display:block;margin-top:10px;background:var(--gold);color:var(--ink);border:0;border-radius:12px;padding:9px 16px;font-size:16px;font-weight:700;box-shadow:0 4px 0 #c46f00}
 .bubble .go:active{transform:translateY(3px);box-shadow:0 1px 0 #c46f00}
+.bubble .go.alt{margin-top:8px;background:#fff;border:3px solid #d5deee;box-shadow:0 4px 0 #d5deee}
 
 #ask{display:none;order:1;pointer-events:auto;width:100%;flex-wrap:wrap;gap:6px;margin-bottom:2px}
 #coach.lab #ask{display:flex}
@@ -87,6 +88,7 @@ body:not(.ask-on) #ask{display:none!important}   /* the question box shows only 
 .board .sc{margin:0 auto;display:flex;gap:14px;align-items:center;font-size:18px}
 .board .num{font-family:"JetBrains Mono",monospace;background:#000;color:var(--gold);padding:3px 12px;border-radius:8px;font-size:26px;min-width:52px;text-align:center}
 .board .q{color:#9fb2d2;font-size:14px}
+.board .saved{color:var(--ok);font-size:14px;opacity:0;transition:opacity .3s}.board .saved.on{opacity:1}
 .field{position:relative;height:50px;flex:none;background:var(--grass2);border-bottom:4px solid #fff;overflow:hidden}
 .field .ez{position:absolute;top:0;bottom:0;width:9%;display:grid;place-items:center;font-size:11px;font-weight:700;letter-spacing:.15em;color:#fff}
 .field .ez.l{left:0;background:#1d4f8f}.field .ez.r{right:0;background:#c9322b}
@@ -162,7 +164,7 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
     <div class="board">
       <button class="x" id="quit">← Map</button>
       <div class="sc"><span>YOU</span><span class="num" id="you">0</span><span class="q" id="qtr">WEEK 1</span><span class="num">0</span><span>BUGS</span></div>
-      <span class="q" id="down"></span>
+      <span class="q" id="down"></span><span class="saved" id="saved" role="status">✓ Saved</span>
     </div>
     <div class="field">
       <div class="ez l">HOME</div><div class="lines"></div><div class="ez r" id="goal">TD</div>
@@ -185,7 +187,7 @@ pre.show{font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f
 <script>
 const $ = s => document.querySelector(s);
 const store = { get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } },
-                set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} } };
+                set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true } catch { return false } } };
 
 /* ---------- data ---------- */
 
@@ -304,7 +306,7 @@ function say(html, mood = '', btn) {
   const react = { jump: 'cheer', flag: 'flag', hint: 'hint', win: 'trophy' }[mood];
   setPose(react ? 'assets/coach-' + (sport === 'mlb' ? 'baseball-' : '') + react : restStem);
   box.innerHTML = html;
-  if (btn) { const b = document.createElement('button'); b.className = 'go'; b.textContent = btn.label; b.onclick = () => { rest(); btn.go(); }; box.appendChild(b); }
+  for (const x of [].concat(btn || [])) { const b = document.createElement('button'); b.className = 'go' + (x.alt ? ' alt' : ''); b.textContent = x.label; b.onclick = () => { rest(); x.go(); }; box.appendChild(b); }
   restAt = ['jump', 'flag', 'hint'].includes(mood) ? performance.now() + Math.min(8000, 2000 + box.textContent.length * 50) : 0;
   clearTimeout(typer); typer = setTimeout(() => c.classList.remove('talk'), Math.min(4000, 600 + box.textContent.length * 45));
   if (voiceOn) { const t = document.createElement('div'); t.innerHTML = html.replace(/<br\s*\/?>/gi, ' '); speak(t.textContent.replace(/[^\p{L}\p{N}\p{P}\p{Zs}+=<>*\/]/gu, ' ')); }
@@ -370,6 +372,13 @@ function pick(i) {
   const card = stadiumLine(w);
   if (!w.ready) return say(`${card}<br><br>${playbookLine(w, i)} This game is coming soon!`);
   loadBase().catch(() => {});   // start loading Python now, while the child looks at the stadium
+  const saved = store.get(progKey(sport, i), null);
+  if (saved?.plays?.length) {
+    const n = saved.plays.length, at = saved.doneCount >= n ? 'the film review' : `<b>Play ${saved.doneCount + 1} of ${n}</b>`;
+    return say(`${card}<br><br><b>Welcome back!</b> You stopped at ${at} in this game. Pick up where you left off?`, 'jump',
+      [{ label: '▶ Continue where I stopped', go: () => startGame(w, i) },
+       { label: '↺ Start over', alt: true, go: () => { dropProgress(sport, i); startGame(w, i); } }]);
+  }
   say(`${card}<br><br>${playbookLine(w, i)} Tap the ball again or press Kick off!`, 'jump', { label: st === 'won' ? 'Play again' : 'Kick off!', go: () => startGame(w, i) });
 }
 $('#whole').onclick = () => { picked = -1; map.flyTo([38.5, -96], 4, { duration: 1.5 }); say('Here is the whole season. Tap a stadium to fly there!'); };
@@ -529,6 +538,66 @@ $('#ask').onsubmit = async e => {
   finally { askBusy = false; }
 };
 
+/* ---------- a lab in progress: saved only in this browser ---------- */
+// One record per lab ("progress:nfl-03"): the code in every box, which boxes are done, hint levels, misses,
+// guesses, the film review and the scroll position. It is saved on every Run and half a second after typing.
+// Its version is a hash of the lab's boxes: when the lab file changes, an old record is dropped,
+// so it can never put the wrong code into a box. A won week keeps only its trophy (in "wins").
+const progKey = (sp, i) => `progress:${sp}-${String(i + 1).padStart(2, '0')}`;
+function labVersion(lab) {
+  const s = JSON.stringify(lab.cells.map(c => c.md ? 0 : [c.kind, c.code || '', c.opts || 0]));
+  let h = 5381; for (let k = 0; k < s.length; k++) h = (h * 33 + s.charCodeAt(k)) >>> 0;
+  return h.toString(36);
+}
+let keepSaving = false, saveT, rvAt = -1, restoring = null, gameSport;
+function saveNow() {
+  clearTimeout(saveT);
+  if (!keepSaving || !cells) return;
+  const ok = store.set(progKey(gameSport, week), { v: labVersion(LABS[gameSport][week]),
+    plays: cells.map(c => ({ code: c.el.querySelector('textarea')?.value, guess: c.el.querySelector('.guess')?.value || '', done: c.done, hintN: c.hintN })),
+    misses, doneCount, myVote, rvWrong, rvAt, scroll: Math.round($('#nb').scrollTop) });
+  $('#saved').classList.toggle('on', ok);   // the ✓ shows only when the browser really kept it
+}
+const saveSoon = () => { clearTimeout(saveT); if (keepSaving) saveT = setTimeout(saveNow, 500); };
+function dropProgress(sp, i) { keepSaving = false; clearTimeout(saveT); try { localStorage.removeItem(progKey(sp, i)); } catch {} }
+$('#nb').addEventListener('input', saveSoon);
+$('#nb').addEventListener('scroll', saveSoon, { passive: true });
+addEventListener('pagehide', saveNow);
+// Puts a saved record back into the boxes that startGame just built.
+function restoreBoxes(rec) {
+  Object.assign(misses, rec.misses); rvWrong = rec.rvWrong || {}; myVote = rec.myVote; rvAt = rec.rvAt ?? -1; doneCount = 0;
+  rec.plays.forEach((p, k) => {
+    const c = cells[k], ta = c.el.querySelector('textarea'), g = c.el.querySelector('.guess');
+    if (ta && typeof p.code === 'string') { ta.value = p.code; ta.rows = p.code.split('\n').length; }
+    if (g) g.value = p.guess || '';
+    c.hintN = p.hintN || 0;
+    if (p.done) { c.done = true; doneCount++; c.el.classList.add('done');
+      if (c.kind === 'quiz') c.el.querySelector(`.opt[data-i="${c.vote ? rec.myVote : c.a}"]`)?.classList.add('right'); }
+  });
+  cells.forEach((c, k) => { if (k === 0 || c.done || cells[k - 1].done) c.el.classList.remove('wait'); });
+  moveBall(); $('#saved').classList.add('on');
+  const nb = $('#nb'); requestAnimationFrame(() => { nb.style.scrollBehavior = 'auto'; nb.scrollTop = rec.scroll || 0; nb.style.scrollBehavior = ''; });
+}
+// Python's memory does not survive a reload, and later boxes use what earlier ones made (combine, speed_mph…).
+// So every finished box runs again, in order, with no output and no coach lines, before the child presses Run.
+async function replay(i) {
+  const gone = () => week !== i || !$('#game').classList.contains('on');
+  const btn = cells.find(c => !c.done)?.el.querySelector('.run');
+  const show = on => { if (btn) { btn.classList.toggle('busy', on); btn.textContent = on ? '⏳ Getting your playbook back…' : '▶ Run'; } };
+  show(true);
+  try {
+    for (const c of cells.filter(c => c.done && c.kind !== 'quiz')) {
+      const code = c.el.querySelector('textarea').value;
+      await ready(c, null, code); const py = await loadPy();
+      if (gone()) return false;
+      py.setStdout({ batched: () => {} }); py.setStdin({ stdin: () => '1' });   // an input( ) box gets a quiet answer instead of a question
+      try { await py.runPythonAsync(code); } catch {}   // an error on purpose (or a box changed after it was done) must not stop the rest
+      finally { py.setStdin(); if (c.data) { try { py.runPython('_p = sys.modules.get("matplotlib.pyplot"); _p and _p.close("all")'); } catch {} } }
+    }
+    return !gone();
+  } finally { show(false); }
+}
+
 /* ---------- lab notebook ---------- */
 let cells, misses, doneCount, rvWrong, myVote, LAB, REVIEW, SKILL_NAMES, week;
 // The coach's words follow the sport being played.
@@ -547,9 +616,10 @@ function loadLab(sp, i) {
 }
 async function startGame(w, i) {
   if (!LABS[sport][i]) { try { await loadLab(sport, i); } catch { return say('I could not open this game. Check the internet connection and try again.', 'flag'); } }
-  week = i; ({ cells: LAB, review: REVIEW, skills: SKILL_NAMES } = LABS[sport][i]);
+  week = i; gameSport = sport; ({ cells: LAB, review: REVIEW, skills: SKILL_NAMES } = LABS[sport][i]);
   $('#qtr').textContent = w.stadium.toUpperCase();
-  misses = Object.fromEntries(Object.keys(SKILL_NAMES).map(k => [k, 0])); doneCount = 0; rvWrong = {}; askLog = []; askCount = 0;
+  misses = Object.fromEntries(Object.keys(SKILL_NAMES).map(k => [k, 0])); doneCount = 0; rvWrong = {}; rvAt = -1; myVote = undefined; askLog = []; askCount = 0;
+  $('#film')?.remove(); $('#saved').classList.remove('on');
   $('#game').classList.add('on'); $('#coach').classList.add('lab'); $('#you').textContent = 0; $('#ball').textContent = SEASON[sport].ball; $('#goal').textContent = words().goal;
   const nb = $('#nb'); nb.innerHTML = ''; nb.scrollTop = 0;
   cells = [];
@@ -566,7 +636,8 @@ async function startGame(w, i) {
     if (c.kind === 'quiz') el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
       const i = +o.dataset.i; if (c.vote) { if (cell.done) return; myVote = i; o.classList.add('right'); finish(cell, c.ok); }
       else if (i === c.a) { o.classList.add('right'); finish(cell, c.ok); }
-      else { o.classList.add('wrong'); o.disabled = true; miss(cell); say(`<b>🚩 ${words().oops}</b> ${c.tips[i]} Try again.`, 'flag'); } });
+      else { o.classList.add('wrong'); o.disabled = true; miss(cell); say(`<b>🚩 ${words().oops}</b> ${c.tips[i]} Try again.`, 'flag'); }
+      saveNow(); });
     else {
       const ta = el.querySelector('textarea'), fit = () => ta.rows = ta.value.split('\n').length;
       ta.oninput = () => {
@@ -578,20 +649,38 @@ async function startGame(w, i) {
       el.querySelector('.run').onclick = () => run(cell);
       const g = el.querySelector('.guess'); if (g) g.oninput = () => el.querySelector('.msg').textContent = '';
       const hb = el.querySelector('.hint'); if (hb) hb.onclick = () => { misses[c.skill] += .5;
-        say(`<b>💡 Hint ${Math.min(cell.hintN + 1, c.hints.length)}:</b> ${c.hints[Math.min(cell.hintN++, c.hints.length - 1)]}`, 'hint'); };
+        say(`<b>💡 Hint ${Math.min(cell.hintN + 1, c.hints.length)}:</b> ${c.hints[Math.min(cell.hintN++, c.hints.length - 1)]}`, 'hint'); saveNow(); };
     }
   });
   cells[0].el.classList.remove('wait'); moveBall();
+  const lab = LABS[sport][i], rec = store.get(progKey(sport, i), null);
+  const fits = rec?.v === labVersion(lab) && rec.plays?.length === cells.length;
+  if (rec && !fits) dropProgress(sport, i);   // the lab changed since: its old boxes no longer match
+  keepSaving = true;
+  // Load the rest of this lab in the background: tables, stats, chart tools.
+  const preload = () => loadData().then(() => lab.cells.some(c => c.code && CHART.test(c.code)) && loadCharts()).catch(() => {});
+  if (fits) {
+    restoreBoxes(rec);
+    if (doneCount === cells.length) { $('#you').textContent = 7; if (rvAt > 0) say('Welcome back to the film room!'); return review(Math.max(0, rvAt)); }
+    say(doneCount ? `Welcome back! I am putting your first ${doneCount} plays back into Python. One moment…` : 'Welcome back! Your code is still here. I am warming up Python…');
+    const back = () => restoring = replay(i).then(ok => { if (ok) say(`All set! You are on <b>Play ${doneCount + 1}</b>. Press <b>▶ Run</b> when you are ready.`, 'jump'); preload(); },
+      () => week === i && say('I could not load Python. Check the internet connection, then press <b>Try again</b>.', 'flag',
+        { label: 'Try again', go: () => { say('Trying again. Getting your playbook back…'); back(); } })).finally(() => restoring = null);
+    return back();
+  }
   say('Welcome to the locker room! This is our playbook. Run the first box. I am warming up Python…');
-  // Say "ready" only when Play 1 can really run. Then load the rest of this lab in the background: tables, stats, chart tools.
-  const lab = LABS[sport][i], here = () => week === i && $('#game').classList.contains('on') && doneCount === 0;
-  const warm = () => ready(cells[0]).then(() => { if (here() && !cells[0].running) say('Python is ready. Press <b>▶ Run</b> on Play 1!', 'jump');
-      loadData().then(() => lab.cells.some(c => c.code && CHART.test(c.code)) && loadCharts()).catch(() => {}); },
+  // Say "ready" only when Play 1 can really run.
+  const here = () => week === i && $('#game').classList.contains('on') && doneCount === 0;
+  const warm = () => ready(cells[0]).then(() => { if (here() && !cells[0].running) say('Python is ready. Press <b>▶ Run</b> on Play 1!', 'jump'); preload(); },
     () => here() && say('I could not load Python. Check the internet connection, then press <b>Try again</b>.', 'flag',
       { label: 'Try again', go: () => { say('Trying again. I am warming up Python…'); warm(); } }));
   warm();
 }
-async function run(c) { if (c.running) return; c.running = true; try { await runBox(c); } finally { c.running = false; } }
+async function run(c) {
+  if (c.running) return; c.running = true;
+  try { while (restoring) await restoring.catch(() => {}); await runBox(c); }   // the finished boxes go back into Python first
+  finally { c.running = false; saveNow(); }
+}
 async function runBox(c) {
   const el = c.el, msg = el.querySelector('.msg'), out = el.querySelector('.out'), btn = el.querySelector('.run'), code = el.querySelector('textarea').value;
   let guess; msg.textContent = '';
@@ -644,6 +733,7 @@ function review(i) {
   el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
     const ok = +o.dataset.i === r.a; el.querySelectorAll('.opt').forEach(b => b.disabled = true);
     o.classList.add(ok ? 'right' : 'wrong'); if (!ok) { rvWrong[r.skill] = true; el.querySelector(`[data-i="${r.a}"]`).classList.add('right'); }
+    rvAt = i + 1; saveNow();
     say(ok ? 'Yes! Locked in.' : 'Not this time. The green one is right. We will drill it.', ok ? 'jump' : '');
     setTimeout(() => i + 1 < REVIEW.length ? review(i + 1) : report(), 1400);
   });
@@ -655,12 +745,13 @@ function report() {
   card(`<span class="tag">📋 SCOUTING REPORT</span><div class="big">🏆</div><div class="task" style="text-align:center"><b>Week ${week + 1} final: You 7, Bugs 0</b></div>${rows}`);
   $('#down').textContent = 'Final';
   if (!won[sport].includes(week)) { won[sport].push(week); store.set('wins', won); }
+  dropProgress(gameSport, week);   // the week is won: the trophy stays, the half-way record goes
   draw();
   say(weak.length ? `Great game! Next time we will warm up with <b>${weak.join(' and ')}</b>.`
                   : 'A perfect game! Every skill locked in.', 'win', { label: 'Back to the map', go: leave });
 }
-function leave() { $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); $('#whole').onclick(); }
-$('#quit').onclick = () => { $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); say('Back on the map. Tap a stadium to play.'); };
+function leave() { saveNow(); keepSaving = false; $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); $('#whole').onclick(); }
+$('#quit').onclick = () => { saveNow(); keepSaving = false; $('#game').classList.remove('on'); $('#coach').classList.remove('lab'); say('Back on the map. Tap a stadium to play.'); };
 
 // On narrow screens the playbook ends where the coach's strip begins.
 const dock = () => { const c = $('#coach'); $('#game').style.bottom = c.classList.contains('lab') && innerWidth <= 820 ? c.offsetHeight + 'px' : ''; };

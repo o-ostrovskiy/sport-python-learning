@@ -1,1 +1,1 @@
-{ "name": "lab-tools", "private": true, "type": "module", "dependencies": { "pyodide": "0.26.4" } }
+{"name":"lab-tools","private":true,"type":"module","dependencies":{"pyodide":"0.26.4"},"devDependencies":{"playwright":"1.58"}}

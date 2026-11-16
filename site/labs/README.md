@@ -63,6 +63,10 @@ mistake was made.
 
 - All boxes share one Python session, top to bottom, like a notebook. A later box may use earlier variables,
   but a `turn` box should define what it needs, because the child may re-run boxes.
+- A game in progress is saved in the browser. On "Continue" after a reload, every finished box runs again, quietly
+  and in order, to rebuild Python's memory; an `input( )` there gets the answer `"1"`. So a finished box must run
+  again without asking anything else and without side effects. When a lab's boxes change (code, kind or options),
+  saved progress for that lab is dropped.
 - A box containing `___` will not run: the child is told to fill in the blanks. At most 2–3 blanks per lab.
 - Python errors are translated to plain words for the child (NameError, SyntaxError, IndexError, KeyError,
   TypeError, IndentationError, AttributeError, ZeroDivisionError). Others show the last line of the error.
