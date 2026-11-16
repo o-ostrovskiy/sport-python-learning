@@ -1,2 +1,28 @@
 // Made by tools/record-voice.mjs. Do not edit by hand.
-window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {});
+window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
+ "10 > 7 asks \"is 10 bigger than 7?\" Yes: True. 3 > 7? No: False. Both words start with a capital letter and have no quotes.": "10-7-asks-is-10-bigger-than-7-yes-true-3-40973bea.mp3",
+ "Right. 4 >= 4 is True: 4 is at least 4. That is the question the umpire really asks.": "right-4-4-is-true-4-is-at-least-4-that-i-8b9da062.mp3",
+ "4 > 4 asks \"is 4 bigger than 4?\" It is not bigger, it is the same.": "4-4-asks-is-4-bigger-than-4-it-is-not-bi-effed811.mp3",
+ "Only one. 4 > 4 is False: 4 is not bigger than 4.": "only-one-4-4-is-false-4-is-not-bigger-th-0f888153.mp3",
+ "Look at the list of symbols above. Which one means \"at least\"?": "look-at-the-list-of-symbols-above-which-a735aac8.mp3",
+ "The answer: print(raleigh_hr >= 60)": "the-answer-print-raleigh-hr-60-e52f05b5.mp3",
+ "Safe! 4.1 is smaller than 4.3, so the answer is True and Python did the line underneath. If the answer were False, Python would skip it.": "safe-4-1-is-smaller-than-4-3-so-the-answ-7c5f62a6.mp3",
+ "SyntaxError: expected ':'. Python tells you exactly what is missing: the colon.": "syntaxerror-expected-python-tells-you-ex-3828745b.mp3",
+ "IndentationError: Python saw the colon, so it expected a line pushed to the right underneath. Without the push, it cannot tell which lines belong to the if.": "indentationerror-python-saw-the-colon-so-efb53755.mp3",
+ "Out! 4.5 is not smaller than 4.3, so Python skipped the if line and did the else line.": "out-4-5-is-not-smaller-than-4-3-so-pytho-19a720bf.mp3",
+ "Right now the bot asks \"is the runner's time smaller?\" On a tie it is not smaller.": "right-now-the-bot-asks-is-the-runner-s-t-8ccd4def.mp3",
+ "Which symbol means \"at most\": smaller, or the same?": "which-symbol-means-at-most-smaller-or-th-9af5de7a.mp3",
+ "The if line should read: if runner_time <= throw_time:": "the-if-line-should-read-if-runner-time-t-6c5857d1.mp3",
+ "Caught! Python asks the questions from top to bottom. 250 is not at least 400, and not at least 300, so nothing was True and it did the else.": "caught-python-asks-the-questions-from-to-20c19eb4.mp3",
+ "Home run! The first True wins, and Python skips the rest. So the order of the rules matters: if the 300-foot rule came first, a 450-foot blast would be called \"extra bases\"!": "home-run-the-first-true-wins-and-python-a949d26a.mp3",
+ "That rule is True too, but Python never gets to it. It reads from the top, and an earlier rule is already True.": "that-rule-is-true-too-but-python-never-g-8da42008.mp3",
+ "Only one line prints. After the first True, Python skips everything below it.": "only-one-line-prints-after-the-first-tru-0565e1ab.mp3",
+ "Home runs start at 400 feet. Extra bases start at 300 feet.": "home-runs-start-at-400-feet-extra-bases-20ad461b.mp3",
+ "Any number from 300 to 399 works. Try distance = 350.": "any-number-from-300-to-399-works-try-dis-c9b22b6b.mp3",
+ "Loaded! Now the umpire bot can look at real seasons.": "loaded-now-the-umpire-bot-can-look-at-re-020b8709.mp3",
+ "Aaron Judge's best season is 62 home runs. 62 is at least 50, so the first rule was True and Python stopped there: MONSTER SEASON!": "aaron-judge-s-best-season-is-62-home-run-a1fdd8e8.mp3",
+ "The missing word is short for \"else if\": 4 letters, starting with el.": "the-missing-word-is-short-for-else-if-4-0610ea96.mp3",
+ "That line should read elif best >= 30:": "that-line-should-read-elif-best-30-e5812bd8.mp3",
+ "A red TypeError means the name was not found. Capital letters matter, there are no accent marks, and sons end in Jr.: \"Vladimir Guerrero Jr.\"": "a-red-typeerror-means-the-name-was-not-f-ecdbffa4.mp3",
+ "You found a bug! 386 against 386, and it still names a winner. When the totals are the same, total1 > total2 is False, so the machine jumps to else. But it is a tie!": "you-found-a-bug-386-against-386-and-it-s-d59c3d43.mp3"
+});
