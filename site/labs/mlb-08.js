@@ -20,7 +20,7 @@ else:
     print("Out of tries. The mystery player was", secret)`;
 
 const CELLS = [
-  { md: '<h2>Part 1. Python asks YOU 🎤</h2>Today you build a <b>game</b>: Python secretly picks a real hitter, gives you clues, and you guess. First trick: Python must <b>ask you</b> something and wait for your answer. That is <code>input( )</code>.' },
+  { md: '<h2>Part 1. Python asks YOU 🎤</h2>Today you build a <b>game</b>: Python secretly picks an MLB hitter, gives you clues, and you guess. First trick: Python must <b>ask you</b> something and wait for your answer. That is <code>input( )</code>.' },
   { skill: 'input', kind: 'run', data: true, task: 'Run it. Python asks its question in a box under the code. Type a player\'s name and press <b>Enter</b>.',
     code: 'name = input("Who is your favorite player? ")\nprint("Great pick:", name)',
     ok: '<code>input( )</code> shows the question in its brackets, waits for you to type, and hands your answer back. The <code>=</code> puts it into the box <code>name</code>.' },
@@ -86,9 +86,9 @@ const CELLS = [
       if (!/random\.choice\(\s*hitters\s*\)/.test(code)) return { msg: 'Look at the <code>secret</code> line. The missing word picks one thing from the list, and it has 6 letters.' };
       if (!(await q('secret in hitters'))) return { msg: 'The secret must come from the list <code>hitters</code>. Keep the list as it was.' };
       const s = esc(String((await q('secret'))));
-      return { ok: true, msg: ((await q('guess == secret')) ? `You got it: ${s}! That was luck, 1 chance in 5. ` : `It was ${s}. With 5 players you will be right about 1 time in 5. `) + 'A good game gives <b>clues</b>. For those we need real stats.' }; } },
+      return { ok: true, msg: ((await q('guess == secret')) ? `You got it: ${s}! That was luck, 1 chance in 5. ` : `It was ${s}. With 5 players you will be right about 1 time in 5. `) + 'A good game gives <b>clues</b>. For those we need the stats.' }; } },
 
-  { md: '<h2>Part 4. The real game 🕵️</h2>Python will pick a <b>mystery player</b> from the real stats and give you clues. First we need the players it may pick from.' },
+  { md: '<h2>Part 4. The whole game 🕵️</h2>Python will pick a <b>mystery player</b> from the stats and give you clues. First we need the players it may pick from.' },
   { skill: 'game', kind: 'run', data: true, task: 'Run it. You wrote these lines in Lab 4: open the stats, keep the newest season, sort by home runs, and make a <b>list</b> of the top 10 names.',
     code: 'import pandas as pd\n\nstats = pd.read_csv("mlb_batting.csv").convert_dtypes()\nnewest = stats["season"].max()\nlast = stats[stats["season"] == newest]\nbest = last.sort_values("HR", ascending=False)\nplayers = list(best["name"].head(10))\n\nprint(newest)\nprint(players)',
     ok: 'The top 10 home run hitters of the newest season. Python will hide one of them. Remember how the names are spelled!' },
@@ -102,7 +102,7 @@ const CELLS = [
       const ch = (await q('chances')), t = (await q('tries')), s = esc(String((await q('secret'))));
       if (!(ch >= 3)) return { msg: `It was ${s}. With <code>chances = ${esc(String(ch))}</code> you never see clues 2 and 3. Change it to 3 and play again: Python will pick a new mystery player.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep the <code>while</code> line as it was.' };
-      return (await q('guess == secret')) ? { ok: true, msg: `YES! ${s} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a real game. Run it again for a new player!` }
+      return (await q('guess == secret')) ? { ok: true, msg: `YES! ${s} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a whole game. Run it again for a new player!` }
         : { ok: true, msg: `It was ${s}. Tough one! The loop stopped because the tries ran out. Run it again: Python picks a new mystery player every time.` }; } },
   { skill: 'game', kind: 'turn', data: true, task: '<b>Make it yours.</b> Turn it into a quiz about base stealers or hit machines: change <code>stat</code> to <code>"SB"</code> (stolen bases), <code>"H"</code> (hits) or <code>"BB"</code> (walks). The box makes a new top 10 for your stat, and shows all the names at the end.',
     code: 'import random\n\nstat = "HR"      # change to "SB", "H" or "BB"\nhow_many = 10    # how many top players Python picks from\nchances = 3\n\nbest = last.sort_values(stat, ascending=False)\nplayers = list(best["name"].head(how_many))\nsecret = random.choice(players)\n\nclues = [\n    "Clue 1: he plays for the " + clue(secret, "team") + ".",\n    "Clue 2: his " + stat + " in " + str(newest) + ": " + str(clue(secret, stat)) + ".",\n    "Clue 3: his name starts with " + secret[0] + ".",\n]\n' + GAME + '\n\nprint("The players were:", players)',
@@ -112,7 +112,7 @@ const CELLS = [
       if (stat === 'HR') return { msg: `It was ${s}. That was still the home run quiz. Change <code>stat</code> to <code>"SB"</code>, <code>"H"</code> or <code>"BB"</code>.` };
       if (!QUIZ_STATS.includes(stat)) return { msg: `<code>"${esc(stat)}"</code> is not a stat we can quiz on. Try <code>"SB"</code>, <code>"H"</code> or <code>"BB"</code>.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep <code>chances = 3</code>.' };
-      return { ok: true, msg: ((await q('guess == secret')) ? `YES! ${s} it is. ` : `It was ${s}. `) + 'Your own quiz, built from real stats. Now let mom, dad or a friend play it: you wrote a program other people can use!' }; } }
+      return { ok: true, msg: ((await q('guess == secret')) ? `YES! ${s} it is. ` : `It was ${s}. `) + 'Your own quiz, built from MLB stats. Now let mom, dad or a friend play it: you wrote a program other people can use!' }; } }
 ];
 
 const REVIEW = [

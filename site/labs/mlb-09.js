@@ -87,7 +87,7 @@ const CELLS = [
     tips: ['', 'A table has the numbers, but your eye can\'t follow ups and downs in it.', 'A chart without words is a mystery! And which kind of chart would it be?'],
     ok: 'Right. A line connects the seasons, so the ups and downs jump out. Bars are best for comparing sizes.' },
 
-  { md: '<h2>Part 4. Two careers side by side 🤝</h2>To really compare two players, put both lines on <b>one</b> chart. A <code>for</code> loop (Lab 5) draws one line for each name in a list.' },
+  { md: '<h2>Part 4. Two careers side by side 🤝</h2>To compare two players fairly, put both lines on <b>one</b> chart. A <code>for</code> loop (Lab 5) draws one line for each name in a list.' },
   { skill: 'compare', kind: 'run', data: true, task: '<b>Guess first:</b> Aaron Judge or Shohei Ohtani: who hit more home runs in 2022? And in 2025? Run it. <code>label=name</code> sticks a name tag on each line, and <code>plt.legend()</code> draws the little box that says who is who.',
     code: 'for name in ["Aaron Judge", "Shohei Ohtani"]:\n    career = stats[stats["name"] == name]\n    plt.plot(career["season"], career["HR"], marker="o", label=name)\n\nplt.legend()\nplt.title("Home runs each season")\n' + LINE_LABELS,
     ok: 'The loop ran twice, so two lines, each in its own color. In 2022 Judge is far on top (62 to 34). In 2025 Ohtani is just ahead (55 to 53). They keep trading places!' },

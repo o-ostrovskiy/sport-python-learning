@@ -5,7 +5,7 @@ import { $, S, esc } from './state.js';
 import { say, API } from './voice.js';
 
 const ASK_OFF = 'Good question for another day! In the film room I can only talk about <b>Python and this lab</b>. Ask me about your code, an error, or what a word like <code>append</code> means.';
-const ASK_ADULT = 'That sounds important. Please talk to your mom, dad or another grown-up you trust right now. I am only a coding coach, but they can really help.';
+const ASK_ADULT = 'That sounds important. Please talk to your mom, dad or another grown-up you trust right now. I am only a coding coach, but they can help.';
 const ASK_PRIVATE = 'Careful! Never type private things like your address, phone, email or passwords here. Ask me a Python question instead.';
 const ASK_LIMIT = 'We have talked a lot! Try the next play, and use 💡 Hint if you get stuck.';
 const PRIVATE = [/[\w.+-]+@[\w-]+\.[\w.]+/, /(\d[\s().-]?){7,}/, /https?:\/\/|www\./i, /\b(my (address|password|phone|school) is|i live (at|in|on))\b/i];

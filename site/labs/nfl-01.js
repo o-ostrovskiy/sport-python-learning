@@ -33,7 +33,7 @@ const LAB1 = [
       const sc = (await g('score'));
       if (sc === 27) return { msg: 'The locker is there, but the score line is not using it yet. Add <code>+ safeties * 2</code> at the end of that line.' };
       if (sc !== 29) return { msg: `The scoreboard says ${sc}, we need 29. A safety is 2 points, so it is <code>safeties * 2</code>.` };
-      return { ok: true, msg: '29! You wrote a new variable and used it in math. That is real programming.' }; } },
+      return { ok: true, msg: '29! You wrote a new variable and used it in math. That is programming.' }; } },
   { md: '<h2>Mission 3. Speedometer 🏎️</h2>Let\'s build a <b>machine</b> (programmers call it a <b>function</b>): you put a 40-yard time in, and a speed in miles per hour comes out. The lines inside the machine are pushed to the right. That is how Python knows they belong to it.' },
   { skill: 'functions', kind: 'run', task: 'Run it to build the machine and test it on Xavier Worthy, the fastest ever.',
     code: 'def speed_mph(seconds):\n    yards_per_second = 40 / seconds\n    return round(yards_per_second * 3600 / 1760, 2)\n\nprint("Xavier Worthy (4.21 sec):", speed_mph(4.21), "mph")',
@@ -82,10 +82,10 @@ const LAB1 = [
       if (p === 'WR') return { msg: 'Still wide receivers. Change <code>"WR"</code> to another position, like <code>"RB"</code>.' };
       if (!(await q('len(one_position)'))) return { msg: `No players have the position "${esc(String(p))}". Use capital letters: <code>"RB"</code>, <code>"CB"</code>, <code>"QB"</code> or <code>"TE"</code>.` };
       return { ok: true, msg: `The fastest ${esc(p)} since 2000 is ${(await q('one_position.sort_values("forty").iloc[0]["player_name"]'))}. You just filtered a table of 9,000 players with one line.` }; } },
-  { md: '<h2>Mission 6. THE BIG QUESTION 🔍</h2>NFL teams spend millions picking players by their Combine numbers. But <b>do the fastest receivers really become the best ones?</b> Scientists guess <b>before</b> they look, so nobody can say "I knew it all along".' },
+  { md: '<h2>Mission 6. THE BIG QUESTION 🔍</h2>NFL teams spend millions picking players by their Combine numbers. But <b>do the fastest receivers become the best ones?</b> Scientists guess <b>before</b> they look, so nobody can say "I knew it all along".' },
   { skill: 'tables', kind: 'quiz', vote: true, task: 'What do you think? There is no wrong answer here.',
     opts: ['Yes, the fastest ones get the most yards', 'No, speed does not matter at all', 'It is mixed: speed helps a little'],
-    ok: 'Locked in! Now let us check it with real data.' },
+    ok: 'Locked in! Now let us check it with the data.' },
   { skill: 'tables', kind: 'run', data: true, task: '👀 <b>Watch the pros.</b> This box glues each receiver\'s 40 time to the yards he gained in his whole career, then draws a chart. Every dot is one receiver. <b>Left = faster. Up = more yards.</b>',
     code: 'import matplotlib.pyplot as plt\n\nyards = pd.read_csv("career_yards.csv")\nwr = combine[(combine["pos"] == "WR") & combine["forty"].notna()]\nwr = wr.drop_duplicates("player_name", keep=False)\ndata = wr.merge(yards, on="player_name")\nprint("Receivers with both numbers:", len(data))\n\nplt.figure(figsize=(9, 5))\nplt.scatter(data["forty"], data["yards"], alpha=0.5)\nplt.xlabel("40-yard dash in seconds   (left = faster)")\nplt.ylabel("Career receiving yards")\nplt.title("Does speed make a great receiver?")\nplt.show()',
     check: async () => ({ ok: true, msg: (myVote === 2 ? 'Good call! ' : 'Surprise! ') + 'If speed decided everything, the highest dots would all be on the left. But they are all mixed up: fast and slow receivers both became stars, and both flopped.' }) },

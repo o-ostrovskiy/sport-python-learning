@@ -1,7 +1,7 @@
 // Baseball Lab 7: Player Cards (dictionaries). See labs/README.md for the format.
 // Twin of baseball/Baseball_Lab_7.ipynb: same ideas, same code.
 (() => {
-const SKILLS = { dict: 'A dictionary: key and value', change: 'Adding and changing facts', lookup: 'Looking things up', build: 'Cards from real stats' };
+const SKILLS = { dict: 'A dictionary: key and value', change: 'Adding and changing facts', lookup: 'Looking things up', build: 'Cards from the stats' };
 const CARD = `card = {
     "name": "Aaron Judge",
     "team": "New York Yankees",
@@ -123,7 +123,7 @@ print(cards[1]["name"])`,
       if (!out.includes('Aaron Judge plays for the New York Yankees') || !out.includes('Cal Raleigh plays for the Seattle Mariners')) return { msg: 'The first line should say "Aaron Judge plays for the New York Yankees". Use the keys <code>"name"</code> and <code>"team"</code>.' };
       return { ok: true, msg: 'Three cards, one loop, two keys. A list keeps the cards in order, and each dictionary keeps one player\'s facts by label.' }; } },
 
-  { md: '<h2>Part 4. Cards made from real stats 📊</h2>Card companies do not type every number by hand. Let\'s build a machine that makes a card from the real data.' },
+  { md: '<h2>Part 4. Cards made from the stats 📊</h2>Card companies do not type every number by hand. Let\'s build a machine that makes a card from the data.' },
   { skill: 'build', kind: 'run', data: true, task: 'First run this to load every MLB season. One row is one player\'s whole season.',
     code: `import pandas as pd
 

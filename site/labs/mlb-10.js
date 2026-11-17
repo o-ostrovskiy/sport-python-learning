@@ -98,7 +98,7 @@ const CELLS = [
     ok: 'Ruth starts at the bottom (he was a pitcher first), then climbs two huge mountains. Aaron hits right away and stays high for almost twenty seasons: no mountain, but a long, high road.' },
   { skill: 'answer', kind: 'run', data: true, task: 'The final report. A good answer says <b>who</b>, and gives the <b>numbers that prove it</b>. Run it and read our answer.',
     code: 'answer = "Hank Aaron hit more home runs in total (755 to 714). But Babe Ruth had more big seasons (11 to 8) and the best season (60)."\n' + REPORT,
-    ok: 'A question, the numbers, a closer look, a picture, an answer. Notice the answer is not just one name. Real answers often say "it depends what you mean by bigger". That is being honest.' },
+    ok: 'A question, the numbers, a closer look, a picture, an answer. Notice the answer is not just one name. Good answers often say "it depends what you mean by bigger". That is being honest.' },
 
   { md: '<h2>Now it is YOUR investigation 🔎</h2>Pick <b>your own</b> question: two players and one thing to count. Need an idea? <b>Stolen bases</b> (<code>"SB"</code>, big = 50): Rickey Henderson and Lou Brock. <b>Hits</b> (<code>"H"</code>, big = 200): Ichiro Suzuki and Derek Jeter. <b>Home runs today</b> (<code>"HR"</code>, big = 40): Aaron Judge and Shohei Ohtani. Or even better: your own two favorite players.' },
   { skill: 'question', kind: 'turn', data: true, task: '<b>Your control room.</b> Change the five lines: your question, your two players, your stat (<code>"HR"</code>, <code>"SB"</code>, <code>"H"</code>, <code>"BB"</code>, <code>"SO"</code> or <code>"G"</code>) and what counts as a big season. Then run it: Python checks that it can find both players.',
@@ -144,7 +144,7 @@ const CELLS = [
       const parts = [String((await q('player1'))), String((await q('player2')))].join(' ').toLowerCase().split(/\s+/).filter(w => w.length > 2 && !/^(jr|sr|ii|iii)\.?$/.test(w));
       if (!parts.some(w => a.includes(w))) return { msg: 'A good answer says <b>who</b>. Use the name of at least one of your players in it.' };
       if (a.length < 25) return { msg: 'That is a start! Now add <b>how you know</b>: a number from your boxes above that proves it.' };
-      return { ok: true, msg: (/\d/.test(a) ? 'A real answer, with numbers as proof. ' : 'A real answer! Next time, put a number in it as proof. ') + 'You asked your own question and answered it with data: that is what sports analysts do for a living. Show the chart and the report to mom or dad. You finished all 10 labs, Investigator!' }; } }
+      return { ok: true, msg: (/\d/.test(a) ? 'A good answer, with numbers as proof. ' : 'A good answer! Next time, put a number in it as proof. ') + 'You asked your own question and answered it with data: that is what sports analysts do for a living. Show the chart and the report to mom or dad. You finished all 10 labs, Investigator!' }; } }
 ];
 
 const REVIEW = [

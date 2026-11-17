@@ -1,7 +1,7 @@
 // One lab = one file. See labs/README.md for the format.
 // Site version of football/Football_Lab_7.ipynb (Player Cards).
 (() => {
-const SKILLS7 = { cards: 'Making a dictionary', keys: 'Keys: look up, add, change', lookup: 'Team codes and loops', deck: 'Cards from real stats' };
+const SKILLS7 = { cards: 'Making a dictionary', keys: 'Keys: look up, add, change', lookup: 'Team codes and loops', deck: 'Cards from the stats' };
 const CARD = `card = {
     "name": "Saquon Barkley",
     "team": "Giants",
@@ -76,7 +76,7 @@ const LAB7 = [
     code: TEAMS5 + '\nteams["DAL"] = "Cowboys"\nteams["???"] = "???"        # change both: a team code, and its name\n\nfor code in teams:\n    print(code, "=", teams[code])\n\nprint("Teams I know:", len(teams))',
     hints: ['The code goes in the square brackets, the name after the <code>=</code>. Both in quotes.', 'For example: <code>teams["DET"] = "Lions"</code>'],
     check: async ({ q }) => {
-      if ((await q('"???" in teams'))) return { msg: 'The key is still <code>"???"</code>. Put a real team code in the square brackets, like <code>"DET"</code>.' };
+      if ((await q('"???" in teams'))) return { msg: 'The key is still <code>"???"</code>. Put a team code in the square brackets, like <code>"DET"</code>.' };
       if ((await q('"???" in teams.values()'))) return { msg: 'The code is in, but its name is still <code>"???"</code>. Put the team\'s name after the <code>=</code>.' };
       if (!(await q('"DAL" in teams'))) return { msg: 'The Cowboys are gone! Keep the line <code>teams["DAL"] = "Cowboys"</code>.' };
       const n = (await q('len(teams)'));
@@ -84,7 +84,7 @@ const LAB7 = [
       if (n !== 7) return { msg: `The dictionary has ${n} teams, we want 7: the first five, the Cowboys, and yours.` };
       return { ok: true, msg: `Seven teams! The last one you added: ${esc(String((await q('list(teams)[-1]'))))} = ${esc(String((await q('teams[list(teams)[-1]]'))))}.` }; } },
 
-  { md: '<h2>Part 3. Cards from the real stats 📊</h2>Typing 32 teams is slow, so here is the whole league, ready-made. (The data uses today\'s codes and names even for old seasons.)' },
+  { md: '<h2>Part 3. Cards from the stats 📊</h2>Typing 32 teams is slow, so here is the whole league, ready-made. (The data uses today\'s codes and names even for old seasons.)' },
   { skill: 'lookup', kind: 'run', task: 'Run it to load all 32 teams.',
     code: TEAMS32 + '\n\nprint("Teams:", len(teams))\nprint("LAC is the", teams["LAC"])',
     ok: '32 teams, each code with its name.' },

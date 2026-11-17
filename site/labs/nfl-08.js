@@ -39,7 +39,7 @@ const LAB8 = [
     hints: ['Only line 1 changes. <code>int(</code> goes before <code>input</code>, and one more <code>)</code> goes at the very end of the line.', 'Line 1 should be: <code>tds = int(input("How many touchdowns? "))</code>'],
     check: async ({ q }) => {
       if (!(await q('isinstance(points, int)'))) return { msg: `Python says ${esc(String((await q('str(points)'))))} points! <code>tds</code> is still text, so <code>* 6</code> repeated it 6 times. Wrap the input: <code>int(input("..."))</code>.` };
-      return { ok: true, msg: `${(await q('int(tds)'))} touchdowns are ${(await q('points'))} points. Real math! <code>int( )</code> turned your typed text into a number.` }; } },
+      return { ok: true, msg: `${(await q('int(tds)'))} touchdowns are ${(await q('points'))} points. Math! <code>int( )</code> turned your typed text into a number.` }; } },
 
   { md: '<h2>Part 2. Python picks 🎲</h2>A quiz is no fun if you already know the answer. Python has a toolbox called <code>random</code> for surprises. <code>random.choice(a_list)</code> picks <b>one thing from a list</b>, like pulling a name out of a hat.' },
   { skill: 'random', kind: 'run', task: 'Run it <b>three times</b> and watch the name. <code>import random</code> opens the toolbox, just like <code>import pandas</code> in Lab 2.',
@@ -73,7 +73,7 @@ const LAB8 = [
   { skill: 'loops', kind: 'run', task: 'Two small new things for our game. <code>!=</code> asks "are these <b>not</b> the same?": the opposite of <code>==</code>. And <code>and</code> between two questions says True only when <b>both</b> are True. <b>Guess first:</b> five answers, True or False?',
     code: 'print("Josh Allen" == "Josh Allen")\nprint("Josh Allen" != "Josh Allen")\nprint("Josh Allen" != "Joe Burrow")\n\nprint(2 < 3 and 5 < 9)\nprint(2 < 3 and 5 < 1)',
     ok: 'True, False, True, then True, False. The last one is False because <code>5 &lt; 1</code> is not true, and <code>and</code> needs <b>both</b> sides to be True.' },
-  { skill: 'loops', kind: 'turn', data: true, task: 'A real guessing loop: "<b>while</b> the guess is not the secret <b>and</b> there are tries left, ask again". One symbol is missing: the one that means "less than", so you get 3 tries. Fill it in, run it, and answer. Capital letters matter!',
+  { skill: 'loops', kind: 'turn', data: true, task: 'A guessing loop: "<b>while</b> the guess is not the secret <b>and</b> there are tries left, ask again". One symbol is missing: the one that means "less than", so you get 3 tries. Fill it in, run it, and answer. Capital letters matter!',
     code: 'secret = "Saquon Barkley"\ntries = 0\nguess = ""\n\nwhile guess != secret and tries ___ 3:\n    guess = input("Who ran for 2,005 yards in 2024? ")\n    tries = tries + 1\n\nif guess == secret:\n    print("Correct! You needed", tries, "tries.")\nelse:\n    print("Out of tries. It was", secret)',
     hints: ['You used this symbol in the first box of Part 3: <code>while tries ___ 3:</code>', 'The line should be: <code>while guess != secret and tries &lt; 3:</code>'],
     check: async ({ code, q }) => {
@@ -85,7 +85,7 @@ const LAB8 = [
       return (await q('guess == secret')) ? { ok: true, msg: `Correct in ${t} ${t === 1 ? 'try' : 'tries'}! The loop stopped early, because <code>guess != secret</code> turned False.` }
         : { ok: true, msg: 'Out of tries, so the loop stopped by itself: <code>tries &lt; 3</code> turned False. That count is what keeps a <code>while</code> from running forever.' }; } },
 
-  { md: '<h2>Part 4. Guess the Player 🏈</h2>Time to build the real quiz. Python will pick a <b>secret player</b> from the real stats and give you clues. First we need the players.' },
+  { md: '<h2>Part 4. Guess the Player 🏈</h2>Time to build the whole quiz. Python will pick a <b>secret player</b> from the NFL stats and give you clues. First we need the players.' },
   { skill: 'game', kind: 'run', data: true, task: 'Run it. Everything here you know from Lab 4: load the seasons, keep the newest one, sort by receiving yards, take the top 10.',
     code: 'import pandas as pd\n\nseasons = pd.read_csv("player_stats_season.csv", low_memory=False)\nseasons = seasons[seasons["season_type"] == "REG"]\nnewest = seasons["season"].max()\nlast = seasons[seasons["season"] == newest]\n\ntop = last.sort_values("receiving_yards", ascending=False).head(10)\ntop = top[["player_display_name", "position", "recent_team", "receiving_yards"]]\ntop',
     ok: 'The top 10 receivers of the newest season. Python will hide one of them. Keep this table in sight: you will need the spelling of the names.' },
@@ -99,7 +99,7 @@ const LAB8 = [
       const mt = (await q('max_tries')), t = (await q('tries')), ans = esc(String((await q('answer'))));
       if (!(mt >= 3)) return { msg: `It was ${ans}. With <code>max_tries = ${esc(String(mt))}</code> you never see clues 2 and 3. Change it to 3 and play again: Python will pick a new secret player.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep the <code>while</code> line as it was.' };
-      return (await q('guess == answer')) ? { ok: true, msg: `TOUCHDOWN! ${ans} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a real game. Run it again for a new player!` }
+      return (await q('guess == answer')) ? { ok: true, msg: `TOUCHDOWN! ${ans} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a whole game. Run it again for a new player!` }
         : { ok: true, msg: `It was ${ans}. Tough one! The loop stopped because the tries ran out. Run it again: Python picks a new secret player every time.` }; } },
   { skill: 'game', kind: 'turn', data: true, task: '<b>Make it yours.</b> Turn it into a quiz about runners or quarterbacks: change <code>stat</code> to <code>"rushing_yards"</code> or <code>"passing_yards"</code>. The box makes a new top 10 for your stat, and shows all ten names at the end.',
     code: 'import random\n\nstat = "receiving_yards"    # change to "rushing_yards" or "passing_yards"\nmax_tries = 3\n\ntop = last.sort_values(stat, ascending=False).head(10)\ncards = top.to_dict("records")\n' + GAME_LOOP + '\n\nprint("The ten players were:", list(top["player_display_name"]))',
@@ -109,7 +109,7 @@ const LAB8 = [
       if (stat === 'receiving_yards') return { msg: `It was ${ans}. That was still the receivers quiz. Change <code>stat</code> to <code>"rushing_yards"</code> or <code>"passing_yards"</code>.` };
       if (!STATS.includes(stat)) return { msg: `<code>"${esc(stat)}"</code> is not a stat we can quiz on. Try <code>"rushing_yards"</code> or <code>"passing_yards"</code>.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep <code>max_tries = 3</code>.' };
-      return { ok: true, msg: ((await q('guess == answer')) ? `TOUCHDOWN! ${ans} it is. ` : `It was ${ans}. `) + 'Your own quiz, built from real stats. Challenge mom or dad: can they beat you?' }; } }
+      return { ok: true, msg: ((await q('guess == answer')) ? `TOUCHDOWN! ${ans} it is. ` : `It was ${ans}. `) + 'Your own quiz, built from NFL stats. Challenge mom or dad: can they beat you?' }; } }
 ];
 
 const REVIEW8 = [

@@ -1,6 +1,6 @@
 // One lab = one file. See labs/README.md for the format.
 (() => {
-const SKILLS4 = { lists: 'Making a list', index: 'Counting from 0', methods: 'append and in', tables: 'A list from real stats' };
+const SKILLS4 = { lists: 'Making a list', index: 'Counting from 0', methods: 'append and in', tables: 'A list from the stats' };
 const BOARD3 = '["Justin Jefferson", "Saquon Barkley", "Josh Allen"]';
 const LAB4 = [
   { md: '<h2>Part 1. Your first list 📋</h2>On draft day, every team has a <b>draft board</b>: the players it wants, in order. Pick 1 at the top, then pick 2, and so on. In Python, a board like that is called a <b>list</b>.' },
@@ -55,19 +55,19 @@ const LAB4 = [
       if (!/if\s+player\s+in\s+my_board\s*:/.test(code)) return { msg: 'Check the <code>if</code> line. The missing word asks "is it inside the list?" and has 2 letters.' };
       if (!/my_board\.append\(\s*player\s*\)/.test(code)) return { msg: 'Check the line under <code>else</code>. The missing word adds a player to the end of a list and has 6 letters.' };
       if (!(await q('player in my_board'))) return { msg: 'The player is still not on the board. Check the line under <code>else</code>.' };
-      return { ok: true, msg: 'The machine works! Now change <code>player</code> to <code>"Josh Allen"</code> and run it again: nobody gets added, because he is already there. That is how real teams avoid picking the same player twice.' }; } },
-  { md: '<h2>Part 4. The real top 5 📊</h2>Real teams build their boards from stats. This is a <b>new file</b>: one row is <b>one whole season</b> of one player, already added up for you.' },
+      return { ok: true, msg: 'The machine works! Now change <code>player</code> to <code>"Josh Allen"</code> and run it again: nobody gets added, because he is already there. That is how NFL teams avoid picking the same player twice.' }; } },
+  { md: '<h2>Part 4. Last season\'s top 5 📊</h2>NFL teams build their boards from stats. This is a <b>new file</b>: one row is <b>one whole season</b> of one player, already added up for you.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Run it to load the seasons. <code>.max()</code> finds the biggest number in the <code>season</code> column, so <code>newest</code> is the newest season in the data.',
     code: 'import pandas as pd\n\nseasons = pd.read_csv("player_stats_season.csv", low_memory=False)\nseasons = seasons[seasons["season_type"] == "REG"]\nnewest = seasons["season"].max()\nprint("Ready!", len(seasons), "seasons loaded. The newest season is", newest)',
     ok: 'Loaded! Thousands of player seasons, ready for scouting.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Three steps you know from Lab 2: keep only the newest season, sort by receiving yards with the <b>most</b> first, then take the top 5 names.',
     code: 'last = seasons[seasons["season"] == newest]\nbest = last.sort_values("receiving_yards", ascending=False)\nnames = best["player_display_name"].head(5)\nprint(names)',
     ok: 'There are the top 5 receivers. The numbers on the left and the last line are the table\'s own notes: ignore them. <code>names</code> is still a piece of the table, not a list yet.' },
-  { skill: 'tables', kind: 'run', data: true, task: 'One new command turns it into a real list: <code>list( )</code>. <b>Guess first:</b> who is number 1? And is Justin Jefferson in the top 5?',
+  { skill: 'tables', kind: 'run', data: true, task: 'One new command turns it into a proper list: <code>list( )</code>. <b>Guess first:</b> who is number 1? And is Justin Jefferson in the top 5?',
     code: 'top5 = list(names)\nprint(top5)\n\nprint("Number 1:", top5[0])\nprint("Is Justin Jefferson in the top 5?", "Justin Jefferson" in top5)',
     ok: 'Square brackets, commas, quotes: it is a list now! So <code>[0]</code> and <code>in</code> work on it, just like on your own board.' },
-  { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final draft board.</b> It starts with the real top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
-    code: 'my_board = list(names)              # start with the real top 5\nmy_board.append("Travis Kelce")     # change to your pick\nmy_board.append("Bijan Robinson")   # change to your pick\n\nprint(my_board)\nprint("Players on my board:", len(my_board))\nprint("My first pick:", my_board[0])\nprint("My last pick:", my_board[len(my_board) - 1])',
+  { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final draft board.</b> It starts with last season\'s top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
+    code: 'my_board = list(names)              # start with last season\'s top 5\nmy_board.append("Travis Kelce")     # change to your pick\nmy_board.append("Bijan Robinson")   # change to your pick\n\nprint(my_board)\nprint("Players on my board:", len(my_board))\nprint("My first pick:", my_board[0])\nprint("My last pick:", my_board[len(my_board) - 1])',
     hints: ['Change the names inside the quotes on lines 2 and 3. Keep <code>.append( )</code> and the quotes.'],
     check: async ({ q }) => {
       const n = (await q('len(my_board)'));
@@ -81,7 +81,7 @@ const REVIEW4 = [
   { skill: 'index', q: 'A board has 4 players. What is the number of the LAST spot?', opts: ['4', '3', '0'], a: 1 },
   { skill: 'methods', q: 'Which line adds Lamar Jackson to the end of the board?', opts: ['board.append("Lamar Jackson")', 'board + "Lamar Jackson"', 'board["Lamar Jackson"]'], a: 0 },
   { skill: 'methods', q: 'What prints?', code: 'board = ["Josh Allen"]\nprint("josh allen" in board)', opts: ['True', 'False', 'Josh Allen'], a: 1 },
-  { skill: 'tables', q: 'names is a column from the table. What does list(names) do?', opts: ['counts the names', 'sorts the names', 'turns them into a real list'], a: 2 }
+  { skill: 'tables', q: 'names is a column from the table. What does list(names) do?', opts: ['counts the names', 'sorts the names', 'turns them into a proper list'], a: 2 }
 ];
 
 registerLab('nfl', 4, {

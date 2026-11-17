@@ -60,7 +60,7 @@ for player in my_team:
     code: `for spot in range(9):
     print(spot + 1, lineup[spot])`,
     ok: '<code>range(9)</code> counts 0 to 8: exactly the spot numbers of a 9-player list, so <code>lineup[spot]</code> is each batter in turn. A lineup card says 1 to 9, so we show <code>spot + 1</code>.' },
-  { skill: 'range', kind: 'turn', task: 'The <b>box score</b>. These are the real runs the Dodgers scored in each inning of Game 5 of the 2024 World Series. The loop shows only 3 innings. Change the <code>3</code> so it shows <b>all 9</b>.',
+  { skill: 'range', kind: 'turn', task: 'The <b>box score</b>. These are the runs the Dodgers scored in each inning of Game 5 of the 2024 World Series. The loop shows only 3 innings. Change the <code>3</code> so it shows <b>all 9</b>.',
     code: `dodgers = [0, 0, 0, 0, 5, 0, 0, 2, 0]
 
 for inning in range(3):     # change the 3

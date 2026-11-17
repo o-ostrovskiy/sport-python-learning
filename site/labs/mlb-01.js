@@ -28,7 +28,7 @@ const CELLS = [
     code: BASES,
     check: async ({ guess }) => ({ ok: true, missed: +guess !== 8, msg: +guess === 8 ? 'You called it: 8! 2×1 + 1×2 + 0×3 + 1×4. Python did the math, then put the answer in <code>total_bases</code>.'
       : `You guessed ${esc(String(guess))}, Python says 8. Here is how: 2×1 = 2, plus 1×2 = 2, plus 0×3 = 0, plus 1×4 = 4. That is 8.` }) },
-  { skill: 'math', kind: 'turn', task: 'A really great day at the plate is <b>10 total bases or more</b>. Change the four numbers to give your batter a great day. Leave the <code>total_bases</code> line alone.',
+  { skill: 'math', kind: 'turn', task: 'A great day at the plate is <b>10 total bases or more</b>. Change the four numbers to give your batter a great day. Leave the <code>total_bases</code> line alone.',
     code: 'singles = 2     # change these numbers\ndoubles = 1\ntriples = 0\nhome_runs = 1\n\ntotal_bases = singles * 1 + doubles * 2 + triples * 3 + home_runs * 4\nprint("Total bases:", total_bases)',
     hints: ['Change only the numbers after the <code>=</code> signs in the first four lines.', 'A home run is worth the most: 4 bases. Try <code>home_runs = 2</code>.'],
     check: async ({ g, q, out }) => {
@@ -104,7 +104,7 @@ const CELLS = [
   { md: '<h2>Mission 6. THE BIG QUESTION 🔬</h2>Home run hitters swing hard. When you swing hard, you miss more. So <b>do the players who hit the most home runs also strike out the most?</b> Scientists guess <b>before</b> they look, so nobody can say "I knew it all along".' },
   { skill: 'tables', kind: 'quiz', vote: true, task: 'What do you think? There is no wrong answer here.',
     opts: ['Yes: more home runs, more strikeouts', 'No: great hitters almost never miss', 'Mostly yes, but the very best are different'],
-    ok: 'Locked in! Now let us check it with real data.' },
+    ok: 'Locked in! Now let us check it with the data.' },
   { skill: 'tables', kind: 'run', data: true, task: '👀 <b>Watch the pros.</b> One row is one season, but we need one row for a <b>whole career</b>. This box throws away seasons where strikeouts are empty, adds up each player\'s seasons, and keeps players with at least 4,000 at bats (<code>&gt;=</code> means "at least").',
     code: 'counted = stats.dropna(subset=["SO"])\ncareers = counted.groupby(["playerID", "name"], as_index=False)[["AB", "HR", "SO"]].sum()\ncareers = careers[careers["AB"] >= 4000]\n\nprint("Players with at least 4,000 at bats:", len(careers))\ncareers.sort_values("HR", ascending=False)[["name", "HR", "SO"]].head(10)',
     ok: 'Barry Bonds on top with 762. Why <code>.dropna</code>? Long ago nobody wrote strikeouts down, so those boxes are empty. If we kept those seasons, a great old hitter would look like he never struck out!' },

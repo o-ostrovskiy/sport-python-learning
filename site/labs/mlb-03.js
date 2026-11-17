@@ -15,7 +15,7 @@ const CELLS = [
     code: 'balls_for_a_walk = 4\nballs = 4\n\nprint(balls > balls_for_a_walk)\nprint(balls >= balls_for_a_walk)',
     opts: ['the first one, with >', 'the second one, with >=', 'both of them'], a: 1,
     tips: ['<code>4 &gt; 4</code> asks "is 4 <b>bigger</b> than 4?" It is not bigger, it is the same.', '', 'Only one. <code>4 &gt; 4</code> is False: 4 is not bigger than 4.'],
-    ok: 'Right. <code>4 &gt;= 4</code> is True: 4 is <b>at least</b> 4. That is the question the umpire really asks.' },
+    ok: 'Right. <code>4 &gt;= 4</code> is True: 4 is <b>at least</b> 4. That is the question the umpire asks.' },
   { skill: 'yesno', kind: 'turn', task: 'Cal Raleigh hit <b>60</b> home runs in 2025. Is that <b>at least</b> 60? Put the right symbol in place of <code>___</code>. It is two symbols together: "bigger than" and "the same".<br>🔎 <b>Google it:</b> <code>python greater than or equal</code>',
     code: 'raleigh_hr = 60\n\nprint(raleigh_hr ___ 60)',
     hints: ['Look at the list of symbols above. Which one means "at least"?', 'The answer: <code>print(raleigh_hr &gt;= 60)</code>'],
@@ -74,10 +74,10 @@ const CELLS = [
       if (!out.includes('Extra bases')) return { msg: 'The rules under line 1 changed. Keep them as they were and change only the number.' };
       return { ok: true, msg: `${d} feet: over their heads! The first rule was False, the second was True, so Python stopped at <code>elif</code>.` }; } },
 
-  { md: '<h2>Part 4. Rate a player\'s best season ⭐</h2>Let\'s use <code>if</code> on real stats: batters\' seasons from 1871 to 2026, the same table as in Lab 2. One row is one player in one season, and <code>HR</code> is home runs.' },
+  { md: '<h2>Part 4. Rate a player\'s best season ⭐</h2>Let\'s use <code>if</code> on MLB stats: batters\' seasons from 1871 to 2026, the same table as in Lab 2. One row is one player in one season, and <code>HR</code> is home runs.' },
   { skill: 'elif', kind: 'run', data: true, task: 'Run it to load the table <code>stats</code>.',
     code: 'import pandas as pd\n\nstats = pd.read_csv("mlb_batting.csv").convert_dtypes()\nprint("Ready!", len(stats), "rows: one player in one season")',
-    ok: 'Loaded! Now the umpire bot can look at real seasons.' },
+    ok: 'Loaded! Now the umpire bot can look at MLB seasons.' },
   { skill: 'elif', kind: 'run', data: true, task: 'This box finds a player\'s best home run season, like in Lab 2, and then <b>rates</b> it: 50 or more is a monster season, 30 or more is a big power season. <b>Guess the rating</b>, then run it.',
     code: 'name = "Aaron Judge"\n\n' + RATE + 'elif' + RATE_END,
     ok: 'Aaron Judge\'s best season is 62 home runs. 62 is at least 50, so the first rule was True and Python stopped there: MONSTER SEASON!' },
@@ -107,7 +107,7 @@ const CELLS = [
       if (tie.includes('Winner')) return { msg: 'Still a winner on a tie. The question must be <code>total1 == total2</code>, with two equals signs, and the line must end with a colon.' };
       if (real.includes('Winner: Pete Alonso') || !real.includes('Winner: Kyle Schwarber') || !back.includes('Winner: Kyle Schwarber')) return { msg: 'The tie works, but now a normal matchup goes wrong. Use <code>elif</code>, not a second <code>if</code>, and keep the <code>if</code> and <code>else</code> lines as they were.' };
       if (tie.split('\n').length < 3) return { msg: 'On a tie the machine now says nothing. Under your <code>elif</code> line add: <code>print("It\'s a tie! 🤝")</code> with 8 spaces in front.' };
-      return { ok: true, msg: 'It\'s a tie! You found a bug in a machine and fixed it. And the real matchup still works: Kyle Schwarber 385, Pete Alonso 307. Great call, Umpire!' }; } }
+      return { ok: true, msg: 'It\'s a tie! You found a bug in a machine and fixed it. And the matchup from the stats still works: Kyle Schwarber 385, Pete Alonso 307. Great call, Umpire!' }; } }
 ];
 const REVIEW = [
   { skill: 'yesno', q: 'What prints?', code: 'print(7 >= 7)', opts: ['True', 'False', '7'], a: 0 },

@@ -4,7 +4,7 @@
 const SKILLS = { def: 'Building a machine with def', inputs: 'Inputs', ret: 'return hands back an answer', combo: 'Machines working together' };
 const TEAM3 = '["Aaron Judge", "Shohei Ohtani", "Cal Raleigh"]';
 const CELLS = [
-  { md: '<h2>Part 1. Your first machine 🔧</h2>You have used machines that someone else built: <code>time_to_plate</code> in Lab 1, <code>compare</code> in Labs 2 and 3. Today you build your own. Python\'s real word for a machine is a <b>function</b>.' },
+  { md: '<h2>Part 1. Your first machine 🔧</h2>You have used machines that someone else built: <code>time_to_plate</code> in Lab 1, <code>compare</code> in Labs 2 and 3. Today you build your own. Python\'s word for a machine is a <b>function</b>.' },
   { skill: 'def', kind: 'run', task: '<b>Guess first:</b> what will this box show? Say it out loud, then run it.',
     code: `def cheer():
     print("Let's go, Yankees!")
@@ -128,7 +128,7 @@ print("Winner:", compare("Juan Soto", "Shohei Ohtani", "H"))`,
     return batting_average(hits, at_bats)`,
     opts: ['higher than 0.331', 'exactly 0.331', 'lower than 0.331'], a: 2,
     tips: ['Then most of his other seasons would have to be even better than 2025, his best one.', 'Only if he hit exactly the same every single year. Players have good and bad years.', ''],
-    ok: 'Right: 2025 was one of his best years, so the whole career comes out lower. Run the next box to see the real number.' },
+    ok: 'Right: 2025 was one of his best years, so the whole career comes out lower. Run the next box to see the exact number.' },
   { skill: 'combo', kind: 'run', data: true, task: 'Run it. Look how short <code>career_average</code> is: it just asks your other two machines.',
     code: `def career_average(player):
     hits = career_total(player, "H")

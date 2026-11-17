@@ -112,7 +112,7 @@ const LAB2 = [
       if (out.includes('Justin Jefferson') && out.includes("Ja'Marr Chase")) return { msg: 'Jefferson wins that one, 7,432 yards to 5,425. Now put in two players <b>you</b> would argue about.' };
       const zero = out.split('\n').find(l => /:\s*0$/.test(l.trim()));
       if (zero) return { msg: `"${esc(zero.split(' :')[0])}" has a total of 0. Either the name is spelled wrong (capital letters matter), or he never had that stat. A 0 makes the other player "win" with no warning, so fix it.` };
-      return { ok: true, msg: 'Argument settled, with real evidence! Case closed, Detective. 🕵️' }; } }
+      return { ok: true, msg: 'Argument settled, with evidence! Case closed, Detective. 🕵️' }; } }
 ];
 const REVIEW2 = [
   { skill: 'text', q: 'What prints?', code: 'team = "Bills"\nprint("team")', opts: ['Bills', 'team', 'a red error'], a: 1 },

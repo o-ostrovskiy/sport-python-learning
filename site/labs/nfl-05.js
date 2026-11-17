@@ -60,8 +60,8 @@ const LAB5 = [
   { skill: 'totals', kind: 'run', data: true, task: 'Typing a whole season by hand is no fun. Run this to load the games table from Labs 2 and 3.',
     code: 'import pandas as pd\n\nstats = pd.read_csv("nfl_games.csv", low_memory=False)\nstats = stats[stats["season_type"] == "REG"]\nprint("Ready!", len(stats), "rows loaded")',
     ok: 'Loaded! One row is one player in one game.' },
-  { skill: 'totals', kind: 'run', data: true, task: 'Three small steps you know: only his games, only 2024, then <code>list( )</code> from Lab 4 turns the column into a real list. Run it.',
-    code: 'name = "Saquon Barkley"\n\ngames = stats[stats["player_display_name"] == name]    # only his games (Lab 2)\nseason = games[games["season"] == 2024]                # only the ones in 2024\nyards_list = list(season["rushing_yards"])             # that column, as a real list (Lab 4)\n\nprint(yards_list)\nprint("Games played:", len(yards_list))',
+  { skill: 'totals', kind: 'run', data: true, task: 'Three small steps you know: only his games, only 2024, then <code>list( )</code> from Lab 4 turns the column into a proper list. Run it.',
+    code: 'name = "Saquon Barkley"\n\ngames = stats[stats["player_display_name"] == name]    # only his games (Lab 2)\nseason = games[games["season"] == 2024]                # only the ones in 2024\nyards_list = list(season["rushing_yards"])             # that column, as a proper list (Lab 4)\n\nprint(yards_list)\nprint("Games played:", len(yards_list))',
     ok: 'His 16 games, in order. The first five are the numbers you just added up.' },
   { skill: 'totals', kind: 'run', data: true, task: 'The same loop walks through the <b>whole</b> season. <code>game = game + 1</code> is a running total too: it adds 1 each round. <b>Guess first:</b> did he reach 2,000 yards?',
     code: 'total = 0\ngame = 0\n\nfor yards in yards_list:\n    game = game + 1\n    total = total + yards\n    print("Game", game, ":", yards, "yards.  Season total:", total)\n\nprint(name, "finished with", total, "yards")',
@@ -87,7 +87,7 @@ const LAB5 = [
       if (n === 'Justin Jefferson' && y === 2022 && s === 'receiving_yards') return { msg: 'That is Justin Jefferson in 2022: 1,809 yards and 10 big games. Now change the top lines to your own player.' };
       if (!(await q('len(yards_list)'))) return { msg: `Games: 0. The list is empty, so the loop had nothing to walk through. Check the spelling of "${esc(n)}" (capital letters matter), and that he played in ${esc(String(y))}. This box only has players with lots of yards.` };
       if (!(await q('total == sum(yards_list)'))) return { msg: 'The total does not match his games. Keep the line <code>total = total + yards</code> inside the loop.' };
-      return { ok: true, msg: `${esc(n)} in ${esc(String(y))}: ${(await q('len(yards_list)'))} games, ${(await q('int(total)')).toLocaleString('en-US')} yards, ${(await q('int(big_games)'))} big games. A list, a loop, a running total and a counter: that is a real program. Final whistle! 🏆` }; } }
+      return { ok: true, msg: `${esc(n)} in ${esc(String(y))}: ${(await q('len(yards_list)'))} games, ${(await q('int(total)')).toLocaleString('en-US')} yards, ${(await q('int(big_games)'))} big games. A list, a loop, a running total and a counter: that is a whole program. Final whistle! 🏆` }; } }
 ];
 const REVIEW5 = [
   { skill: 'loops', q: 'How many lines does this print?', code: 'team = ["Allen", "Cook", "Kincaid"]\nfor player in team:\n    print(player)\nprint("Go Bills!")', opts: ['3', '4', '6'], a: 1 },

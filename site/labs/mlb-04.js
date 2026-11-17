@@ -1,6 +1,6 @@
 // Baseball Lab 4: My Lineup Card. Same ideas and code as baseball/Baseball_Lab_4.ipynb. See labs/README.md for the format.
 (() => {
-const SKILLS = { lists: 'Making a list', index: 'Counting from 0', methods: 'append and in', tables: 'A list from real stats' };
+const SKILLS = { lists: 'Making a list', index: 'Counting from 0', methods: 'append and in', tables: 'A list from the stats' };
 const TEAM3 = '["Aaron Judge", "Shohei Ohtani", "Cal Raleigh"]';
 const LINEUP = 'lineup = [\n    "Shohei Ohtani",\n    "Aaron Judge",\n    "Juan Soto",\n    "Cal Raleigh",\n    "Bobby Witt Jr.",\n    "Jose Ramirez",\n    "Kyle Schwarber",\n    "Julio Rodriguez",\n    "Pete Alonso",\n]\n';
 const CELLS = [
@@ -22,7 +22,7 @@ const CELLS = [
       if ((await q('my_team == ' + TEAM3))) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
       return { ok: true, msg: `${esc(String((await q('str(my_team[0])'))))} at the top. Nice team! Three players, two commas, one list.` }; } },
 
-  { md: '<h2>Part 2. Batting… 0th?! 🤯</h2>Now a real lineup: 9 batters. A list this long does not fit on one line, so we write <b>one player per line</b>. Python keeps reading until it finds the closing bracket <code>]</code>. The first batter is the <b>leadoff</b> hitter.' },
+  { md: '<h2>Part 2. Batting… 0th?! 🤯</h2>Now a full lineup: 9 batters. A list this long does not fit on one line, so we write <b>one player per line</b>. Python keeps reading until it finds the closing bracket <code>]</code>. The first batter is the <b>leadoff</b> hitter.' },
   { skill: 'index', kind: 'quiz', task: '<b>Guess first.</b> <code>lineup[1]</code> asks for one batter from the lineup. Which one will it show?',
     code: LINEUP + 'print(lineup[1])',
     opts: ['Shohei Ohtani', 'Aaron Judge', 'Juan Soto'], a: 1,
@@ -60,18 +60,18 @@ const CELLS = [
       if (!(await q('player in my_team'))) return { msg: 'The player is still not on the team. Check the line under <code>else</code>.' };
       return { ok: true, msg: 'The machine works! Now change <code>player</code> to <code>"Aaron Judge"</code> and run it again: nobody gets added, because he is already there. No team needs two Aaron Judges!' }; } },
 
-  { md: '<h2>Part 4. The real top 5 📊</h2>Real teams build their rosters from stats. This is the table from Lab 2: one row is one player\'s <b>whole season</b>, and <code>HR</code> is home runs.' },
+  { md: '<h2>Part 4. This season\'s top 5 📊</h2>MLB teams build their rosters from stats. This is the table from Lab 2: one row is one player\'s <b>whole season</b>, and <code>HR</code> is home runs.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Run it to load the seasons. <code>.max()</code> finds the biggest number in the <code>season</code> column, so <code>newest</code> is the newest season in the data.',
     code: 'import pandas as pd\n\nstats = pd.read_csv("mlb_batting.csv").convert_dtypes()\nnewest = stats["season"].max()\nprint("Ready!", len(stats), "seasons loaded. The newest season is", newest)',
     ok: 'Loaded! Thousands of player seasons, ready for your front office.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Three steps you know from Lab 2: keep only the newest season, sort by home runs with the <b>most</b> first, then take the top 5 names.',
     code: 'last = stats[stats["season"] == newest]\nbest = last.sort_values("HR", ascending=False)\nnames = best["name"].head(5)\nprint(names)',
     ok: 'There are the top 5 home run hitters. The numbers on the left and the last line are the table\'s own notes: ignore them. <code>names</code> is still a piece of the table, not a list yet.' },
-  { skill: 'tables', kind: 'run', data: true, task: 'One new command turns it into a real list: <code>list( )</code>. <b>Guess first:</b> is Aaron Judge in the top 5? The answer may surprise you.',
+  { skill: 'tables', kind: 'run', data: true, task: 'One new command turns it into a proper list: <code>list( )</code>. <b>Guess first:</b> is Aaron Judge in the top 5? The answer may surprise you.',
     code: 'top5 = list(names)\nprint(top5)\n\nprint("Number 1:", top5[0])\nprint("Is Aaron Judge in the top 5?", "Aaron Judge" in top5)',
     ok: 'Square brackets, commas, quotes: it is a list now, so <code>[0]</code> and <code>in</code> work on it. No Judge this time! And in 2026 Kyle Schwarber and Pete Crow-Armstrong both hit 45: a tie, so Python just puts one of them first.' },
-  { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final team.</b> It starts with the real top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
-    code: 'my_team = list(names)               # start with the real top 5\nmy_team.append("Aaron Judge")       # change to your pick\nmy_team.append("Shohei Ohtani")     # change to your pick\n\nprint(my_team)\nprint("Players on my team:", len(my_team))\nprint("First on my list:", my_team[0])\nprint("Last on my list:", my_team[len(my_team) - 1])',
+  { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final team.</b> It starts with this season\'s top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
+    code: 'my_team = list(names)               # start with this season\'s top 5\nmy_team.append("Aaron Judge")       # change to your pick\nmy_team.append("Shohei Ohtani")     # change to your pick\n\nprint(my_team)\nprint("Players on my team:", len(my_team))\nprint("First on my list:", my_team[0])\nprint("Last on my list:", my_team[len(my_team) - 1])',
     hints: ['Change the names inside the quotes on lines 2 and 3. Keep <code>.append( )</code> and the quotes.'],
     check: async ({ q }) => {
       const n = (await q('len(my_team)'));
@@ -85,7 +85,7 @@ const REVIEW = [
   { skill: 'index', q: 'A lineup has 9 batters. What is the number of the LAST spot?', opts: ['9', '8', '0'], a: 1 },
   { skill: 'methods', q: 'Which line adds Juan Soto to the end of the team?', opts: ['team.append("Juan Soto")', 'team + "Juan Soto"', 'team["Juan Soto"]'], a: 0 },
   { skill: 'methods', q: 'What prints?', code: 'team = ["Aaron Judge"]\nprint("aaron judge" in team)', opts: ['True', 'False', 'Aaron Judge'], a: 1 },
-  { skill: 'tables', q: 'names is a column from the table. What does list(names) do?', opts: ['counts the names', 'sorts the names', 'turns them into a real list'], a: 2 }
+  { skill: 'tables', q: 'names is a column from the table. What does list(names) do?', opts: ['counts the names', 'sorts the names', 'turns them into a proper list'], a: 2 }
 ];
 
 registerLab('mlb', 4, {

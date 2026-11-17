@@ -47,9 +47,9 @@ const LAB10 = [
     check: async ({ q }) => {
       if (!(await q('isinstance(bar, (int, float))'))) return { msg: 'The bar must be a number, without quotes.' };
       const big = (await q('big')), n = (await q('len(mine)'));
-      if (!((await q('bar')) > 0)) return { msg: `With a bar of 0, all ${n} seasons count, so the number tells you nothing. Set a real bar on line 1.` };
+      if (!((await q('bar')) > 0)) return { msg: `With a bar of 0, all ${n} seasons count, so the number tells you nothing. Set a higher bar on line 1.` };
       if (big === 0) return { ok: true, msg: 'No season clears your bar. That is an answer too: the bar is higher than his best season. Lower it and run again if you want to see some count.' };
-      if (big === n && n > 1) return { ok: true, msg: `All ${n} seasons clear your bar, so it is an easy one. Raise it and run again if you want to find his really big seasons.` };
+      if (big === n && n > 1) return { ok: true, msg: `All ${n} seasons clear your bar, so it is an easy one. Raise it and run again if you want to find his biggest seasons.` };
       return { ok: true, msg: `${big} out of ${n}. A bar means something when some seasons clear it and some do not. The loop checked every season for you.` }; } },
   { skill: 'numbers', kind: 'quiz', task: 'Which tool tells you about <b>one great year</b>, not the whole career?',
     opts: ['.max()', '.sum()', 'len( )'], a: 0,
@@ -66,7 +66,7 @@ const LAB10 = [
     check: async ({ q }) => {
       const rival = String((await q('rival'))), player = String((await q('player')));
       const n = (await q('len(seasons[seasons["player_display_name"] == rival])'));
-      if (n === 0) return { msg: (rival === '?' ? 'There is no rival yet. ' : `Python has nobody called <code>"${esc(rival)}"</code>. Check the spelling and the capital letters. `) + 'Put a real player\'s name between the quotes on line 1.' };
+      if (n === 0) return { msg: (rival === '?' ? 'There is no rival yet. ' : `Python has nobody called <code>"${esc(rival)}"</code>. Check the spelling and the capital letters. `) + 'Put a player\'s name between the quotes on line 1.' };
       if (rival === player) return { msg: 'That is your own player! A rival must be somebody else.' };
       if ((await q('seasons[seasons["player_display_name"] == rival]["player_id"].nunique()')) > 1) return { msg: `Two different NFL players are called ${esc(rival)}, so their seasons got added together. Pick another rival for now.` };
       if ((await q('int(rival_total)')) === 0) return { msg: `${esc(rival)} has 0 in <code>${esc(String((await q('stat'))))}</code> for his whole career. Pick a rival who plays the same position as ${esc(player)}.` };
@@ -77,7 +77,7 @@ const LAB10 = [
     ok: 'Did the leader change? Sometimes the player with the smaller total has the better average season: he just has not played as long. A good investigator says which number the answer is based on.' },
   { skill: 'compare', kind: 'quiz', task: 'Player A: 12,000 yards in 12 seasons. Player B: 6,000 yards in 4 seasons. Who gains more in an <b>average season</b>?',
     opts: ['Player A', 'Player B', 'They are the same'], a: 1,
-    tips: ['A has the bigger total, but he needed 12 seasons for it. Share 12,000 between 12 seasons, and 6,000 between 4.', '', 'Share 12,000 between 12 seasons, and 6,000 between 4. Are the two answers really the same?'],
+    tips: ['A has the bigger total, but he needed 12 seasons for it. Share 12,000 between 12 seasons, and 6,000 between 4.', '', 'Share 12,000 between 12 seasons, and 6,000 between 4. Are the two answers the same?'],
     ok: 'Player B: 1,500 a season against 1,000. The bigger total does not always mean the better player.' },
 
   { md: '<h2>Part 4. Show it and tell it 📈</h2>A report needs a picture and an answer. This is the two-line chart from Lab 9, with your player and your rival already filled in.' },
@@ -95,7 +95,7 @@ const LAB10 = [
       const a = String((await q('str(answer)'))).trim();
       if (!a) return { msg: 'The report is ready, but <code>My answer:</code> is empty. Write your answer between the quotes on line 1.' };
       if (a.length < 10 || !a.includes(' ')) return { msg: 'Make it a full sentence, so someone who reads your report understands what you found.' };
-      return { ok: true, msg: 'A question, the evidence, a picture and an answer: that is a real investigation, and it is all yours. Go show the report and the chart to mom or dad!' }; } }
+      return { ok: true, msg: 'A question, the evidence, a picture and an answer: that is a full investigation, and it is all yours. Go show the report and the chart to mom or dad!' }; } }
 ];
 
 const REVIEW10 = [

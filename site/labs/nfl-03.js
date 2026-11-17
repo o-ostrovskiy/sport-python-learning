@@ -82,11 +82,11 @@ const LAB3 = [
     code: 'yards_to_go = 1          # change this number\nyards_to_end_zone = 60   # change this number\n\n' + COACH,
     hints: ['The field goal rule needs <code>yards_to_end_zone</code> to be 35 or less. But the first rule must be False, or it wins.', 'Try <code>yards_to_go = 8</code> and <code>yards_to_end_zone = 20</code>.'],
     check: async ({ g, out }) => {
-      if (out.includes('field goal')) return { ok: true, msg: `Field goal! With ${esc(String((await g('yards_to_go'))))} yards to go the first rule was False, so Python moved on, and ${esc(String((await g('yards_to_end_zone'))))} is at most 35. (Real coaches also think about the score and the clock.)` };
+      if (out.includes('field goal')) return { ok: true, msg: `Field goal! With ${esc(String((await g('yards_to_go'))))} yards to go the first rule was False, so Python moved on, and ${esc(String((await g('yards_to_end_zone'))))} is at most 35. (NFL coaches also think about the score and the clock.)` };
       if (out.includes('Go for it')) return { msg: `The bot says "Go for it", because <code>yards_to_go</code> is ${esc(String((await g('yards_to_go'))))}: that is 1 or less, and the first rule wins. Make <code>yards_to_go</code> bigger than 1.` };
       if (out.includes('Punt')) return { msg: `The bot punts: ${esc(String((await g('yards_to_end_zone'))))} yards is too far for a kick. Make <code>yards_to_end_zone</code> 35 or less.` };
       return { msg: 'The bot said nothing. Keep the <code>if</code>, <code>elif</code> and <code>else</code> lines and change only the two numbers.' }; } },
-  { md: 'Now let\'s use <code>if</code> on real stats: we find a player\'s best game, like in Lab 2, and then <b>rate</b> it. 200 yards or more is a monster game, 100 or more is a big game.' },
+  { md: 'Now let\'s use <code>if</code> on NFL stats: we find a player\'s best game, like in Lab 2, and then <b>rate</b> it. 200 yards or more is a monster game, 100 or more is a big game.' },
   { skill: 'elif', kind: 'run', data: true, task: 'First load the table, the same way as in Lab 2. Run it.',
     code: 'import pandas as pd\n\nstats = pd.read_csv("nfl_games.csv", low_memory=False)\nstats = stats[stats["season_type"] == "REG"]\nprint("Ready!", len(stats), "rows loaded")',
     ok: 'Loaded! One row is one player in one game.' },
@@ -109,12 +109,12 @@ const LAB3 = [
     code: TOP + '    # add your two lines here\n' + BOTTOM + '\ncompare("Tom Brady", "Tom Brady", "passing_tds")',
     hints: ['<code>elif</code> has to come after the <code>if</code> part and before <code>else</code>. That is exactly where the note is.', 'The <code>elif</code> line starts under the <code>i</code> of <code>if</code> (4 spaces). Its <code>print</code> starts under the other <code>print</code> lines (8 spaces).', 'Two equals signs: <code>elif total1 == total2:</code> asks "are they the same?"'],
     check: async ({ code, out }) => {
-      if (/tie/i.test(out) && !out.includes('Winner')) return { ok: true, msg: 'It\'s a tie! You found a bug and fixed it, like a real programmer. The <code>elif</code> sits between <code>if</code> and <code>else</code>, so Python checks it before giving up and picking player 2. 🎉' };
+      if (/tie/i.test(out) && !out.includes('Winner')) return { ok: true, msg: 'It\'s a tie! You found a bug and fixed it, like a programmer. The <code>elif</code> sits between <code>if</code> and <code>else</code>, so Python checks it before giving up and picking player 2. 🎉' };
       if (!/elif/.test(code)) return { msg: 'The machine still picks Tom Brady over Tom Brady. Replace the <code># add your two lines here</code> line with the <code>elif</code> line and its <code>print</code> line.' };
       if (/elif\s+total1\s*>=?\s*total2/.test(code)) return { msg: 'Your <code>elif</code> asks "is it bigger?". For a tie we ask "are they the same?": <code>elif total1 == total2:</code>' };
       if (/tie/i.test(out)) return { msg: 'It says tie <b>and</b> a winner. The tie <code>print</code> must be under the <code>elif</code>, pushed in 8 spaces, and the old <code>print</code> lines stay where they were.' };
       return { msg: 'The <code>elif</code> is there, but the machine still does not say tie. Check that it reads <code>elif total1 == total2:</code> and that the <code>print("It\'s a tie! 🤝")</code> line is right under it.' }; } },
-  { skill: 'debug', kind: 'run', data: true, task: 'One real matchup to finish, with your fixed machine. <b>Guess first:</b> who has more rushing yards?',
+  { skill: 'debug', kind: 'run', data: true, task: 'One matchup from the stats to finish, with your fixed machine. <b>Guess first:</b> who has more rushing yards?',
     code: 'compare("Derrick Henry", "Adrian Peterson", "rushing_yards")',
     ok: 'Adrian Peterson, 14,921 yards to 11,423 (through the 2024 season). But Henry is still playing! If a total ever says 0, check the spelling of the name.' }
 ];
