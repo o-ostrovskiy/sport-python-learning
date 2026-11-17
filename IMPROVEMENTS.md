@@ -153,7 +153,7 @@ lesson checker and a browser play-through can prove nothing broke.
 Optional later step: **Vite + TypeScript** if the site keeps growing. Types would catch lab format mistakes early.
 React, Next.js or another framework is not worth it for this site: it would add a build and a lot of weight for no gain.
 
-### 8. Browser tests and CI
+### 8. Browser tests and CI — DONE 2026-11-16
 - **Playwright** tests:
   - home page loads;
   - a week opens;

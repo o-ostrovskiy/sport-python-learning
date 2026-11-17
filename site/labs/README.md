@@ -106,7 +106,8 @@ can read. No math or analytics words. Real players and real numbers: run every b
 
 ## Answer key and automatic check (required)
 
-Every lab has an answer key `labs/answers/<sport>-<NN>.json` (kept out of git; it is also the parent's key).
+Every lab has an answer key `labs/answers/<sport>-<NN>.json` (kept out of git; it is also the parent's key). CI reads the keys from
+the `ANSWER_KEYS` secret: after adding or changing one, set the secret again (the command is in `DEPLOY.md`, "Checks").
 Keys are play numbers (text cells do not count):
 
 ```json

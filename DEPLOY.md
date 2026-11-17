@@ -38,9 +38,15 @@ A content change (a lesson, a page, new voice files) needs no restart. From a cl
 the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for this computer, `rsync --delete` to
 `~/python-season/`, close SSH. Then open the site and check that a lesson runs and the answer keys give "Not found".
 
-Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson. Before every update that
-touches `play.html`, `play.css`, `js/`, `py-worker.js`, `season.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
-`node test-stop.mjs`, `node test-map.mjs`, `node test-editor.mjs`, `node test-cache.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
+**Checks.** GitHub Actions (`.github/workflows/site.yml`, "Site checks") runs them on every push to main and every pull
+request that touches `site/` or `server/` (not the daily voice commits): `check-site.mjs` (scripts parse, links, HTML),
+`check-lab.mjs all` (the 20 lessons in real Python) and `run-tests.mjs` (every browser test, the 20-lab play-through included).
+Publish only from a commit whose run is green. On this computer: `cd site/tools && node check-site.mjs && node check-lab.mjs all && node run-tests.mjs`
+(`--quick` leaves out the play-through).
+
+The answer keys are not in git (the repository is public). CI gets them from the repository secret `ANSWER_KEYS`, a base64
+`.tar.gz` of `site/labs/answers`. After changing an answer key, set it again:
+`cd site/labs && COPYFILE_DISABLE=1 tar czf - --exclude .DS_Store answers | base64 | tr -d '\n' | gh secret set ANSWER_KEYS --repo o-ostrovskiy/sport-python-learning`
 
 **Coach voice goes live by itself** (decided 2026-11-16): the daily scheduled task "Запись голоса тренера" records the next
 lines, commits only `site/assets/voice/`, pushes, and uploads that folder to `~/python-season/assets/voice/` (clips first,

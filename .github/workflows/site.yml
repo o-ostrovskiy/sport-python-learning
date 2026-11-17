@@ -1,0 +1,59 @@
+# Checks the Python Season site on every push to main and every pull request that touches it
+# (IMPROVEMENTS.md item 8). The daily coach-voice commits (site/assets/voice/) do not start it.
+#   1. check-site.mjs   every script parses; links, imports and HTML basics are right
+#   2. check-lab.mjs    all 20 lessons played in real Python, hint paths and answers included
+#   3. run-tests.mjs    the browser tests in Chromium, the 20-lab play-through through the real page included
+# The answer keys are not in git (the repository is public). They come from the ANSWER_KEYS secret
+# (a base64 .tar.gz of site/labs/answers), only for this run. Without it (a fork) the checks that need them are skipped.
+name: Site checks
+
+on:
+  push:
+    branches: [main]
+    paths: ['site/**', 'server/**', '.github/workflows/site.yml', '!site/assets/voice/**']
+  pull_request:
+    paths: ['site/**', 'server/**', '.github/workflows/site.yml', '!site/assets/voice/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: site/tools
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/tools/package-lock.json
+      - name: Install the tools
+        run: npm ci
+      - name: Answer keys (from the ANSWER_KEYS secret, never in git)
+        env:
+          ANSWER_KEYS: ${{ secrets.ANSWER_KEYS }}
+        run: |
+          if [ -n "$ANSWER_KEYS" ]; then
+            printf '%s' "$ANSWER_KEYS" | base64 -d | tar xz -C ../labs
+            echo "answer keys restored: $(ls ../labs/answers | wc -l) files"
+          else
+            echo "::notice::No ANSWER_KEYS secret (a fork?): the checks that need the answer keys are skipped"
+          fi
+      - name: Scripts, links and HTML
+        run: node check-site.mjs
+      - name: Lessons in real Python
+        run: |
+          if [ -d ../labs/answers ]; then node check-lab.mjs all; else echo "skipped: no answer keys"; fi
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser tests
+        run: node run-tests.mjs

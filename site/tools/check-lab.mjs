@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { loadPyodide } from 'pyodide';
 
 const SITE = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PY_VERSION = JSON.parse(fs.readFileSync(new URL('./node_modules/pyodide/package.json', import.meta.url), 'utf8')).version;
+const PY_DIR = path.join(SITE, 'assets', 'vendor', 'pyodide', PY_VERSION) + path.sep;
 // Same helper code as loadBase() in play.html.
 const BASE = `
 import warnings; warnings.filterwarnings("ignore")
@@ -55,7 +57,8 @@ async function checkLab(name) {
   if (plays.length < 11 || plays.length > 18) warn(`${plays.length} plays (aim for about 15)`);
   if (skills.length < 3 || skills.length > 4) warn(`${skills.length} skills (aim for 3–4)`);
 
-  const py = await loadPyodide(); let out = [], inputs = [];
+  // The same Python files the site sends to children (assets/vendor/pyodide, see vendor-pyodide.mjs): nothing is downloaded.
+  const py = await loadPyodide({ indexURL: PY_DIR }); let out = [], inputs = [];
   py.setStdout({ batched: s => out.push(s) }); py.setStderr({ batched: () => {} });
   globalThis._nextInput = () => { if (!inputs.length) throw new Error('the code asked for input() but the answers file gives no more "inputs"'); return inputs.shift(); };
   py.runPython(HELPERS);

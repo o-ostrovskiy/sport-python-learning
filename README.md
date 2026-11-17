@@ -87,6 +87,9 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/tools/build-map.mjs` | draws the map once (US Census outlines, Albers projection) and writes each stadium's `xy` into `season.js` |
 | `site/tools/build-editor.mjs` | bundles CodeMirror 6 (the code boxes) into `site/assets/vendor/codemirror/codemirror.js`, served from our own site |
 | `site/tools/vendor-pyodide.mjs` | copies Python and the packages the labs use into `site/assets/vendor/pyodide/`, checking each against Pyodide's sha256 list |
+| `site/tools/check-site.mjs` | every script parses; local links, anchors, imports and HTML basics are right |
+| `site/tools/run-tests.mjs` | runs every browser test below and says which passed (`--quick`: all but the play-through) |
+| `site/tools/test-smoke.mjs` | browser test: pages load, a week opens, Play 1 prints, a hint, a flag, and answer keys are never served |
 | `site/tools/check-lab.mjs` | plays a lab from start to finish in real Python and fails if any box, hint path or answer misbehaves |
 | `site/tools/test-resume.mjs` | browser test (Playwright): half-play Week 1, reload, Continue, and the boxes and Python's memory are back |
 | `site/tools/test-stop.mjs` | browser test: ⏹ Stop ends `while True: pass` and the next boxes run; `input( )` asks in the page |
@@ -94,6 +97,7 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/tools/test-editor.mjs` | browser test with real key presses: indent after a colon, brackets, straight quotes, Shift+Enter, Tab and Escape+Tab |
 | `site/tools/test-cache.mjs` | browser test: nothing from other sites, Python kept by `sw.js`, and an open lab keeps working offline |
 | `site/tools/playthrough.mjs` | plays every lab through the real page in Chromium with the answer keys, film review included |
+| `.github/workflows/site.yml` | GitHub Actions: `check-site`, `check-lab all` and `run-tests` on every push and pull request that touches the site |
 | `server/` | for home use only: `local.mjs` runs the site on this computer, `handler.mjs` is the coach-question API that keeps the Gemini key private |
 | [`DEPLOY.md`](DEPLOY.md) | where the public site lives, how to update it, and the launch checklist |
 
