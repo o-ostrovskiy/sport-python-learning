@@ -87,6 +87,7 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/tools/build-map.mjs` | draws the map once (US Census outlines, Albers projection) and writes each stadium's `xy` into `season.js` |
 | `site/tools/build-editor.mjs` | bundles CodeMirror 6 (the code boxes) into `site/assets/vendor/codemirror/codemirror.js`, served from our own site |
 | `site/tools/vendor-pyodide.mjs` | copies Python and the packages the labs use into `site/assets/vendor/pyodide/`, checking each against Pyodide's sha256 list |
+| `site/tools/publish.sh` | puts the committed site on python.mystoryland.ai in one command, with its safety checks (see `DEPLOY.md`) |
 | `site/tools/check-site.mjs` | every script parses; local links, anchors, imports and HTML basics are right |
 | `site/tools/run-tests.mjs` | runs every browser test below and says which passed (`--quick`: all but the play-through) |
 | `site/tools/test-smoke.mjs` | browser test: pages load, a week opens, Play 1 prints, a hint, a flag, and answer keys are never served |

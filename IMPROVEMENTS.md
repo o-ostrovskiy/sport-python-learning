@@ -166,7 +166,7 @@ React, Next.js or another framework is not worth it for this site: it would add 
 - **GitHub Actions** on every push: `node --check` on the scripts, `check-lab.mjs all`, the Playwright tests, and a link and
   HTML check. The repository is public, so Actions minutes are free.
 
-### 9. A one-command update of the live site
+### 9. A one-command update of the live site — DONE 2026-11-17
 Add `tools/publish.sh`:
 1. Make a clean export of the committed `site/` (`git archive`), leaving out `tools/`, `labs/answers/` and `*.md`.
 2. Run the lesson checker.

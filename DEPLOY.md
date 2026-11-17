@@ -33,10 +33,18 @@ On the Storyland Lightsail box (decided 2026-11-15, live 2026-11-16), as a secon
 
 ## Updating the site
 
-A content change (a lesson, a page, new voice files) needs no restart. From a clean copy of `site/` without
-`tools/`, `labs/answers/` and `*.md`, sync it to the box. The commands are in
-the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for this computer, `rsync --delete` to
-`~/python-season/`, close SSH. Then open the site and check that a lesson runs and the answer keys give "Not found".
+A content change (a lesson, a page, new voice files) needs no restart. Publish with one command, from a pushed main
+whose "Site checks" run is green:
+
+    site/tools/publish.sh --dry-run     # what would change on the box; uploads nothing
+    site/tools/publish.sh               # the same, asks once, uploads, checks the live site
+
+It refuses when `site/` has uncommitted changes, main is not pushed or is behind, the CI run is not green, a lesson
+fails, or the upload would delete a voice file on the box. It makes a clean copy of the committed `site/` (without
+`tools/`, `labs/answers/` and `*.md`), opens SSH for this computer, runs `rsync --delete` to `~/python-season/`, always
+closes SSH, then checks with curl: pages 200, answer key, tools and `/api/` 404, pandas sent compressed. It needs the
+infrastructure repo checked out (`INFRA`, for `ssh-access.sh` and the box's address) and the Lightsail key (`KEY`).
+The manual commands are still in the infrastructure repo's `deploy/README.md` ("Python Season").
 
 **Checks.** GitHub Actions (`.github/workflows/site.yml`, "Site checks") runs them on every push to main and every pull
 request that touches `site/` or `server/` (not the daily voice commits): `check-site.mjs` (scripts parse, links, HTML),
