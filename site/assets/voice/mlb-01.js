@@ -23,7 +23,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "Line 1 should say stat = \"SB\", with capital letters.": "line-1-should-say-stat-sb-with-capital-l-80ae4814.mp3",
  "Change only the number on line 1.": "change-only-the-number-on-line-1-9916b49f.mp3",
  "Line 1 should look like this: year = 1998": "line-1-should-look-like-this-year-1998-7e3dcac9.mp3",
- "Locked in! Now let us check it with real data.": "locked-in-now-let-us-check-it-with-real-630d87ce.mp3",
+ "Locked in! Now let us check it with the data.": "locked-in-now-let-us-check-it-with-the-d-612a00a9.mp3",
  "Barry Bonds on top with 762. Why .dropna? Long ago nobody wrote strikeouts down, so those boxes are empty. If we kept those seasons, a great old hitter would look like he never struck out!": "barry-bonds-on-top-with-762-why-dropna-l-d01f5f9d.mp3",
  "Find the number 1450 in the line and type 1000 instead. No comma inside the number.": "find-the-number-1450-in-the-line-and-typ-3e14e4ec.mp3",
  "The name must be text, so it needs quotes: player = \"Juan Soto\".": "the-name-must-be-text-so-it-needs-quotes-935a23ef.mp3",

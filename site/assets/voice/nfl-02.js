@@ -42,5 +42,5 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "Use the machine: compare(\"Name One\", \"Name Two\", \"stat\").": "use-the-machine-compare-name-one-name-tw-ace92b42.mp3",
  "The machine did not finish. Give it three things in quotes with commas between: player, player, stat.": "the-machine-did-not-finish-give-it-three-ba472f7b.mp3",
  "Jefferson wins that one, 7,432 yards to 5,425. Now put in two players you would argue about.": "jefferson-wins-that-one-7-432-yards-to-5-b40406f3.mp3",
- "Argument settled, with real evidence! Case closed, Detective.": "argument-settled-with-real-evidence-case-cf612c18.mp3"
+ "Argument settled, with evidence! Case closed, Detective.": "argument-settled-with-evidence-case-clos-2c38a230.mp3"
 });

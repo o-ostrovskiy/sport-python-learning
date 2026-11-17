@@ -1,7 +1,7 @@
 // Made by tools/record-voice.mjs. Do not edit by hand.
 window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "10 > 7 asks \"is 10 bigger than 7?\" Yes: True. 3 > 7? No: False. Both words start with a capital letter and have no quotes.": "10-7-asks-is-10-bigger-than-7-yes-true-3-40973bea.mp3",
- "Right. 4 >= 4 is True: 4 is at least 4. That is the question the umpire really asks.": "right-4-4-is-true-4-is-at-least-4-that-i-8b9da062.mp3",
+ "Right. 4 >= 4 is True: 4 is at least 4. That is the question the umpire asks.": "right-4-4-is-true-4-is-at-least-4-that-i-3d4c94fd.mp3",
  "4 > 4 asks \"is 4 bigger than 4?\" It is not bigger, it is the same.": "4-4-asks-is-4-bigger-than-4-it-is-not-bi-effed811.mp3",
  "Only one. 4 > 4 is False: 4 is not bigger than 4.": "only-one-4-4-is-false-4-is-not-bigger-th-0f888153.mp3",
  "Look at the list of symbols above. Which one means \"at least\"?": "look-at-the-list-of-symbols-above-which-a735aac8.mp3",
@@ -19,7 +19,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "Only one line prints. After the first True, Python skips everything below it.": "only-one-line-prints-after-the-first-tru-0565e1ab.mp3",
  "Home runs start at 400 feet. Extra bases start at 300 feet.": "home-runs-start-at-400-feet-extra-bases-20ad461b.mp3",
  "Any number from 300 to 399 works. Try distance = 350.": "any-number-from-300-to-399-works-try-dis-c9b22b6b.mp3",
- "Loaded! Now the umpire bot can look at real seasons.": "loaded-now-the-umpire-bot-can-look-at-re-020b8709.mp3",
+ "Loaded! Now the umpire bot can look at MLB seasons.": "loaded-now-the-umpire-bot-can-look-at-ml-4aa487e3.mp3",
  "Aaron Judge's best season is 62 home runs. 62 is at least 50, so the first rule was True and Python stopped there: MONSTER SEASON!": "aaron-judge-s-best-season-is-62-home-run-a1fdd8e8.mp3",
  "The missing word is short for \"else if\": 4 letters, starting with el.": "the-missing-word-is-short-for-else-if-4-0610ea96.mp3",
  "That line should read elif best >= 30:": "that-line-should-read-elif-best-30-e5812bd8.mp3",

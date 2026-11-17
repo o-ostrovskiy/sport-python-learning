@@ -38,7 +38,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "The bot said nothing. Keep the if, elif and else lines and change only the two numbers.": "the-bot-said-nothing-keep-the-if-elif-an-c30031c8.mp3",
  "Check the line that had the ___. The word that means \"else if\" has 4 letters, and the line still ends with a colon.": "check-the-line-that-had-the-the-word-tha-1159c096.mp3",
  "The elif is right: Kelce's best is 191 yards, a big game. Now change the name on line 1 to your own player.": "the-elif-is-right-kelce-s-best-is-191-ya-29c77525.mp3",
- "It's a tie! You found a bug and fixed it, like a real programmer. The elif sits between if and else, so Python checks it before giving up and picking player 2.": "it-s-a-tie-you-found-a-bug-and-fixed-it-e688dbaf.mp3",
+ "It's a tie! You found a bug and fixed it, like a programmer. The elif sits between if and else, so Python checks it before giving up and picking player 2.": "it-s-a-tie-you-found-a-bug-and-fixed-it-da426368.mp3",
  "The machine still picks Tom Brady over Tom Brady. Replace the # add your two lines here line with the elif line and its print line.": "the-machine-still-picks-tom-brady-over-t-f78f3fb0.mp3",
  "Your elif asks \"is it bigger?\". For a tie we ask \"are they the same?\": elif total1 == total2:": "your-elif-asks-is-it-bigger-for-a-tie-we-75da3975.mp3",
  "It says tie and a winner. The tie print must be under the elif, pushed in 8 spaces, and the old print lines stay where they were.": "it-says-tie-and-a-winner-the-tie-print-m-3226eddb.mp3",
