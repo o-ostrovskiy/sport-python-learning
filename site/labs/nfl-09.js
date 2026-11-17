@@ -18,8 +18,8 @@ const LAB9 = [
   { skill: 'bars', kind: 'run', data: true, task: 'The top 3 receivers of 2024 and their receiving yards. <b>Guess first:</b> whose bar will be the tallest? Then run it.',
     code: 'import matplotlib.pyplot as plt\n\n' + TOP3 + '\nplt.bar(players, yards)\nplt.show()',
     ok: '<code>plt</code> is Python\'s drawing toolbox (you saw it in Lab 1). <code>plt.bar(players, yards)</code> draws one bar per player: first list = names, second list = how tall. <code>plt.show()</code> says "done, show the picture".' },
-  { skill: 'labels', kind: 'quiz', task: 'Look at your chart again. What do the numbers on the left side count?',
-    opts: ['Receiving yards', 'Touchdowns', 'Nobody can tell from the chart'], a: 2,
+  { skill: 'labels', kind: 'quiz', task: 'Imagine a friend sees <b>only the picture</b>, not the code. Can they tell what the numbers on the left count?',
+    opts: ['Yes: receiving yards', 'Yes: touchdowns', 'No, the picture does not say'], a: 2,
     tips: ['<b>You</b> know that, because you read the code. But would a friend who only sees the picture know?', 'Could be! Could also be yards, or dollars. Does the picture itself say?', ''],
     ok: 'Exactly. A chart without words is a riddle. Every chart needs a <b>title</b> and a <b>label</b> for its numbers.' },
   { skill: 'labels', kind: 'turn', data: true, task: 'Give the chart words. Write a <b>title</b> (what is this chart about?) and a <b>label</b> for the left side (what do the numbers count?) between the empty quotes <code>""</code>.',
@@ -106,7 +106,7 @@ const REVIEW9 = [
   { skill: 'bars', q: 'The names list has 4 players and the numbers list has 3 numbers. What happens?', opts: ['3 bars are drawn', 'a red ValueError', 'the last bar is 0'], a: 1 },
   { skill: 'labels', q: 'Which line writes words along the LEFT side of a chart?', opts: ['plt.title("Yards")', 'plt.xlabel("Yards")', 'plt.ylabel("Yards")'], a: 2 },
   { skill: 'lines', q: 'You want to show how one player changed over 8 seasons. Which chart fits best?', opts: ['a line chart', 'a bar chart of 3 players', 'no chart, just print'], a: 0 },
-  { skill: 'lines', q: 'On a season-by-season line chart, the line goes UP from 2021 to 2022. What does that mean?', opts: ['2022 was a worse season', '2022 was a better season', 'he changed teams'], a: 1 },
+  { skill: 'lines', q: 'On a season-by-season line chart, the line goes UP from 2021 to 2022. What does that mean?', opts: ['he had less of that stat in 2022', 'he had more of that stat in 2022', 'he changed teams'], a: 1 },
   { skill: 'compare', q: 'Two lines on one chart. What makes the little box that says who is who?', opts: ['plt.show()', 'plt.legend()', 'plt.title()'], a: 1 }
 ];
 

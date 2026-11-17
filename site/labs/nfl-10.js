@@ -47,7 +47,7 @@ const LAB10 = [
     check: async ({ q }) => {
       if (!(await q('isinstance(bar, (int, float))'))) return { msg: 'The bar must be a number, without quotes.' };
       const big = (await q('big')), n = (await q('len(mine)'));
-      if (!((await q('bar')) > 0)) return { msg: `With a bar of 0, all ${n} seasons count, so the number tells you nothing. Set a higher bar on line 1.` };
+      if (!((await q('bar')) > 0)) return { msg: `With a bar of 0, almost every one of his ${n} seasons counts, so the number tells you nothing. Set a higher bar on line 1.` };
       if (big === 0) return { ok: true, msg: 'No season clears your bar. That is an answer too: the bar is higher than his best season. Lower it and run again if you want to see some count.' };
       if (big === n && n > 1) return { ok: true, msg: `All ${n} seasons clear your bar, so it is an easy one. Raise it and run again if you want to find his biggest seasons.` };
       return { ok: true, msg: `${big} out of ${n}. A bar means something when some seasons clear it and some do not. The loop checked every season for you.` }; } },

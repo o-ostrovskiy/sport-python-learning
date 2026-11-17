@@ -56,7 +56,7 @@ const LAB7 = [
       if (!(await q('isinstance(my_card, dict)'))) return { msg: 'The card must be a dictionary. Keep the curly brackets <code>{ }</code> and the <code>"key": value</code> pairs.' };
       if (!/my_card\[\s*["']number["']\s*\]/.test(code)) return { msg: 'That key works, but it is not the jersey number. Which label sits in front of the number on the card? Type it in quotes.' };
       if ((await q('len(my_card)')) !== 4 || !(await q('all(k in my_card for k in ["name", "team", "number", "position"])'))) return { msg: 'The card needs its four keys: <code>"name"</code>, <code>"team"</code>, <code>"number"</code> and <code>"position"</code>. Change only what comes after the colons.' };
-      if ((await q('my_card["name"] == "Justin Jefferson"'))) return { msg: 'The key is right: he wears number 18. Now make it <b>your</b> card: change the four values after the colons.' };
+      if ((await q('my_card["name"] == "Justin Jefferson"'))) return { msg: 'The key is right: he wears number 18. Now make a card for another player: change the four values after the colons. (Is Jefferson your favorite? Then use your second favorite, so you practice changing the values.)' };
       if (!(await q('isinstance(my_card["number"], int)'))) return { msg: 'The jersey number is a number, so no quotes around it: <code>"number": 17,</code>' };
       return { ok: true, msg: `${esc(String((await q('my_card["name"]'))))}, number ${(await q('my_card["number"]'))}. Your first dictionary: four keys, four values.` }; } },
 

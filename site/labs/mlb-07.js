@@ -60,7 +60,7 @@ print(card["name"], "wears number", card["number"])`,
       if (!(await q('isinstance(card, dict)'))) return { msg: 'The card must be a dictionary. Keep the curly brackets <code>{ }</code> around the pairs.' };
       const lost = (await q('next((k for k in ["name", "team", "number", "position"] if k not in card), "")'));
       if (lost) return { msg: `The key <code>"${esc(lost)}"</code> is gone from your card. Keep all four keys and change only the values after the colons.` };
-      if ((await q('card["name"] == "Aaron Judge"'))) return { msg: 'That is still Aaron Judge\'s card. Put your own player after <code>"name":</code> and change the other three values too.' };
+      if ((await q('card["name"] == "Aaron Judge"'))) return { msg: 'That is still Aaron Judge\'s card. Put another player after <code>"name":</code> and change the other three values too. (Is Judge your favorite? Then use your second favorite.)' };
       if ((await q('card["number"] == 99 and card["team"] == "New York Yankees"'))) return { msg: 'New name, but still the Yankees and number 99. Change the team and the number to your player\'s.' };
       return { ok: true, msg: `A card for ${esc(String((await q('str(card["name"])'))))}, number ${esc(String((await q('str(card["number"])'))))}. Four keys, four values, one dictionary.` }; } },
 
@@ -165,7 +165,7 @@ for player in my_team:
       if (n < 5) return { msg: 'Some facts went missing from the card. Keep the lines that were there and add one new line.' };
       if (n === 5) return { msg: 'The card still has 5 facts. Add a line like <code>card["walks"] = seasons["BB"].sum()</code> above <code>return card</code>, pushed in like the others.' };
       const lost = (await q('next((str(p) for p in my_team if len(stats[stats["name"] == p]) == 0), "")'));
-      if (lost) return { msg: `Your new line works! But the card for ${esc(lost)} says 0 seasons: Python did not find him. Check the spelling and the capital letters.` };
+      if (lost) return { msg: `Your new line works! But the card for ${esc(lost)} says 0 seasons: Python did not find him. Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star.` };
       return { ok: true, msg: `Your own card design, with ${n} facts on every card and a machine that prints them. Nice collection!` }; } }
 ];
 const REVIEW = [

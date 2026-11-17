@@ -37,7 +37,7 @@ const CELLS = [
   { skill: 'index', kind: 'turn', task: 'Who hits <b>cleanup</b> (4th)? Change the <code>0</code> to the right number. Careful, it is not 4!',
     code: 'print("Cleanup hitter:", lineup[0])   # change the 0',
     hints: ['Count the spots from the top, starting at 0: Ohtani is 0, Judge is 1…', 'The spot is one less than the batting order. 4th batter, so spot…?'],
-    check: async ({ out }) => out.includes('Cal Raleigh') ? { ok: true, msg: 'Cal Raleigh! The 4th batter lives at spot 3. You are counting like Python now.' }
+    check: async ({ out, code }) => !/lineup\s*\[/.test(code) ? { msg: 'Ask the list for him: keep <code>lineup[ ]</code> and put a spot number in the square brackets.' } : out.includes('Cal Raleigh') ? { ok: true, msg: 'Cal Raleigh! The 4th batter lives at spot 3. You are counting like Python now.' }
       : { msg: `That shows ${esc(out.replace('Cleanup hitter: ', ''))}. We want the 4th batter. Count from 0 at the top.` } },
 
   { md: '<h2>Part 3. Trade deadline 📞</h2>Your team just traded for a new player. <code>.append( )</code> means <b>"add to the end"</b>. The dot means "do this to that": <code>my_team.append("Juan Soto")</code> = "to <code>my_team</code>, add Juan Soto at the end".' },

@@ -89,7 +89,7 @@ const LAB6 = [
   { md: '<h2>Part 4. Rebuild <code>compare</code> yourself ⚔️</h2>In Lab 3 you opened the <code>compare</code> machine and fixed its tie bug. Now you build it from scratch, your own way, out of two small machines.' },
   { skill: 'team', kind: 'run', data: true, task: '<b>Machine 1</b> adds up one player\'s whole career (every season since 1999) in one stat. Run it.',
     code: 'def career_total(name, stat):\n    player = seasons[seasons["player_display_name"] == name]\n    return player[stat].sum()\n\nprint(career_total("Tom Brady", "passing_tds"))\nprint(career_total("Peyton Manning", "passing_tds"))',
-    ok: '650 and 513 touchdown passes. (The file starts in 1999, so Manning\'s first season, 1998, is not counted.)' },
+    ok: 'About 650 and 513 touchdown passes. (The file starts in 1999, so Manning\'s first season, 1998, is not counted.)' },
   { skill: 'ret', kind: 'turn', data: true, task: '<b>Machine 2</b> uses machine 1 twice, then decides. The old <code>compare</code> printed the winner. Yours will <b>hand back</b> the winner\'s name. Two words are missing: the 3-letter word that starts building a machine, and the 6-letter word that hands an answer back.',
     code: '___ compare(player1, player2, stat):\n' + COMPARE_BODY,
     hints: ['The first word is short for "define". The second one means "hand this back".', 'Line 1 should start with <code>def compare(</code>', 'Under the <code>if</code>: <code>return player1</code>'],
@@ -104,7 +104,7 @@ const LAB6 = [
     hints: ['Change the names inside the quotes. Each keeps its own quotes, with commas between.', 'For example: <code>winner = compare("Derrick Henry", "Saquon Barkley", "rushing_tds")</code>'],
     check: async ({ code, out, g }) => {
       if (!/compare\s*\(/.test(code)) return { msg: 'Use your machine: <code>winner = compare("Name One", "Name Two", "stat")</code>.' };
-      if (out.includes('Justin Jefferson') && out.includes("Ja'Marr Chase")) return { msg: 'Jefferson wins that one, 7,432 yards to 5,425. Now put in two players <b>you</b> would argue about.' };
+      if (out.includes('Justin Jefferson') && out.includes("Ja'Marr Chase")) return { msg: /receiving_yards/.test(code) ? 'Jefferson wins that one, 7,432 yards to 5,425. Now put in two players <b>you</b> would argue about.' : 'Good stat! Now change the two players too: put in two players <b>you</b> would argue about.' };
       const zero = out.split('\n').find(l => /:\s*0$/.test(l.trim()));
       if (zero) return { msg: `"${esc(zero.split(' :')[0])}" has a total of 0. The name is spelled wrong (capital letters matter), or he never had that stat. Fix it so the fight is fair.` };
       if (typeof (await g('winner')) !== 'string') return { msg: 'Keep <code>winner =</code> in front, so the machine\'s answer lands in a locker.' };

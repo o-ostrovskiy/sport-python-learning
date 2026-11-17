@@ -111,7 +111,7 @@ const CELLS = [
       if (p1 === p2) return { msg: 'Those are the same player twice. Pick two different players to compare.' };
       if (typeof stat !== 'string' || !STAT_WORDS[stat]) return { msg: `<code>stat</code> must be one of <code>"HR"</code>, <code>"SB"</code>, <code>"H"</code>, <code>"BB"</code>, <code>"SO"</code> or <code>"G"</code>, in capital letters and in quotes.` };
       for (const p of [p1, p2]) {
-        if (!await rowsOf(q, p)) return { msg: `I can't find "${esc(p)}" in the stats. Check the spelling and the capital letters. (Pitchers are not in this table.)` };
+        if (!await rowsOf(q, p)) return { msg: `I can't find "${esc(p)}" in the stats. Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star. (Pitchers are not in this table.)` };
         if ((await q(`stats[stats["name"] == ${JSON.stringify(p)}]["playerID"].nunique()`)) > 1) return { msg: `Two different players are called ${esc(p)} (often a dad and his son), so their numbers would get mixed up. Pick another player.` };
         if (!await rowsOf(q, p, `.dropna(subset=["${stat}"])`)) return { msg: `Nobody counted ${STAT_WORDS[stat]} when ${esc(p)} played, so there is nothing to compare. Pick another stat or another player.` };
       }

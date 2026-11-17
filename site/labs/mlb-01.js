@@ -35,7 +35,7 @@ const CELLS = [
       const t = (await g('total_bases'));
       if (typeof t !== 'number') return { msg: 'Hits are numbers, so they need no quotes: <code>home_runs = 2</code>.' };
       if (!(await q('total_bases == singles * 1 + doubles * 2 + triples * 3 + home_runs * 4'))) return { msg: 'The math line changed. It should still say <code>total_bases = singles * 1 + doubles * 2 + triples * 3 + home_runs * 4</code>. Change only the four numbers above it.' };
-      if (t === 8) return { msg: 'Still 8 total bases: those are my numbers. Give your batter more hits.' };
+      if (t === 8) return { msg: 'That is 8 total bases, the same as my batter. A great day is 10 or more: give your batter more hits.' };
       if (t < 10) return { msg: `That is ${t} total bases. A great day is 10 or more. Add another home run: each one is worth 4.` };
       if (!out.includes(String(t))) return { msg: 'Keep the <code>print</code> line so we can see the total.' };
       return { ok: true, msg: `${t} total bases! You changed the numbers, and the same math line gave a new answer. That is why we use variables.` }; } },
@@ -49,7 +49,7 @@ const CELLS = [
     hints: ['Look at the play above. The machine is used like this: <code>time_to_plate(100)</code>.', 'Put the machine inside print: <code>print(time_to_plate(____))</code>. Which number goes in?', 'The answer: <code>print(time_to_plate(105.8))</code>'],
     check: async ({ out, code }) => {
       const c = code.replace(/#.*/g, '');
-      if (/time_to_plate\s*\(\s*105\.8\s*\)/.test(c) && out.includes('0.39')) return { ok: true, msg: '0.39 seconds! You used a function all by yourself. Try <code>80</code> (a curveball) or <code>45</code> (a 10-year-old\'s pitch) to see how much more time the batter gets.' };
+      if (/time_to_plate\s*\(/.test(c) && out.includes('0.39')) return { ok: true, msg: '0.39 seconds! You used a function all by yourself. Try <code>80</code> (a curveball) or <code>45</code> (a 10-year-old\'s pitch) to see how much more time the batter gets.' };
       if (!/time_to_plate\s*\(/.test(c)) return { msg: 'Use our machine. Its name is <code>time_to_plate</code>, and the speed goes in the round brackets.' };
       if (!/print/.test(c)) return { msg: 'The machine made the answer, but nobody showed it! Wrap it in <code>print( )</code>.' };
       if (!/105\.8/.test(c)) return { msg: 'Check the speed you fed the machine. Chapman threw <code>105.8</code>.' };
@@ -68,7 +68,7 @@ const CELLS = [
       if (n === 'Aaron Judge') return { msg: 'That is still Aaron Judge. Put your own player between the quotes.' };
       if (!(await q('len(stats[stats["name"] == name])'))) { const near = (await q('_near(stats, name)'));
         return { msg: near ? `Nobody in the archive is called "${esc(n)}". Did you mean <code>"${esc(near)}"</code>? Every letter and capital must match.`
-          : `Nobody in the archive is called "${esc(n)}". Check the spelling and the capital letters. The archive has hitters only, so a pitcher will not be there: try another player.` }; }
+          : `Nobody in the archive is called "${esc(n)}". Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star. The archive has hitters only, so a pitcher will not be there: try another player.` }; }
       return { ok: true, msg: `Found him! ${esc(n)}: ${esc((await q('_who(stats, name)')))}` }; } },
   { skill: 'tables', kind: 'quiz', task: 'Quick one. What does this count?', code: 'len(stats)',
     opts: ['the columns in the table', 'the rows: one for each player season', 'the letters in the word stats'], a: 1,

@@ -69,7 +69,7 @@ const LAB8 = [
     code: 'tries = 0\n\nwhile tries < 3:\n    print("Try number", tries)',
     opts: ['It prints once and stops', 'It never stops: tries stays 0 forever', 'A red error'], a: 1,
     tips: ['Python goes back to the question after every lap. Is <code>tries &lt; 3</code> ever going to be False here?', '', 'No error. Python is happy to keep going. Look: does <code>tries</code> ever change?'],
-    ok: 'Yes: an <b>endless loop</b>. 0 is always less than 3, so it prints forever. Every <code>while</code> needs a line inside it that changes the thing in its question. Do not try it here: the page would freeze!' },
+    ok: 'Yes: an <b>endless loop</b>. 0 is always less than 3, so it prints forever. Every <code>while</code> needs a line inside it that changes the thing in its question. Do not try it here: it would keep going until you press ⏹ Stop!' },
   { skill: 'loops', kind: 'run', task: 'Two small new things for our game. <code>!=</code> asks "are these <b>not</b> the same?": the opposite of <code>==</code>. And <code>and</code> between two questions says True only when <b>both</b> are True. <b>Guess first:</b> five answers, True or False?',
     code: 'print("Josh Allen" == "Josh Allen")\nprint("Josh Allen" != "Josh Allen")\nprint("Josh Allen" != "Joe Burrow")\n\nprint(2 < 3 and 5 < 9)\nprint(2 < 3 and 5 < 1)',
     ok: 'True, False, True, then True, False. The last one is False because <code>5 &lt; 1</code> is not true, and <code>and</code> needs <b>both</b> sides to be True.' },

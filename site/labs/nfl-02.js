@@ -88,6 +88,7 @@ const LAB2 = [
       if (/\]\s*\.sum\s*\(\s*\)/.test(code)) return { msg: '<code>.sum()</code> adds up <b>all</b> his games. We want only the biggest one. 3 letters, the opposite of "min".' };
       if (!/\.max\s*\(\s*\)/.test(code)) return { msg: 'We want the command for the biggest number: 3 letters, the opposite of "min". Keep the dot before it and the <code>()</code> after it.' };
       if (!(await q('len(games)'))) return { msg: 'The <code>games</code> table is empty. Go back one box and find your player first.' };
+      if ((await q('int(games[stat].max())')) === 0) return { msg: 'His best is 0 yards in that column, so that is not his job. Quarterback? Change line 1 to <code>"passing_yards"</code>. Running back? <code>"rushing_yards"</code>.' };
       return { ok: true, msg: `His best game: ${(await q('int(games[stat].max())'))} yards. A normal game: about ${(await q('int(round(games[stat].mean()))'))}. <code>.mean()</code> is the <b>average</b>: add up all his games and share them out equally. <code>round( )</code> cuts off the decimals.` }; } },
 
   { md: '<h2>Part 4. Record games and big arguments 💥</h2><code>sort_values</code> puts all the rows in order. <code>ascending=False</code> means <b>biggest first</b>. Inside a command\'s round brackets, one <code>=</code> chooses a <b>setting</b>, like flipping a switch. <i>Ascending</i> means "going up", so <code>ascending=False</code> says: switch "going up" <b>off</b>.' },
@@ -102,7 +103,7 @@ const LAB2 = [
   { md: 'Last case: <b>who is better?</b> We built you a machine called <code>compare</code>. You give it two players and a stat. It adds up every game since 1999 for each of them and says who wins.<br><br><code>def</code> teaches Python a new command. <code>player1</code>, <code>player2</code> and <code>stat</code> are empty lockers that get filled when you use the machine. <code>.sum()</code> adds up a column. <code>if</code> and <code>else</code> decide who wins. You will take this machine apart in Lab 3.' },
   { skill: 'stats', kind: 'run', data: true, task: 'Run it. The top part builds the machine. The last line <b>uses</b> it: first player, second player, the stat, each in quotes with commas between.',
     code: COMPARE + '\n\ncompare("Tom Brady", "Peyton Manning", "passing_tds")',
-    ok: 'Brady wins, 650 touchdown passes to 513. (The box starts in 1999, so Manning\'s first season, 1998, is not counted.) You wrote the long lines once, and now one short line does the work.' },
+    ok: 'Brady wins, about 650 touchdown passes to 513. (The box starts in 1999, so Manning\'s first season, 1998, is not counted.) You wrote the long lines once, and now one short line does the work.' },
   { skill: 'stats', kind: 'turn', data: true, task: '<b>Settle an argument.</b> Change the two names, and the stat if you like: <code>"receiving_yards"</code>, <code>"rushing_yards"</code>, <code>"passing_yards"</code>, <code>"passing_tds"</code> or <code>"receiving_tds"</code>. Keep the quotes and the commas.',
     code: 'compare("Justin Jefferson", "Ja\'Marr Chase", "receiving_yards")   # change the names and the stat',
     hints: ['Change the names inside the quotes. Each name keeps its own quotes, with a comma after it.', 'For example: <code>compare("Josh Allen", "Patrick Mahomes", "passing_yards")</code>'],

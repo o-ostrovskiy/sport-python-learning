@@ -63,7 +63,7 @@ const CELLS = [
       if (n === 'Aaron Judge') return { msg: 'That is still Aaron Judge. Put your own player between the quotes on line 1.' };
       if (!(await q('len(seasons)'))) { const near = (await q('_near(stats, name)'));
         return { msg: `0 rows: no row said True for "${esc(n)}". ` + (near ? `Did you mean <code>"${esc(near)}"</code>? To Python, every letter and capital must match.`
-          : 'Check the spelling and the capital letters. The box has hitters only, so a pitcher will not be there.') }; }
+          : 'Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star. The box has hitters only, so a pitcher will not be there.') }; }
       return { ok: true, msg: `Case file opened: ${esc(n)}, ${(await q('len(seasons)'))} season${(await q('len(seasons)')) === 1 ? '' : 's'}. Now <code>seasons</code> is a small table, and every row in it is your player.` }; } },
   { skill: 'stats', kind: 'turn', data: true, task: '<b>His best season ever.</b> <code>seasons[stat]</code> is one column of your player\'s table. Every column has a command that finds its <b>biggest</b> number. It is 3 letters, the opposite of "min". Write it in place of <code>___</code>. The dot means "do this to that".<br>🔎 <b>Google it:</b> <code>pandas biggest value in a column</code>',
     code: 'stat = "HR"\n\nprint("Best season:", seasons[stat].___())',
@@ -77,7 +77,7 @@ const CELLS = [
       if (!/seasons\[\s*stat\s*\]\.max\s*\(\s*\)/.test(c)) return { msg: 'The missing word has 3 letters and finds the biggest number in a column. Keep the dot before it and the <code>()</code> after it.' };
       const s = (await g('stat'));
       return { ok: true, msg: `${esc((await q('str(name)')))}'s best season: ${(await q('int(seasons[stat].max())'))} ${STAT_WORDS[s] || esc(String(s))}. If your player is fast rather than strong, change <code>"HR"</code> to <code>"SB"</code> and run it again.` }; } },
-  { skill: 'stats', kind: 'run', data: true, task: 'And a <b>normal</b> season? <code>.mean()</code> means "average": add up all his seasons and share them out equally. <code>round( )</code> cuts off the decimals. (A red <code>TypeError</code> here means <code>seasons</code> is empty: fix the name two plays up and run that box again.)',
+  { skill: 'stats', kind: 'run', data: true, task: 'And a <b>normal</b> season? <code>.mean()</code> means "average": add up all his seasons and share them out equally. <code>round( )</code> turns it into the nearest whole number. (A red <code>TypeError</code> here means <code>seasons</code> is empty: fix the name two plays up and run that box again.)',
     code: 'print("Average season:", round(seasons[stat].mean()))',
     ok: 'That is what he does in a normal year. A best season next to an average season tells you how special his big year was.' },
 
@@ -109,7 +109,7 @@ const CELLS = [
       if (p1 === 'Mookie Betts' && p2 === 'Juan Soto') return { msg: 'That is still my matchup. Put your own two players inside the quotes.' };
       if (!STAT_WORDS[s]) return { msg: `<code>"${esc(s)}"</code> is not a stat the machine can add up. Use one of these: <code>"HR"</code>, <code>"H"</code>, <code>"RBI"</code>, <code>"SB"</code>, <code>"BB"</code>, <code>"SO"</code>.` };
       for (const p of [p1, p2]) if (!(await q(`int((stats["name"] == ${py(p)}).sum())`))) { const near = (await q(`_near(stats, ${py(p)})`));
-        return { msg: `Careful! The machine found no rows for "${esc(p)}", so his total is 0 and the other player "wins" with no warning. ` + (near ? `Did you mean <code>"${esc(near)}"</code>?` : 'Check the spelling and the capital letters.') }; }
+        return { msg: `Careful! The machine found no rows for "${esc(p)}", so his total is 0 and the other player "wins" with no warning. ` + (near ? `Did you mean <code>"${esc(near)}"</code>?` : 'Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star.') }; }
       if (p1 === p2) return { msg: 'That is the same player twice. Pick two different players to compare.' };
       const t1 = (await q(`int(stats[stats["name"] == ${py(p1)}][${py(s)}].sum())`)), t2 = (await q(`int(stats[stats["name"] == ${py(p2)}][${py(s)}].sum())`));
       return { ok: true, msg: t1 === t2 ? `${t1} against ${t2}: a tie! But the machine still named a winner. That is a bug, and you will fix it in Lab 3.`

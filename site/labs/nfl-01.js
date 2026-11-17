@@ -15,7 +15,7 @@ const LAB1 = [
       if (p === 'Patrick Mahomes') return { msg: 'It still says Patrick Mahomes. Type your own favorite player between the quotes.' };
       if (typeof n !== 'number') return { msg: 'The jersey number is a number, so no quotes: <code>number = 17</code>.' };
       if (!out.includes(p)) return { msg: 'Keep the <code>print</code> line so we can see your player.' };
-      return { ok: true, msg: `${p}, number ${n}. Great pick! You just changed three lockers.` }; } },
+      return { ok: true, msg: `${esc(p)}, number ${n}. Great pick! You just changed three lockers.` }; } },
   { skill: 'variables', kind: 'quiz', task: 'Quick one. What does this print?', code: 'team = "Vikings"\nprint("team")',
     opts: ['Vikings', 'team', '"team"'], a: 1,
     tips: ['Look closely: <code>"team"</code> has quotes here. With quotes Python does not open the locker.', '', 'Close! Python shows the word, but the quotes themselves never get printed.'],
@@ -35,7 +35,7 @@ const LAB1 = [
       if (sc !== 29) return { msg: `The scoreboard says ${sc}, we need 29. A safety is 2 points, so it is <code>safeties * 2</code>.` };
       return { ok: true, msg: '29! You wrote a new variable and used it in math. That is programming.' }; } },
   { md: '<h2>Mission 3. Speedometer 🏎️</h2>Let\'s build a <b>machine</b> (programmers call it a <b>function</b>): you put a 40-yard time in, and a speed in miles per hour comes out. The lines inside the machine are pushed to the right. That is how Python knows they belong to it.' },
-  { skill: 'functions', kind: 'run', task: 'Run it to build the machine and test it on Xavier Worthy, the fastest ever.',
+  { skill: 'functions', kind: 'run', task: 'Run it to build the machine and test it on Xavier Worthy, the fastest 40 in Combine history.',
     code: 'def speed_mph(seconds):\n    yards_per_second = 40 / seconds\n    return round(yards_per_second * 3600 / 1760, 2)\n\nprint("Xavier Worthy (4.21 sec):", speed_mph(4.21), "mph")',
     ok: '19.43 miles per hour! <code>speed_mph(4.21)</code> fed 4.21 into the machine, and the answer came back out.' },
   { skill: 'functions', kind: 'turn', task: 'Your turn to use the machine. Tyreek Hill ran the 40 in <b>4.29</b> seconds. Print his speed.',
@@ -92,7 +92,7 @@ const LAB1 = [
   { skill: 'tables', kind: 'turn', data: true, task: 'Be the scout. This finds <b>slow stars</b>: 4.55 seconds or slower, but more than 8,000 career yards. Now find the <b>superstars</b>: change <code>8000</code> to <code>10000</code>. (<code>&gt;=</code> means "at least", <code>&gt;</code> means "more than".)',
     code: 'data[(data["forty"] >= 4.55) & (data["yards"] > 8000)][["player_name", "forty", "yards"]]',
     hints: ['Find the number <code>8000</code> in the line and type <code>10000</code> instead. No comma inside the number.'],
-    check: async ({ code, q }) => /10000/.test(code)
+    check: async ({ code, q }) => /\b10000\b/.test(code)
       ? { ok: true, msg: `${(await q('len(data[(data["forty"] >= 4.55) & (data["yards"] > 10000)])'))} receivers were "slow" at the Combine and still gained over 10,000 yards. Catching, routes and smarts matter too. That is why teams hire analysts like you.` }
       : { msg: 'It still says 8000. Change it to <code>10000</code> to keep only the superstars.' } }
 ];
@@ -101,7 +101,7 @@ const REVIEW1 = [
   { skill: 'variables', q: 'What prints?', code: 'city = "Dallas"\nprint(city)', opts: ['city', '"Dallas"', 'Dallas'], a: 2 },
   { skill: 'math', q: 'What prints?', code: 'points = 2 * 6 + 3\nprint(points)', opts: ['15', '18', '263'], a: 0 },
   { skill: 'functions', q: 'Which line uses the machine and shows the answer?', opts: ['speed_mph = 4.5', 'print(speed_mph(4.5))', 'print("speed_mph(4.5)")'], a: 1 },
-  { skill: 'tables', q: 'Which line shows the 5 slowest players?', code: 'fastest = combine.sort_values("forty")', opts: ['fastest.head(5)', 'len(fastest)', 'fastest.tail(5)'], a: 2 }
+  { skill: 'tables', q: 'Which line shows the 5 slowest players?', code: 'fastest = combine.dropna(subset=["forty"]).sort_values("forty")', opts: ['fastest.head(5)', 'len(fastest)', 'fastest.tail(5)'], a: 2 }
 ];
 
 registerLab('nfl', 1, {

@@ -44,7 +44,7 @@ const LAB5 = [
       if (n < 18) return { msg: `It stopped at Week ${n}. We need Week 18, so the stop number must be bigger.` };
       if (n > 18) return { msg: `That went all the way to Week ${n}. The season has 18 weeks, so stop one after 18.` };
       return { ok: true, msg: 'Week 18! To count up to 18, you stop at 19: one more than the last number you want.' }; } },
-  { skill: 'range', kind: 'run', task: 'Now we can print the board the way Lab 4 promised. <code>len(my_board)</code> is 5, so <code>range(5)</code> hands out 0, 1, 2, 3, 4: exactly the spots on the board. Run it.',
+  { skill: 'range', kind: 'run', task: 'Now let\'s number the board: Pick 1, Pick 2… <code>len(my_board)</code> is 5, so <code>range(5)</code> hands out 0, 1, 2, 3, 4: exactly the spots on the board. Run it.',
     code: 'my_board = ["Justin Jefferson", "Saquon Barkley", "Josh Allen", "Ja\'Marr Chase", "Bijan Robinson"]\n\nfor spot in range(len(my_board)):\n    print("Pick", spot + 1, ":", my_board[spot])',
     ok: 'Each round, <code>spot</code> holds the next number, and <code>my_board[spot]</code> is the player at that spot. <code>spot + 1</code> turns Python\'s counting (0, 1, 2) into people\'s counting (1, 2, 3).' },
 

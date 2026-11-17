@@ -47,13 +47,14 @@ const CELLS = [
     check: async ({ code, out, g }) => {
       const c = code.replace(/#.*/g, '');
       if ((await g('runner_time')) !== (await g('throw_time'))) return { msg: 'Keep both times the same, <code>4.3</code> and <code>4.3</code>. A tie is the whole point! Change only the symbol in the <code>if</code> line.' };
+      if (/if\s+throw_time\s*>=\s*runner_time\s*:/.test(c) && out.includes('Safe')) return { ok: true, msg: 'Safe! You turned the question around, and it works: the throw was not faster. Most umpires say it the other way: <code>runner_time &lt;= throw_time</code>.' };
       if (/if\s+runner_time\s*==\s*throw_time/.test(c)) return { msg: 'With <code>==</code> the runner is safe <b>only</b> on an exact tie. A faster runner would be called out! Use the symbol that means "smaller, or the same".' };
       if (/if\s+runner_time\s*>=\s*throw_time/.test(c)) return { msg: 'Careful: <code>&gt;=</code> makes the <b>slower</b> runner safe. We want "smaller, or the same".' };
       if (!/if\s+runner_time\s*<=\s*throw_time\s*:/.test(c)) return { msg: out.includes('Out') ? 'The bot still says Out. In the <code>if</code> line, change <code>&lt;</code> to the symbol that means "at most".' : 'Change only one thing: the <code>&lt;</code> in the <code>if</code> line becomes the symbol for "at most".' };
       if (!out.includes('Safe')) return { msg: 'The <code>if</code> line is right, but the bot did not say Safe. Keep the <code>print</code> lines as they were.' };
       return { ok: true, msg: 'Safe! Tie goes to the runner. One symbol, <code>&lt;=</code>, changed the call. That is how careful umpires and programmers have to be.' }; } },
 
-  { md: '<h2>Part 3. <code>elif</code>: how far did it go? 🏟️</h2>The batter hits a fly ball. Our ballpark has <b>three</b> possible calls, and two choices are not enough. For more we use <b><code>elif</code></b>, short for "else if": <i>otherwise, if…</i> The rules (our wall is 400 feet away): 400 feet or more is a <b>home run</b>. Otherwise, 300 feet or more flies over the outfielders: <b>extra bases</b>. Otherwise an outfielder <b>catches it</b>.' },
+  { md: '<h2>Part 3. <code>elif</code>: how far did it go? 🏟️</h2>The batter hits a fly ball. Our ballpark has <b>three</b> possible calls, and two choices are not enough. For more we use <b><code>elif</code></b>, short for "else if": <i>otherwise, if…</i> The rules (our wall is 400 feet away): 400 feet or more is a <b>home run</b>. Otherwise, 300 feet or more is a deep hit into the outfield: <b>extra bases</b>. Otherwise an outfielder <b>catches it</b>.' },
   { skill: 'elif', kind: 'run', task: '<b>Guess the call</b> for a 250-foot fly ball, then run it.',
     code: 'distance = 250   # feet\n\n' + FLY,
     ok: 'Caught! Python asks the questions <b>from top to bottom</b>. 250 is not at least 400, and not at least 300, so nothing was True and it did the <code>else</code>.' },

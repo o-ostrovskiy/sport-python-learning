@@ -19,7 +19,7 @@ const LAB4 = [
       if (n < 3) return { msg: `Python counts only ${n} player${n === 1 ? '' : 's'} on your board. A comma is missing between two names, so they got glued together.` };
       if (n > 3) return { msg: `That is ${n} players. For now we want exactly 3.` };
       if ((await q('my_board == ' + BOARD3))) return { msg: 'Those are still my three players. Put your own favorites inside the quotes.' };
-      return { ok: true, msg: `${(await q('my_board[0]'))} at the top. Nice board! Three players, two commas, one list.` }; } },
+      return { ok: true, msg: `${esc(String((await q('my_board[0]'))))} at the top. Nice board! Three players, two commas, one list.` }; } },
   { md: '<h2>Part 2. Pick number... 0?! 🤯</h2>A bigger board. A list this long does not fit on one line, so we write <b>one player per line</b>. Python keeps reading until it finds the closing bracket <code>]</code>.' },
   { skill: 'index', kind: 'quiz', task: '<b>Guess first.</b> <code>my_board[1]</code> asks for one player from the board. Which one will it show?',
     code: 'my_board = [\n    "Justin Jefferson",\n    "Saquon Barkley",\n    "Josh Allen",\n    "Ja\'Marr Chase",\n    "Bijan Robinson",\n]\nprint(my_board[1])',
@@ -34,7 +34,7 @@ const LAB4 = [
     ok: 'A red error, just as planned! <code>IndexError: list index out of range</code>. <b>Index</b> is Python\'s word for the spot number. There is no spot 5: the last spot is always one less than <code>len( )</code>.' },
   { skill: 'index', kind: 'turn', task: 'Show your <b>5th</b> pick: change the <code>0</code> to the right number. Careful, it is not 5!',
     code: 'print("Pick 5:", my_board[0])   # change the 0',
-    hints: ['Count the spots from the top, starting at 0: Justin is 0, Saquon is 1…', 'The last spot is one less than the number of players. 5 players, so spot…?'],
+    hints: ['Count the spots from the top, starting at 0: Justin is 0, Saquon is 1…', 'The last spot is one less than the number of players. 5 players, so spot…?', 'The answer: <code>print("Pick 5:", my_board[4])</code>'],
     check: async ({ out }) => out.includes('Bijan Robinson') ? { ok: true, msg: 'Bijan Robinson! The 5th pick lives at spot 4. You are counting like Python now.' }
       : { msg: `That shows ${esc(out.replace('Pick 5: ', ''))}. We want the last player on the board. Count from 0 at the top.` } },
   { md: '<h2>Part 3. Draft day 📞</h2>You found a new player you like. <code>.append( )</code> means <b>"add to the end"</b>. The dot means "do this to that": <code>my_board.append("Lamar Jackson")</code> = "to <code>my_board</code>, add Lamar Jackson at the end".' },
@@ -56,7 +56,7 @@ const LAB4 = [
       if (!/my_board\.append\(\s*player\s*\)/.test(code)) return { msg: 'Check the line under <code>else</code>. The missing word adds a player to the end of a list and has 6 letters.' };
       if (!(await q('player in my_board'))) return { msg: 'The player is still not on the board. Check the line under <code>else</code>.' };
       return { ok: true, msg: 'The machine works! Now change <code>player</code> to <code>"Josh Allen"</code> and run it again: nobody gets added, because he is already there. That is how NFL teams avoid picking the same player twice.' }; } },
-  { md: '<h2>Part 4. Last season\'s top 5 📊</h2>NFL teams build their boards from stats. This is a <b>new file</b>: one row is <b>one whole season</b> of one player, already added up for you.' },
+  { md: '<h2>Part 4. The 2024 top 5 📊</h2>NFL teams build their boards from stats. This is a <b>new file</b>: one row is <b>one whole season</b> of one player, already added up for you.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Run it to load the seasons. <code>.max()</code> finds the biggest number in the <code>season</code> column, so <code>newest</code> is the newest season in the data.',
     code: 'import pandas as pd\n\nseasons = pd.read_csv("player_stats_season.csv", low_memory=False)\nseasons = seasons[seasons["season_type"] == "REG"]\nnewest = seasons["season"].max()\nprint("Ready!", len(seasons), "seasons loaded. The newest season is", newest)',
     ok: 'Loaded! Thousands of player seasons, ready for scouting.' },
@@ -66,8 +66,8 @@ const LAB4 = [
   { skill: 'tables', kind: 'run', data: true, task: 'One new command turns it into a proper list: <code>list( )</code>. <b>Guess first:</b> who is number 1? And is Justin Jefferson in the top 5?',
     code: 'top5 = list(names)\nprint(top5)\n\nprint("Number 1:", top5[0])\nprint("Is Justin Jefferson in the top 5?", "Justin Jefferson" in top5)',
     ok: 'Square brackets, commas, quotes: it is a list now! So <code>[0]</code> and <code>in</code> work on it, just like on your own board.' },
-  { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final draft board.</b> It starts with last season\'s top 5. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
-    code: 'my_board = list(names)              # start with last season\'s top 5\nmy_board.append("Travis Kelce")     # change to your pick\nmy_board.append("Bijan Robinson")   # change to your pick\n\nprint(my_board)\nprint("Players on my board:", len(my_board))\nprint("My first pick:", my_board[0])\nprint("My last pick:", my_board[len(my_board) - 1])',
+  { skill: 'tables', kind: 'turn', data: true, task: '<b>Your final draft board.</b> It starts with the top 5 of 2024, the newest season in our file. Add <b>two</b> players of your own: change only the two names in the <code>append</code> lines.',
+    code: 'my_board = list(names)              # start with the 2024 top 5\nmy_board.append("Travis Kelce")     # change to your pick\nmy_board.append("Bijan Robinson")   # change to your pick\n\nprint(my_board)\nprint("Players on my board:", len(my_board))\nprint("My first pick:", my_board[0])\nprint("My last pick:", my_board[len(my_board) - 1])',
     hints: ['Change the names inside the quotes on lines 2 and 3. Keep <code>.append( )</code> and the quotes.'],
     check: async ({ q }) => {
       const n = (await q('len(my_board)'));

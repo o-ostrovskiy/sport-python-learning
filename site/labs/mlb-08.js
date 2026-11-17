@@ -47,7 +47,7 @@ const CELLS = [
     code: 'strikes = 0\n\nwhile strikes < 3:\n    print("Strike", strikes)',
     opts: ['It prints once and stops', 'It never stops: strikes stays 0 forever', 'A red error'], a: 1,
     tips: ['Python goes back to the question after every lap. Will <code>strikes &lt; 3</code> ever be False here?', '', 'No error. Python is happy to keep going. Look: does <code>strikes</code> ever change?'],
-    ok: 'Yes: a loop that <b>never stops</b>. 0 is always less than 3. Something inside a <code>while</code> must change, or it never ends. Do not try it here: the page would freeze!' },
+    ok: 'Yes: a loop that <b>never stops</b>. 0 is always less than 3. Something inside a <code>while</code> must change, or it never ends. Do not try it here: it would keep going until you press ⏹ Stop!' },
   { skill: 'loops', kind: 'turn', task: 'A walk takes <b>4 balls</b> (Lab 3). This loop stops too early. Change only the <code>3</code>, so the umpire counts all 4.',
     code: 'balls = 0\n\nwhile balls < 3:   # change the 3\n    balls = balls + 1\n    print("Ball", balls)\n\nprint("Take your base!")',
     hints: ['The loop runs as long as <code>balls</code> is less than the number. Which number lets it reach 4?', 'The line should be: <code>while balls &lt; 4:</code>'],
@@ -100,6 +100,7 @@ const CELLS = [
     hints: ['Only one number changes: the <code>1</code> in the <code>chances</code> line near the top.', 'Line 3 should be: <code>chances = 3</code>'],
     check: async ({ q }) => {
       const ch = (await q('chances')), t = (await q('tries')), s = esc(String((await q('secret'))));
+      if (ch > 3) return { msg: `There are only 3 clues, so 3 tries is the most. Set <code>chances = 3</code> and play again.` };
       if (!(ch >= 3)) return { msg: `It was ${s}. With <code>chances = ${esc(String(ch))}</code> you never see clues 2 and 3. Change it to 3 and play again: Python will pick a new mystery player.` };
       if (!(t >= 1)) return { msg: 'The loop never asked you anything. Keep the <code>while</code> line as it was.' };
       return (await q('guess == secret')) ? { ok: true, msg: `YES! ${s} in ${t} ${t === 1 ? 'try' : 'tries'}. Random pick, while loop, input: you built a whole game. Run it again for a new player!` }

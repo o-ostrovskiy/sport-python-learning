@@ -34,7 +34,7 @@ announce("Aaron Judge", 99)   # change to your player and his number`,
     check: async ({ code, out }) => {
       if (!/def\s+announce\s*\(\s*player\s*,\s*number\s*\)\s*:/.test(code)) return { msg: 'Keep the first two lines, the machine itself, just as they were. Change only the last line.' };
       if (!out.includes('Now batting, number')) return { msg: 'Nothing was announced. The last line must call the machine: <code>announce("Name", 17)</code>.' };
-      if (out.includes(': Aaron Judge !')) return { msg: 'That is still Aaron Judge. Put your own player and his number on the last line.' };
+      if (out.includes(': Aaron Judge !')) return { msg: 'That is still Aaron Judge. Put another player and his number on the last line. (Is Judge your favorite? Then use your second favorite, so you practice the change.)' };
       return { ok: true, msg: 'What an announcement! The order matters: the first thing you give goes into the first box (<code>player</code>), the second into the second box (<code>number</code>).' }; } },
 
   { md: '<h2>Part 2. return: a machine that hands back an answer 🎁</h2><code>cheer</code> and <code>announce</code> only <b>show</b> something. Most machines work out an answer and <b>hand it back</b>. A <b>batting average</b> tells how often a batter gets a hit: his <b>hits</b> shared out over his <b>at-bats</b> (his turns at bat). That is division, <code>/</code>.' },
@@ -157,7 +157,7 @@ for player in my_team:
       if (!(await q('isinstance(my_team, list) and len(my_team) > 0'))) return { msg: 'Keep <code>my_team</code> a list with at least one player in square brackets.' };
       if ((await q('my_team == ' + TEAM3))) return { msg: 'Those are still my three players. Put your own inside the quotes.' };
       const lost = (await q('next((str(p) for p in my_team if len(stats[stats["name"] == p]) == 0), "")'));
-      if (lost) return { msg: `Python found no seasons for ${esc(lost)}, so his numbers came out empty. Check the spelling and the capital letters.` };
+      if (lost) return { msg: `Python found no seasons for ${esc(lost)}, so his numbers came out empty. Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star.` };
       return { ok: true, msg: `A scouting report for ${(await q('len(my_team)'))} players, built from four machines you made yourself. Machine built, Engineer!` }; } }
 ];
 const REVIEW = [

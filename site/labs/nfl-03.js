@@ -97,6 +97,7 @@ const LAB3 = [
       const n = (await g('name'));
       if (!/^elif\s+best\s*>=\s*100\s*:/m.test(code)) return { msg: 'Check the line that had the <code>___</code>. The word that means "else if" has 4 letters, and the line still ends with a colon.' };
       if (!(await q('len(games)'))) return { msg: `It says "nan yards". <code>nan</code> means <b>empty</b>: Python found no games for "${esc(String(n))}", so the rating is wrong. Check the spelling. Capital letters matter.` };
+      if ((await q('int(best)')) === 0) return { msg: `${esc(String(n))} has 0 catching yards: is he a quarterback? Pick a receiver or a tight end. (Running back? Change <code>"receiving_yards"</code> to <code>"rushing_yards"</code> on line 4.)` };
       if (n === 'Travis Kelce') return { msg: 'The <code>elif</code> is right: Kelce\'s best is 191 yards, a big game. Now change the name on line 1 to your own player.' };
       const b = (await q('int(best)'));
       return { ok: true, msg: `${esc(String(n))}'s best game: ${b} yards. ${out.includes('MONSTER') ? 'A monster game!' : out.includes('Big game') ? 'A big game!' : 'No 100-yard game yet.'} Python checked 200 first, then 100, top to bottom.` }; } },
@@ -116,7 +117,7 @@ const LAB3 = [
       return { msg: 'The <code>elif</code> is there, but the machine still does not say tie. Check that it reads <code>elif total1 == total2:</code> and that the <code>print("It\'s a tie! 🤝")</code> line is right under it.' }; } },
   { skill: 'debug', kind: 'run', data: true, task: 'One matchup from the stats to finish, with your fixed machine. <b>Guess first:</b> who has more rushing yards?',
     code: 'compare("Derrick Henry", "Adrian Peterson", "rushing_yards")',
-    ok: 'Adrian Peterson, 14,921 yards to 11,423 (through the 2024 season). But Henry is still playing! If a total ever says 0, check the spelling of the name.' }
+    ok: 'Adrian Peterson, about 14,900 yards to 11,400 (through the 2024 season). But Henry is still playing! If a total ever says 0, check the spelling of the name.' }
 ];
 const REVIEW3 = [
   { skill: 'compare', q: 'What prints?', code: 'print(7 >= 7)', opts: ['True', 'False', '7'], a: 0 },

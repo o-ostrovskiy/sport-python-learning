@@ -105,7 +105,7 @@ const CELLS = [
       if (typeof p1 !== 'string' || typeof p2 !== 'string') return { msg: 'Both players must be text, in quotes: <code>player1 = "Mike Trout"</code>.' };
       if (p1 === 'Babe Ruth' && p2 === 'Aaron Judge') return { msg: 'That is still my match-up. Put your own players in the quotes on lines 1 and 2.' };
       if (p1 === p2) return { msg: 'Those are the same player twice. Pick two different players to compare.' };
-      for (const p of [p1, p2]) if (!(await q(`len(stats[stats["name"] == ${JSON.stringify(p)}])`))) return { msg: `I can't find "${esc(p)}" in the stats, so his line is missing. Check the spelling and the capital letters. (Pitchers are not in this table.)` };
+      for (const p of [p1, p2]) if (!(await q(`len(stats[stats["name"] == ${JSON.stringify(p)}])`))) return { msg: `I can't find "${esc(p)}" in the stats, so his line is missing. Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star. (Pitchers are not in this table.)` };
       if (!/plt\.plot\(/.test(code)) return { msg: 'Keep the <code>plt.plot</code> line inside the loop.' };
       const c = await chart(q);
       if (c.lines !== 2) return { msg: 'I expected two lines on the chart, one for each player. Keep the loop as it was.' };

@@ -17,7 +17,7 @@ const LINEUP = `lineup = [
 const TEAM3 = '["Aaron Judge", "Shohei Ohtani", "Cal Raleigh"]';
 const CELLS = [
   { md: '<h2>Part 1. One batter at a time 🔁</h2>A baseball game repeats itself: 9 innings, 9 batters, again and again. Today you teach Python to <b>repeat</b> things, so you never have to write the same line 9 times. In Python that is called a <b>loop</b>.' },
-  { skill: 'loops', kind: 'run', task: 'In Lab 4, <code>print(lineup)</code> squeezed the whole lineup onto one line. <b>Guess first:</b> what will these two new lines at the bottom show? Then run it.',
+  { skill: 'loops', kind: 'run', task: 'In Lab 4, <code>print(my_team)</code> squeezed the whole list onto one line. <b>Guess first:</b> what will these two new lines at the bottom show? Then run it.',
     code: LINEUP + `
 for batter in lineup:
     print(batter)`,
@@ -160,7 +160,8 @@ print("Seasons with", big, "or more:", count)`,
     hints: ['Change the name inside the quotes on the first line. Try <code>"Hank Aaron"</code> or <code>"Babe Ruth"</code>.', 'Spell the name exactly, with capital letters: <code>player = "Hank Aaron"</code>.'],
     check: async ({ q }) => {
       if ((await q('player == "Shohei Ohtani"'))) return { msg: 'That is still my player. Put another name inside the quotes on the first line.' };
-      if ((await q('len(seasons)')) === 0) return { msg: `Python found 0 seasons for ${esc(String((await q('str(player)'))))}, so the loop had nothing to walk through. Check the spelling and the capital letters.` };
+      if ((await q('len(seasons)')) === 0) return { msg: `Python found 0 seasons for ${esc(String((await q('str(player)'))))}, so the loop had nothing to walk through. Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star.` };
+      if ((await q('seasons["playerID"].nunique()')) > 1) return { ok: true, msg: `Two players share the name ${esc(String((await q('str(player)'))))} (often a dad and his son), so their careers got added together: ${(await q('len(seasons)'))} seasons and ${(await q('int(total)'))} home runs. The loop cannot tell them apart!` };
       return { ok: true, msg: `${esc(String((await q('str(player)'))))}: ${(await q('len(seasons)'))} seasons and ${(await q('int(total)'))} home runs. The loop does not care if it is 9 seasons or 23: it is the same few lines. That's the ballgame!` }; } }
 ];
 const REVIEW = [
