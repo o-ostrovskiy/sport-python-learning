@@ -100,15 +100,11 @@
    "style": "gentle"
   },
   {
-   "text": "I could not load Python. Check the internet connection and open the game again.",
+   "text": "I could not load Python. Check the internet connection, then press Try again.",
    "style": "gentle"
   },
   {
-   "text": "I could not load Python. Check the internet connection.",
-   "style": "gentle"
-  },
-  {
-   "text": "I could not open the stats. Check the internet connection and try again.",
+   "text": "I could not load what this box needs. Check the internet connection, then press Run again.",
    "style": "gentle"
   },
   {

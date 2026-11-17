@@ -20,8 +20,10 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url)), SITE = path.resolve(HERE, '..'), OUT = path.join(SITE, 'assets', 'voice');
 const env = { ...process.env };
 try { for (const line of fs.readFileSync(path.resolve(SITE, '..', 'server', '.env'), 'utf8').split('\n')) { const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/); if (m && !(m[1] in process.env)) env[m[1]] = m[2]; } } catch {}
-// Each model has its own daily allowance: when the first one is used up for the day, the tool carries on with the next.
-const MODELS = [...new Set([env.TTS_MODEL || 'gemini-3.8-flash-tts', env.TTS_MODEL_2 || 'gemini-3.8-flash-lite-tts'])]; let model = 0;
+// One model, so every clip sounds the same. A clip's file name does not say which model made it, so a second model would
+// mix voices without a trace. Only when TTS_MODEL_2 is set on purpose does the tool carry on with it after the first
+// model's daily allowance is used up (2026-11-17: the lite model used to be the default here, against the voice task's rule).
+const MODELS = [...new Set([env.TTS_MODEL || 'gemini-3.8-flash-tts', env.TTS_MODEL_2].filter(Boolean))]; let model = 0;
 const VOICE = env.TTS_VOICE || 'Achird', BITRATE = '32k';
 const flag = f => process.argv.includes(f);
 
