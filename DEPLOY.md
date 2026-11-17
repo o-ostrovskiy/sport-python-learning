@@ -82,10 +82,9 @@ Must do
 - [x] **Map.** Since 2026-11-16 the map is one drawing of the 48 states (`site/assets/usa-map.js`, made by
       `node site/tools/build-map.mjs` from US Census Bureau outlines). No map service and no key. The old Mapbox key can be deleted
       in the Mapbox account.
-- [ ] **Caddy for self-hosted Python (needed before the 2026-11-16 Python change goes live).** In the Python Season block of the
-      infrastructure repo's `deploy/Caddyfile`: serve `/assets/vendor/pyodide/*.whl` and `*.zip` as `application/wasm` so `encode`
-      compresses them (pandas: 24 MB raw, about 5 MB compressed), cache `/assets/vendor/pyodide/*` as `public, max-age=31536000, immutable`,
-      and keep it out of the `no-cache` rule. Then recreate Caddy (`deploy.sh caddy`; mystoryland.ai drops for a few seconds).
+- [x] **Caddy for self-hosted Python** (2026-11-16, infrastructure PRs #145 and #146, applied with `caddy reload`). The Python Season
+      block compresses `application/zip` too (Caddy's type for `.whl` and `.zip`): pandas goes out as 5.5 MB instead of 23.8 MB.
+      `/assets/vendor/pyodide/*` is cached for a year (`immutable`), so a new Pyodide must go into a new `<version>/` folder.
 - [ ] **A separate Gemini key with a spending cap.** The public site uses no key; the key in `server/.env` is used at home
       (the home server and `record-voice.mjs`). Give it its own Google Cloud project with a monthly spending cap, and never reuse another project's key.
 - [x] **Facts check.** Stadium facts and seat numbers in `site/season.js` checked against sources on 2026-11-15; 7 lines corrected. Check Camden Yards seats again after Opening Day 2027.
