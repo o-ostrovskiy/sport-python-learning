@@ -81,7 +81,18 @@ DELETES="$(printf '%s\n' "$PLAN" | grep '^\*deleting' || true)"
 CHANGES="$(printf '%s\n' "$PLAN" | grep -E '^<f(\+\+\+|.s|c)' | awk '{print $2}' || true)"
 echo "files to upload: $(printf '%s' "$CHANGES" | grep -c . || true)"; printf '%s\n' "$CHANGES" | grep -v 'assets/vendor/pyodide/' | sed 's/^/   /' | head -40
 echo "files to delete: $(printf '%s' "$DELETES" | grep -c . || true)"; printf '%s\n' "$DELETES" | sed 's/^/   /' | head -40
-printf '%s\n' "$DELETES" | grep -q 'assets/voice/' && die "this would delete voice files on the box: commit them first"
+# A voice file on the box but not in this commit is either an old recording no line uses any more (the voice task
+# uploads without deleting, so replaced clips stay behind: fine to delete) or a new one this checkout does not have
+# yet (never delete). The live site's own voice index files tell them apart.
+VOICE_DELETES="$(printf '%s\n' "$DELETES" | grep -o 'assets/voice/[^ ]*\.mp3' || true)"
+if [ -n "$VOICE_DELETES" ]; then
+  LIVE_INDEX="$(for f in "$TMP"/site/assets/voice/*.js; do curl -s "$URL/assets/voice/$(basename "$f")"; done)"
+  [ -n "$LIVE_INDEX" ] || die "could not read the live voice index to check the voice files that would be deleted"
+  for v in $VOICE_DELETES; do
+    printf '%s' "$LIVE_INDEX" | grep -q "$(basename "$v")" && die "the live site still uses $v, which is not in this commit: pull or commit the voice files first"
+  done
+  echo "   (the voice files above are old recordings: no voice index on the live site uses them)"
+fi
 if [ "$DRY" = 1 ]; then echo; echo "Dry run: nothing uploaded."; exit 0; fi
 if [ -z "$CHANGES$DELETES" ]; then echo "The box already has this commit."; else
   if [ "$YES" != 1 ]; then read -r -p "Publish this to $URL? [y/N] " ok; [ "$ok" = y ] || [ "$ok" = Y ] || die "not published"; fi
