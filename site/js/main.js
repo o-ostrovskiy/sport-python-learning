@@ -23,4 +23,6 @@ findLabs((sport, i) => {
   if (sport === S.sport && i === want) { want = -1; pick(i); }
 });
 document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.dataset.sport === S.sport));
+// sw.js keeps Python, the data and the voice in this browser after the first visit (our own files only).
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.warn('No offline copy', e));
 say("Hi, I'm Coach Andrew! This map is our season. Tap the glowing stadium and let's win some games with Python.");

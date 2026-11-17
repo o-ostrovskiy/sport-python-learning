@@ -262,7 +262,7 @@ async function runBox(c) {
     const lastLine = res.error.trim().split('\n').filter(l => !/^See https?:/.test(l)).pop() || '';
     out.textContent = lastLine.replace(/https?:\/\/\S+/g, '');
     if (c.expectError && res.error.includes(c.expectError)) {
-      if (!c.done) finish(c, c.ok);
+      if (!c.done) { c.passedCode = code; finish(c, c.ok); }
       return;
     }
     if (!c.done) miss(c);
@@ -281,7 +281,9 @@ async function runBox(c) {
     return say('I could not check this box. Press <b>▶ Run</b> again.', 'flag');
   }
   if (r.missed) S.misses[c.skill]++;
-  if (r.ok) finish(c, r.msg);
+  // The code that passed is what Python remembers from this play; progress.js runs it again after a reload or a Stop,
+  // even if the child changes the box later (into an endless loop, say).
+  if (r.ok) { c.passedCode = code; finish(c, r.msg); }
   else { miss(c); say(`<b>🚩 Not yet.</b> ${r.msg}`, 'flag'); }
 }
 

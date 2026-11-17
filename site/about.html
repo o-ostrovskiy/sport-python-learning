@@ -65,10 +65,11 @@ th{color:var(--soft);font-weight:600}
       <tr><td>Name, email, account</td><td>Never asked for. There are no accounts.</td></tr>
       <tr><td>Progress (which games are won, a game not yet finished with the code typed in it, calendar start date, voice on or off)</td><td>Saved only in this browser on this device, so a half-played game can continue later. Clearing the browser's site data erases it. A finished game keeps only its trophy.</td></tr>
       <tr><td>The code and answers your child types</td><td>They run inside the browser and are checked there. While a game is unfinished they are kept in this browser (see Progress). They are never sent to us or to anyone else.</td></tr>
+      <tr><td>A copy of the game's own files (Python, the lesson data, the pages)</td><td>Kept in this browser after the first visit, so the next visit opens in seconds and an open game keeps working if the internet drops. These are only our site's files, nothing about your child. Clearing the browser's site data erases them.</td></tr>
       <tr><td>The coach's voice</td><td>Recordings that are part of the site. The microphone is never used.</td></tr>
       <tr><td>The device's internet address (IP address)</td><td>Every website's hosting company sees it in order to send the pages, and may keep it for a short time in its security logs. We use it for nothing else: not to recognize, contact or learn about anyone.</td></tr>
     </table>
-    <p>One part of the game comes from another service, which also sees the device's internet address when it sends its files: the Python engine (jsDelivr). The map, the fonts and everything else come from our own site.</p>
+    <p>Everything the game needs comes from our own site: Python, the map, the fonts, the code editor and the lessons. No other service sends any part of the game.</p>
     <p>There are no ads. We use Google Analytics to count visits and to see which lessons are used. It sets one cookie in this browser and sends Google the pages opened, the kind of device and the rough location (city or region) worked out from the internet address. Advertising features are switched off, the data is kept for two months, and we do not build profiles, try to identify anyone, or sell or share anything.</p>
     <p>Questions about privacy? Parents can write to us through the <a href="https://github.com/o-ostrovskiy/sport-python-learning/issues">project's GitHub page</a>.</p>
 
@@ -91,7 +92,7 @@ th{color:var(--soft);font-weight:600}
     <p>For the grown-ups who like to look under the hood. The whole site is plain files: web pages, a few scripts, pictures and small data tables. There is no app server, no database and no accounts behind it.</p>
     <ul>
       <li><b>Pages:</b> plain HTML, CSS and JavaScript, with no framework and no build step. The game is a handful of small JavaScript modules: the coach, the map, Python, the lessons and saving.</li>
-      <li><b>Python in the page:</b> <a href="https://pyodide.org">Pyodide</a>, the real Python language (with the pandas and matplotlib tools) made to run inside a web browser. Your child's code runs on your own device, in a separate background worker: a loop that never ends cannot freeze the page, and a ⏹ Stop button ends it. When Python asks a question with <code>input( )</code>, the child answers in a box on the page.</li>
+      <li><b>Python in the page:</b> <a href="https://pyodide.org">Pyodide</a>, the real Python language (with the pandas and matplotlib tools) made to run inside a web browser. It is sent from our own site and kept in the browser after the first visit. Your child's code runs on your own device, in a separate background worker: a loop that never ends cannot freeze the page, and a ⏹ Stop button ends it. When Python asks a question with <code>input( )</code>, the child answers in a box on the page.</li>
       <li><b>Code boxes:</b> <a href="https://codemirror.net">CodeMirror</a>, served from our own site. It colours the Python, numbers the lines and indents the line after a colon by itself.</li>
       <li><b>Lessons:</b> one small file per game day holds its missions, hints and checks. When your child presses Run, the page compares the result with what the lesson expects and picks the coach's line.</li>
       <li><b>Data:</b> trimmed copies of the open NFL and MLB data, small enough for a browser to load.</li>

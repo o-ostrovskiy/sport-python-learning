@@ -1,0 +1,3 @@
+Pyodide 0.26.4 (https://pyodide.org, https://github.com/pyodide/pyodide), Mozilla Public License 2.0.
+The Python packages here (cycler, fonttools, kiwisolver, matplotlib, matplotlib-pyodide, numpy, packaging, pandas, pillow, pyparsing, python-dateutil, pytz, six) keep their own open-source licences.
+Copied unchanged from the pyodide npm package by site/tools/vendor-pyodide.mjs.

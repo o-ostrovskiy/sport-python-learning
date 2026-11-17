@@ -2,7 +2,9 @@
 // button can end it (the page terminates the worker and starts a fresh one).
 // Messages in:  { id, cmd: 'py' | 'base' | 'charts' | 'data' | 'run' | 'get' | 'eval', ... }   and   { cmd: 'answer', text }
 // Messages out: { id, ok, value | error }, { type: 'bytes', file, n } while big files download, { type: 'ask', prompt } for input( ).
-const PY = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/';
+// Python comes from our own site (tools/vendor-pyodide.mjs copies it there). The version is in the path,
+// so sw.js can keep these files for good.
+const PY = new URL('assets/vendor/pyodide/0.26.4/', self.location).href;
 const SIZES = ['pyodide.asm.wasm', 'python_stdlib.zip', 'pandas', 'numpy', 'matplotlib', 'fonttools', 'pillow'];
 
 // Count the bytes of the big Python files as they arrive, so the page can show how far loading is.

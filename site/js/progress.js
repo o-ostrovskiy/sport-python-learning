@@ -26,6 +26,7 @@ export function saveNow() {
   if (!keepSaving || !S.cells) return;
   const plays = S.cells.map(c => ({
     code: c.ed?.value,
+    passed: c.passedCode,
     guess: c.el.querySelector('.guess')?.value || '',
     done: c.done,
     hintN: c.hintN,
@@ -68,6 +69,7 @@ export function restoreBoxes(rec) {
     if (c.ed && typeof p.code === 'string' && p.code !== c.ed.value) c.ed.setValue(p.code);
     if (guess) guess.value = p.guess || '';
     c.hintN = p.hintN || 0;
+    c.passedCode = p.passed ?? p.code;   // records saved before "passed" existed: the box's text
     if (p.done) {
       c.done = true;
       S.doneCount++;
@@ -99,7 +101,7 @@ async function replay(i) {
   show(true);
   try {
     for (const c of S.cells.filter(c => c.done && c.kind !== 'quiz')) {
-      const code = c.ed.value;
+      const code = c.passedCode ?? c.ed.value;   // what passed, not what the box says now
       await ready(c, null, code);
       if (gone()) return false;
       // quiet: no output, and an input( ) gets the answer "1" instead of a question. An error is fine here

@@ -1,7 +1,7 @@
 // Browser test for the drawn map (IMPROVEMENTS.md item 4).
 //   cd site/tools && node test-map.mjs            (add --headed to watch)
 // Starts server/local.mjs on its own port and, in Chromium on an upright iPad screen (768 × 1024):
-//  1. the page asks no map service for anything (only our own site, Python from jsDelivr, and nothing else);
+//  1. the page asks no map service for anything (everything, Python included, comes from our own site);
 //  2. the whole map fits with no scrolling, and the coach covers no stadium;
 //  3. Week 1 is won through the real lab (answer keys), and back on the map its stadium shows a trophy.
 import { spawn } from 'node:child_process';
@@ -14,7 +14,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url)), ROOT = path.resolve(H
 const PORT = 8800 + Math.floor(Math.random() * 100), BASE = `http://localhost:${PORT}`;
 const ANS = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'labs', 'answers', 'nfl-01.json'), 'utf8'));
 const LONG = 240000;
-const ALLOWED = [BASE, 'https://cdn.jsdelivr.net/pyodide/'];   // Python still comes from jsDelivr (item 6 moves it here)
+const ALLOWED = [BASE];   // everything, Python included, comes from our own site
 
 const server = spawn('node', ['server/local.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), GEMINI_API_KEY: '' }, stdio: 'ignore' });
 let browser, failed = false;

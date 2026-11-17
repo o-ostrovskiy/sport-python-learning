@@ -134,7 +134,7 @@ exactly the thing children get wrong. Use **CodeMirror 6**, self-hosted as an ES
 Keep Tab as 4 spaces, but let Esc then Tab move focus out of the editor, so keyboard users are not trapped.
 Check that it works on an iPad.
 
-### 6. Serve Python from our own site, and cache it for the next visit
+### 6. Serve Python from our own site, and cache it for the next visit — DONE 2026-11-16 (site side; the Caddy change waits for the owner)
 - Serve Pyodide and the packages it uses (pandas, matplotlib, about 21 MB) from `site/assets/vendor/pyodide/`
   instead of jsDelivr. One fewer third party for children (update About's Privacy section). It is also needed for the
   headers in item 3.

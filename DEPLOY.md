@@ -10,7 +10,7 @@ hosted, how to update it, and what was settled before launch.
 | Pages: home + calendar, About, the game | `site/index.html`, `site/about.html`, `site/play.html` (with `play.css` and `js/`), `site/season.js`, `site/pages.css` | Yes, static files |
 | Lessons | `site/labs/<sport>-<NN>.js` (a week becomes playable when its file exists) | Yes |
 | Data, pictures, recorded voice, fonts, the drawn map | `site/data/*.csv`, `site/assets/` (`voice/`, `vendor/`, `usa-map.js`) | Yes |
-| Python | Runs in the child's browser (Pyodide, loaded from jsDelivr) | Yes, nothing on our side |
+| Python | Pyodide 0.26.4 and its packages in `site/assets/vendor/pyodide/0.26.4/` (copied and sha256-checked by `site/tools/vendor-pyodide.mjs`); runs in the child's browser, kept there by `site/sw.js` | Yes |
 | Visit counting | `site/analytics.js` (Google Analytics, public address only) | Yes |
 | Answer keys and the lesson checker | `site/labs/answers/`, `site/tools/` | **No**, never uploaded |
 | Coach questions and live voice | `server/handler.mjs` (the API), `server/local.mjs` (runs pages + API on this computer) | **No**, home use only |
@@ -40,7 +40,7 @@ the infrastructure repo's `deploy/README.md` ("Python Season"): open SSH for thi
 
 Run `cd site/tools && node check-lab.mjs all` before every update that touches a lesson. Before every update that
 touches `play.html`, `play.css`, `js/`, `py-worker.js`, `season.js` or a lesson, also run the browser tests (Playwright, Chromium): `node test-resume.mjs`,
-`node test-stop.mjs`, `node test-map.mjs`, `node test-editor.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
+`node test-stop.mjs`, `node test-map.mjs`, `node test-editor.mjs`, `node test-cache.mjs` and `node playthrough.mjs` (all 20 labs through the real page, about 10 minutes).
 
 **Coach voice goes live by itself** (decided 2026-11-16): the daily scheduled task "Запись голоса тренера" records the next
 lines, commits only `site/assets/voice/`, pushes, and uploads that folder to `~/python-season/assets/voice/` (clips first,
@@ -71,7 +71,7 @@ Must do
       (https://aistudio.google.com/docs/terms); (2) under COPPA (amended rule, in force since 2026-04-22) free text typed by a
       child under 13 and passed to another company needs a parent's verifiable consent. Fonts are served from
       `site/assets/vendor/` so pages no longer call Google Fonts or unpkg, and the map is our own drawing (2026-11-16: no Mapbox,
-      no map key). Still outside our site: jsDelivr (Python engine), named in the Privacy section of `about.html`. This is not a lawyer's opinion.
+      no map key), and Python comes from our own site (2026-11-16). Nothing of the game comes from another site; Google Analytics is the only outside service. This is not a lawyer's opinion.
       To bring the question box back later: another AI provider whose terms allow children's products, parental consent, and a lawyer.
 - [x] **Visit counting.** Decided by the owner 2026-11-15: Google Analytics (property "Python Season", `G-KVVSBG2CE6`, loaded by
       `site/analytics.js` on the public address only). In the property: Google signals off, ads personalization off in all regions,
@@ -82,6 +82,10 @@ Must do
 - [x] **Map.** Since 2026-11-16 the map is one drawing of the 48 states (`site/assets/usa-map.js`, made by
       `node site/tools/build-map.mjs` from US Census Bureau outlines). No map service and no key. The old Mapbox key can be deleted
       in the Mapbox account.
+- [ ] **Caddy for self-hosted Python (needed before the 2026-11-16 Python change goes live).** In the Python Season block of the
+      infrastructure repo's `deploy/Caddyfile`: serve `/assets/vendor/pyodide/*.whl` and `*.zip` as `application/wasm` so `encode`
+      compresses them (pandas: 24 MB raw, about 5 MB compressed), cache `/assets/vendor/pyodide/*` as `public, max-age=31536000, immutable`,
+      and keep it out of the `no-cache` rule. Then recreate Caddy (`deploy.sh caddy`; mystoryland.ai drops for a few seconds).
 - [ ] **A separate Gemini key with a spending cap.** The public site uses no key; the key in `server/.env` is used at home
       (the home server and `record-voice.mjs`). Give it its own Google Cloud project with a monthly spending cap, and never reuse another project's key.
 - [x] **Facts check.** Stadium facts and seat numbers in `site/season.js` checked against sources on 2026-11-15; 7 lines corrected. Check Camden Yards seats again after Opening Day 2027.
