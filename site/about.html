@@ -92,6 +92,7 @@ th{color:var(--soft);font-weight:600}
     <ul>
       <li><b>Pages:</b> plain HTML, CSS and JavaScript, with no framework and no build step. The game is a handful of small JavaScript modules: the coach, the map, Python, the lessons and saving.</li>
       <li><b>Python in the page:</b> <a href="https://pyodide.org">Pyodide</a>, the real Python language (with the pandas and matplotlib tools) made to run inside a web browser. Your child's code runs on your own device, in a separate background worker: a loop that never ends cannot freeze the page, and a ⏹ Stop button ends it. When Python asks a question with <code>input( )</code>, the child answers in a box on the page.</li>
+      <li><b>Code boxes:</b> <a href="https://codemirror.net">CodeMirror</a>, served from our own site. It colours the Python, numbers the lines and indents the line after a colon by itself.</li>
       <li><b>Lessons:</b> one small file per game day holds its missions, hints and checks. When your child presses Run, the page compares the result with what the lesson expects and picks the coach's line.</li>
       <li><b>Data:</b> trimmed copies of the open NFL and MLB data, small enough for a browser to load.</li>
       <li><b>Map:</b> one drawing of the 48 states, made once from the US Census Bureau's outlines. The stadiums are placed on it ahead of time, so the page needs no map service and no map library.</li>

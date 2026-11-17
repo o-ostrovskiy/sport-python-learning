@@ -124,7 +124,7 @@ trophy. It fits on an upright iPad with no scrolling and no zoom.
 
 ## Should do
 
-### 5. A real code editor instead of a plain text box
+### 5. A real code editor instead of a plain text box — DONE 2026-11-16
 `<textarea>` has no colours and no line numbers. Pressing Enter after `if …:` does not indent the next line, which is
 exactly the thing children get wrong. Use **CodeMirror 6**, self-hosted as an ES module build in `assets/vendor/`, with:
 - Python highlighting and auto-indent after a colon;

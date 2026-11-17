@@ -2,6 +2,7 @@
 //   state.js     what the parts share: helpers and the state of the season and the lab
 //   voice.js     Coach Andrew: bubble, voice and face
 //   map.js       the drawn season map and the week strip
+//   editor.js    the code box of a play (CodeMirror, from assets/vendor/codemirror)
 //   python.js    Python in a Web Worker (py-worker.js): loading, input( ), Stop, errors in plain words
 //   game.js      the lab notebook: plays, checks, film review, scouting report
 //   progress.js  a lab in progress, saved in this browser

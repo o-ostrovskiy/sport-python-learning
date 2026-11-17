@@ -34,7 +34,7 @@ try {
           const right = await page.evaluate(k => { const c = seasonState.cells[k - 1]; return c.vote ? 0 : c.a; }, k);
           await cell.locator(`.opt[data-i="${right}"]`).click();
         } else {
-          if (a.solution) await cell.locator('textarea').fill(a.solution);
+          if (a.solution) await page.evaluate(([k, code]) => seasonState.cells[k - 1].ed.setValue(code), [k, a.solution]);   // the code box is a CodeMirror editor
           if (a.answer !== undefined) await cell.locator('.guess').fill(String(a.answer));
           const inputs = [...(a.inputs || [])];
           await cell.locator('.run').click();

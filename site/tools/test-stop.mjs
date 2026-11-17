@@ -26,6 +26,9 @@ try {
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   page.on('dialog', d => { errors.push('a browser pop-up opened: ' + d.message()); d.dismiss(); });
 
+  // The code boxes are CodeMirror editors (js/editor.js): set and read their text through the page.
+  const setCode = (k, code) => page.evaluate(([k, code]) => seasonState.cells[k - 1].ed.setValue(code), [k, code]);
+  const getCode = k => page.evaluate(k => seasonState.cells[k - 1].ed.value, k);
   const cell = k => page.locator('#nb .cell').nth(k - 1);   // k = play number
   const isDone = k => cell(k).evaluate(e => e.classList.contains('done'));
   const run = async k => {   // stops at the first error message instead of waiting for a box that will never be done
@@ -41,8 +44,8 @@ try {
 
   step('Week 1: while True: pass in Play 1, then ⏹ Stop within 5 seconds');
   await open(1);
-  const start = await cell(1).locator('textarea').inputValue();
-  await cell(1).locator('textarea').fill('while True:\n    pass');
+  const start = await getCode(1);
+  await setCode(1, 'while True:\n    pass');
   const t0 = Date.now(); await cell(1).locator('.run').click();
   await cell(1).locator('.stop').waitFor({ state: 'visible', timeout: 5000 });
   must(/never end/.test(await page.locator('#say').innerText()), 'the coach did not point at the while line');
@@ -52,8 +55,8 @@ try {
   must(await cell(1).locator('.stop').count() === 0, 'the Stop button stayed');
 
   step('then Play 1 and Play 2 run in the fresh Python');
-  await cell(1).locator('textarea').fill(start); await run(1); must(await isDone(1), 'Play 1 not done after Stop');
-  await cell(2).locator('textarea').fill(ANS[2].solution); await run(2); must(await isDone(2), 'Play 2 not done after Stop');
+  await setCode(1, start); await run(1); must(await isDone(1), 'Play 1 not done after Stop');
+  await setCode(2, ANS[2].solution); await run(2); must(await isDone(2), 'Play 2 not done after Stop');
 
   step('Week 8: input( ) asks in the box under the code');
   await page.evaluate(() => localStorage.clear());

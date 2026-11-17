@@ -24,10 +24,13 @@ try {
   const page = await (await browser.newContext({ viewport: { width: 1280, height: 860 } })).newPage();
   const errors = []; page.on('pageerror', e => errors.push(e.message));
 
+  // The code boxes are CodeMirror editors (js/editor.js): set and read their text through the page.
+  const setCode = (k, code) => page.evaluate(([k, code]) => seasonState.cells[k - 1].ed.setValue(code), [k, code]);
+  const getCode = k => page.evaluate(k => seasonState.cells[k - 1].ed.value, k);
   const cell = k => page.locator('#nb .cell').nth(k - 1);   // k = play number
   const coach = () => page.locator('#say').innerText();
   const waitDone = k => page.waitForFunction(k => document.querySelectorAll('#nb .cell')[k - 1]?.classList.contains('done'), k, { timeout: LONG });
-  const typeIn = (k, code) => cell(k).locator('textarea').fill(code);
+  const typeIn = (k, code) => setCode(k, code);
   const run = async k => {   // stops at the first error message instead of waiting for a box that will never be done
     await cell(k).locator('.run').click();
     await page.waitForFunction(k => { const c = document.querySelectorAll('#nb .cell')[k - 1]; return c.classList.contains('done') || c.querySelector('.out.err'); }, k, { timeout: LONG });
@@ -47,14 +50,14 @@ try {
   await run(1);
   await typeIn(2, ANS[2].solution); await run(2);
   await cell(3).locator('.opt[data-i="1"]').click(); await waitDone(3);
-  const mine = (await cell(4).locator('textarea').inputValue()) + '\n# my own note';
+  const mine = (await getCode(4)) + '\n# my own note';
   await typeIn(4, mine); await page.waitForTimeout(900);   // the save after typing waits half a second
   must(await page.locator('#saved.on').count() === 1, 'no ✓ Saved after typing');
 
   step('reload, Continue: Plays 1–3 done, Play 4 text kept');
   await cont();
   for (const k of [1, 2, 3]) must(await cell(k).evaluate(e => e.classList.contains('done')), `Play ${k} is not done after Continue`);
-  must(await cell(4).locator('textarea').inputValue() === mine, 'Play 4 lost the typed code');
+  must(await getCode(4) === mine, 'Play 4 lost the typed code');
   must(await cell(5).evaluate(e => e.classList.contains('wait')), 'Play 5 should still be locked');
 
   step('finish Plays 4–6, reload, Continue, then Plays 7–9 need speed_mph and combine from before the reload');

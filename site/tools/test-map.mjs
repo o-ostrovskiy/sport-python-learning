@@ -54,7 +54,7 @@ try {
     if (await cell.locator('.opts').count()) {
       await cell.locator(`.opt[data-i="${await page.evaluate(k => seasonState.cells[k - 1].vote ? 0 : seasonState.cells[k - 1].a, k)}"]`).click();
     } else {
-      if (a.solution) await cell.locator('textarea').fill(a.solution);
+      if (a.solution) await page.evaluate(([k, code]) => seasonState.cells[k - 1].ed.setValue(code), [k, a.solution]);   // the code box is a CodeMirror editor
       if (a.answer !== undefined) await cell.locator('.guess').fill(String(a.answer));
       await cell.locator('.run').click();
     }

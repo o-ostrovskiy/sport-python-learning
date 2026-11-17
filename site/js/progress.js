@@ -25,7 +25,7 @@ export function saveNow() {
   clearTimeout(saveT);
   if (!keepSaving || !S.cells) return;
   const plays = S.cells.map(c => ({
-    code: c.el.querySelector('textarea')?.value,
+    code: c.ed?.value,
     guess: c.el.querySelector('.guess')?.value || '',
     done: c.done,
     hintN: c.hintN,
@@ -64,8 +64,8 @@ export function restoreBoxes(rec) {
   S.rvAt = rec.rvAt ?? -1;
   S.doneCount = 0;
   rec.plays.forEach((p, k) => {
-    const c = S.cells[k], ta = c.el.querySelector('textarea'), guess = c.el.querySelector('.guess');
-    if (ta && typeof p.code === 'string') { ta.value = p.code; ta.rows = p.code.split('\n').length; }
+    const c = S.cells[k], guess = c.el.querySelector('.guess');
+    if (c.ed && typeof p.code === 'string' && p.code !== c.ed.value) c.ed.setValue(p.code);
     if (guess) guess.value = p.guess || '';
     c.hintN = p.hintN || 0;
     if (p.done) {
@@ -99,7 +99,7 @@ async function replay(i) {
   show(true);
   try {
     for (const c of S.cells.filter(c => c.done && c.kind !== 'quiz')) {
-      const code = c.el.querySelector('textarea').value;
+      const code = c.ed.value;
       await ready(c, null, code);
       if (gone()) return false;
       // quiet: no output, and an input( ) gets the answer "1" instead of a question. An error is fine here

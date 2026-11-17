@@ -25,7 +25,7 @@ function labContext() {
   return {
     sport: S.sport, week: S.week + 1, topic: SEASON[S.sport].weeks[S.week].topic, skills: Object.values(S.SKILL_NAMES).join(', '),
     play: cells.indexOf(c) + 1, plays: cells.length, task: strip(c.task),
-    code: (c.el.querySelector('textarea')?.value ?? c.code ?? '').slice(0, 1200),
+    code: (c.ed?.value ?? c.code ?? '').slice(0, 1200),
     output: (c.el.querySelector('.out')?.textContent ?? '').slice(0, 300),
   };
 }

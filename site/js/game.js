@@ -1,8 +1,9 @@
 // The lab notebook: the plays (boxes), running and checking them, the film review and the scouting report.
 import { $, S, LABS, store, esc } from './state.js';
-import { say } from './voice.js';
+import { say, rest } from './voice.js';
 import { py, pyCall, stopPy, closeAsk, g, q, ready, loadData, loadCharts, CHART, friendly } from './python.js';
-import { progKey, labVersion, startSaving, saveNow, stopSaving, dropProgress, restoreBoxes, bringBack, waitForRestore } from './progress.js';
+import { progKey, labVersion, startSaving, saveNow, saveSoon, stopSaving, dropProgress, restoreBoxes, bringBack, waitForRestore } from './progress.js';
+import { codeEditor } from './editor.js';
 import { draw } from './map.js';
 import { resetAsk } from './ask.js';
 
@@ -52,7 +53,7 @@ function cellHtml(c, n) {
     h += `${c.code ? `<pre class="show">${esc(c.code)}</pre>` : ''}`;
     h += `<div class="opts">${c.opts.map((o, i) => `<button class="opt" data-i="${i}">${esc(o)}</button>`).join('')}</div>`;
   } else {
-    h += `<textarea class="code" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" rows="${c.code.split('\n').length}">${esc(c.code)}</textarea>
+    h += `<div class="code"></div>
       <div class="row">${c.kind === 'predict' ? '<input class="guess" inputmode="numeric" placeholder="guess">' : ''}<button class="run">▶ Run</button>
       ${c.hints ? '<button class="hint">💡 Hint</button>' : ''}<span class="key">or Shift + Enter</span><span class="msg"></span></div><div class="out"></div>`;
   }
@@ -78,22 +79,14 @@ function wireQuiz(cell) {
     saveNow();
   });
 }
-function wireCode(cell) {
-  const el = cell.el, ta = el.querySelector('textarea'), msg = el.querySelector('.msg');
-  ta.oninput = () => {
-    // Tablets like to turn " and ' into curly quotes, which Python cannot read: put the straight ones back.
-    if (/[“”„‘’]/.test(ta.value)) {
-      const at = ta.selectionStart;
-      ta.value = ta.value.replace(/[“”„]/g, '"').replace(/[‘’]/g, "'");
-      ta.setSelectionRange(at, at);
-    }
-    ta.rows = ta.value.split('\n').length;
-    msg.textContent = '';
-  };
-  ta.onkeydown = e => {
-    if (e.key === 'Enter' && e.shiftKey) { e.preventDefault(); run(cell); }
-    if (e.key === 'Tab') { e.preventDefault(); ta.setRangeText('    ', ta.selectionStart, ta.selectionEnd, 'end'); }
-  };
+function wireCode(cell, n) {
+  const el = cell.el, msg = el.querySelector('.msg');
+  // The code box (js/editor.js). Typing clears the box's message, calms the coach and saves the lab half a second later.
+  cell.ed = codeEditor(el.querySelector('.code'), cell.code, {
+    label: `Python code for play ${n}`,
+    onRun: () => run(cell),
+    onChange: () => { msg.textContent = ''; rest(); saveSoon(); },
+  });
   el.querySelector('.run').onclick = () => run(cell);
   const guess = el.querySelector('.guess');
   if (guess) guess.oninput = () => { msg.textContent = ''; };
@@ -144,7 +137,7 @@ export async function startGame(w, i) {
     el.innerHTML = cellHtml(c, S.cells.length + 1);
     nb.appendChild(el);
     S.cells.push(cell);
-    if (c.kind === 'quiz') wireQuiz(cell); else wireCode(cell);
+    if (c.kind === 'quiz') wireQuiz(cell); else wireCode(cell, S.cells.length);
   }
   S.cells[0].el.classList.remove('wait');
   moveBall();
@@ -203,7 +196,7 @@ async function run(c) {
 
 async function runBox(c) {
   const el = c.el, msg = el.querySelector('.msg'), out = el.querySelector('.out'), btn = el.querySelector('.run');
-  const code = el.querySelector('textarea').value;
+  const code = c.ed.value;
   let guess;
   msg.textContent = '';
   if (c.kind === 'predict' && !c.done) {
@@ -303,7 +296,7 @@ function finish(c, text) {
     const goNext = () => {
       const before = next.el.previousElementSibling;   // a mission title above the next play scrolls into view with it
       (before.classList.contains('md') ? before : next.el).scrollIntoView({ block: 'start' });
-      next.el.querySelector('textarea')?.focus({ preventScroll: true });
+      next.ed?.focus();
     };
     say(`<b>${words().cheers[S.doneCount % 5]}</b> ${text}`, 'jump', { label: 'Next play ↓', go: goNext });
   } else {

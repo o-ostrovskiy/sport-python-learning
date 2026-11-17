@@ -120,8 +120,8 @@ body:not(.ask-on) #ask{display:none!important}   /* the question box shows only 
 .tag.turn{background:var(--gold);color:var(--ink)}
 .cell.done .tag::after{content:" ✓"}
 .task{font-size:18px;line-height:1.5;margin:8px 0 12px}
-textarea.code{display:block;width:100%;resize:none;border:0;outline:3px solid transparent;font-family:"JetBrains Mono",monospace;background:var(--ink);color:#e9f1ff;border-radius:14px;padding:14px 16px;font-size:16px;line-height:1.55;tab-size:4;white-space:pre;overflow-x:auto}
-textarea.code:focus{outline-color:var(--gold)}
+/* the code box itself is js/editor.js (CodeMirror); no ligatures anywhere code shows, so >= stays two characters */
+pre.show,.out,code,.guess,.asks .qq,.asks input{font-variant-ligatures:none}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
 .run{background:var(--ok);color:#fff;border:0;border-radius:14px;padding:10px 22px;font-size:17px;font-weight:700;box-shadow:0 5px 0 #1f8e4b}
 .run:active{transform:translateY(3px);box-shadow:0 2px 0 #1f8e4b}

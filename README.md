@@ -81,13 +81,15 @@ copy `server/.env.example` to `server/.env`, add your own Gemini key and set `AS
 | `site/labs/` | one file per lab; [`site/labs/README.md`](site/labs/README.md) explains the format |
 | `site/data/` | trimmed copies of the open data, small enough for a browser |
 | `site/season.js` | the two seasons: weeks, stadiums, map positions (`at` and the drawn map's `xy`), stadium facts |
-| `site/assets/` | coach pictures, recorded coach voice (`voice/`), fonts (`vendor/`), the drawn map of the 48 states (`usa-map.js`) |
+| `site/assets/` | coach pictures, recorded coach voice (`voice/`), fonts and the code editor (`vendor/`, CodeMirror 6), the drawn map of the 48 states (`usa-map.js`) |
 | `site/analytics.js` | Google Analytics visit counting, on the public address only |
 | `site/tools/build-map.mjs` | draws the map once (US Census outlines, Albers projection) and writes each stadium's `xy` into `season.js` |
+| `site/tools/build-editor.mjs` | bundles CodeMirror 6 (the code boxes) into `site/assets/vendor/codemirror/codemirror.js`, served from our own site |
 | `site/tools/check-lab.mjs` | plays a lab from start to finish in real Python and fails if any box, hint path or answer misbehaves |
 | `site/tools/test-resume.mjs` | browser test (Playwright): half-play Week 1, reload, Continue, and the boxes and Python's memory are back |
 | `site/tools/test-stop.mjs` | browser test: ⏹ Stop ends `while True: pass` and the next boxes run; `input( )` asks in the page |
 | `site/tools/test-map.mjs` | browser test on an upright iPad: no map service, the map fits, winning Week 1 puts a trophy on its stadium |
+| `site/tools/test-editor.mjs` | browser test with real key presses: indent after a colon, brackets, straight quotes, Shift+Enter, Tab and Escape+Tab |
 | `site/tools/playthrough.mjs` | plays every lab through the real page in Chromium with the answer keys, film review included |
 | `server/` | for home use only: `local.mjs` runs the site on this computer, `handler.mjs` is the coach-question API that keeps the Gemini key private |
 | [`DEPLOY.md`](DEPLOY.md) | where the public site lives, how to update it, and the launch checklist |
