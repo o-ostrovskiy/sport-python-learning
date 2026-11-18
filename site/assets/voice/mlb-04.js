@@ -26,6 +26,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "No red error, but it is wrong: Python glued the two names into one player. The comma is what keeps players apart.": "no-red-error-but-it-is-wrong-python-glue-613addd7.mp3",
  "The team must be a list. Keep the square brackets [ ] around the names.": "the-team-must-be-a-list-keep-the-square-20638d8f.mp3",
  "Those are still my three players. Put your own favorites inside the quotes.": "those-are-still-my-three-players-put-you-47a1af90.mp3",
+ "Ask the list for him: keep lineup[ ] and put a spot number in the square brackets.": "ask-the-list-for-him-keep-lineup-and-put-0fbf2510.mp3",
  "Cal Raleigh! The 4th batter lives at spot 3. You are counting like Python now.": "cal-raleigh-the-4th-batter-lives-at-spot-1749959b.mp3",
  "Check the if line. The missing word asks \"is it inside the list?\" and has 2 letters.": "check-the-if-line-the-missing-word-asks-d9618738.mp3",
  "Check the line under else. The missing word adds a player to the end of a list and has 6 letters.": "check-the-line-under-else-the-missing-wo-a1980e33.mp3",

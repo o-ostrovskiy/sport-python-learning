@@ -35,6 +35,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "< asks \"is it smaller?\" We are asking \"is it at least 60?\"": "asks-is-it-smaller-we-are-asking-is-it-a-a4384712.mp3",
  "Put only the symbol in place of the blank, so the line reads print(raleigh_hr >= 60).": "put-only-the-symbol-in-place-of-the-blan-9fdeb3f0.mp3",
  "Keep both times the same, 4.3 and 4.3. A tie is the whole point! Change only the symbol in the if line.": "keep-both-times-the-same-4-3-and-4-3-a-t-b2d27af7.mp3",
+ "Safe! You turned the question around, and it works: the throw was not faster. Most umpires say it the other way: runner_time <= throw_time.": "safe-you-turned-the-question-around-and-679389b7.mp3",
  "With == the runner is safe only on an exact tie. A faster runner would be called out! Use the symbol that means \"smaller, or the same\".": "with-the-runner-is-safe-only-on-an-exact-3090fd82.mp3",
  "Careful: >= makes the slower runner safe. We want \"smaller, or the same\".": "careful-makes-the-slower-runner-safe-we-10102e17.mp3",
  "The bot still says Out. In the if line, change < to the symbol that means \"at most\".": "the-bot-still-says-out-in-the-if-line-ch-10bdd71d.mp3",

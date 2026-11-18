@@ -25,7 +25,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "elif has to come after the if part and before else. That is exactly where the note is.": "elif-has-to-come-after-the-if-part-and-b-b45c2520.mp3",
  "The elif line starts under the i of if (4 spaces). Its print starts under the other print lines (8 spaces).": "the-elif-line-starts-under-the-i-of-if-4-217722e8.mp3",
  "Two equals signs: elif total1 == total2: asks \"are they the same?\"": "two-equals-signs-elif-total1-total2-asks-19470d67.mp3",
- "Adrian Peterson, 14,921 yards to 11,423 (through the 2024 season). But Henry is still playing! If a total ever says 0, check the spelling of the name.": "adrian-peterson-14-921-yards-to-11-423-t-42a796d0.mp3",
+ "Adrian Peterson, about 14,900 yards to 11,400 (through the 2024 season). But Henry is still playing! If a total ever says 0, check the spelling of the name.": "adrian-peterson-about-14-900-yards-to-11-d94e3149.mp3",
  "True! 50 is at least 50. Mahomes hit it exactly.": "true-50-is-at-least-50-mahomes-hit-it-ex-f4a73f0c.mp3",
  "So close: the symbols are in the wrong order. \"Bigger than\" comes first, then \"the same\": >=.": "so-close-the-symbols-are-in-the-wrong-or-d8ee0a20.mp3",
  "== asks \"is it exactly the same?\". That says True here, but it would say False for 51. We want \"at least\": bigger, or the same.": "asks-is-it-exactly-the-same-that-says-tr-b4ae7912.mp3",

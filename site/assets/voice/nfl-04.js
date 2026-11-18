@@ -10,6 +10,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "A red error, just as planned! IndexError: list index out of range. Index is Python's word for the spot number. There is no spot 5: the last spot is always one less than len( ).": "a-red-error-just-as-planned-indexerror-l-283f9cce.mp3",
  "Count the spots from the top, starting at 0: Justin is 0, Saquon is 1…": "count-the-spots-from-the-top-starting-at-cada8444.mp3",
  "The last spot is one less than the number of players. 5 players, so spot…?": "the-last-spot-is-one-less-than-the-numbe-92056f36.mp3",
+ "The answer: print(\"Pick 5:\", my_board[4])": "the-answer-print-pick-5-my-board-4-a43bc4ec.mp3",
  "Lamar went to the bottom, and the board grew from 3 to 4. The append line changes the list quietly; print shows it.": "lamar-went-to-the-bottom-and-the-board-g-96ed2d48.mp3",
  "True, False… and False! To Python a small j and a big J are different letters. in only says True when the name is spelled exactly the same.": "true-false-and-false-to-python-a-small-j-941f40f6.mp3",
  "Right. \"Saquon\" is not the same as \"Saquon Barkley\", so the answer is False.": "right-saquon-is-not-the-same-as-saquon-b-cf94ce00.mp3",

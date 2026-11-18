@@ -32,7 +32,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "Almost. The line should be print(\"Rows in the box:\", len(stats)).": "almost-the-line-should-be-print-rows-in-06dde521.mp3",
  "The name is text, so it needs quotes: name = \"Juan Soto\".": "the-name-is-text-so-it-needs-quotes-name-63a0b305.mp3",
  "That is still Aaron Judge. Put your own player between the quotes on line 1.": "that-is-still-aaron-judge-put-your-own-p-1c66c7ba.mp3",
- "Check the spelling and the capital letters. The box has hitters only, so a pitcher will not be there.": "check-the-spelling-and-the-capital-lette-b2b48a51.mp3",
+ "Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star. The box has hitters only, so a pitcher will not be there.": "check-the-spelling-and-the-capital-lette-580aecfa.mp3",
  "<NA> means empty: Python found no numbers to look at. The name in the play above is spelled differently from the table, or this stat was not counted in his day. Fix the name there, run that box again, then come back.": "na-means-empty-python-found-no-numbers-t-c09d9e11.mp3",
  "That is his smallest season. We want the biggest: the opposite of min.": "that-is-his-smallest-season-we-want-the-076d9f96.mp3",
  "That adds up his whole career. We want only his one best season: 3 letters, the opposite of min.": "that-adds-up-his-whole-career-we-want-on-05ee1202.mp3",
@@ -42,6 +42,6 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "Keep the two lines under the first one just as they were. They do the sorting.": "keep-the-two-lines-under-the-first-one-j-ff4e622f.mp3",
  "Use the machine like this: compare(\"Name One\", \"Name Two\", \"HR\"). Three things in quotes, with commas between them.": "use-the-machine-like-this-compare-name-o-addf6ed7.mp3",
  "That is still my matchup. Put your own two players inside the quotes.": "that-is-still-my-matchup-put-your-own-tw-d6e9e81b.mp3",
- "Check the spelling and the capital letters.": "check-the-spelling-and-the-capital-lette-b0dc8111.mp3",
+ "Check the spelling and the capital letters. If it is right, he may not be in our archive: it keeps the better-known hitters, so try a star.": "check-the-spelling-and-the-capital-lette-c7107081.mp3",
  "That is the same player twice. Pick two different players to compare.": "that-is-the-same-player-twice-pick-two-d-ba72ff07.mp3"
 });

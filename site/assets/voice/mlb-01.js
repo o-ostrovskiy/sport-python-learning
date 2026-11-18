@@ -33,7 +33,7 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "You called it: 8! 2 1 + 1 2 + 0 3 + 1 4. Python did the math, then put the answer in total_bases.": "you-called-it-8-2-1-1-2-0-3-1-4-python-d-9c8538be.mp3",
  "Hits are numbers, so they need no quotes: home_runs = 2.": "hits-are-numbers-so-they-need-no-quotes-3da6a9e7.mp3",
  "The math line changed. It should still say total_bases = singles * 1 + doubles * 2 + triples * 3 + home_runs * 4. Change only the four numbers above it.": "the-math-line-changed-it-should-still-sa-45d756d3.mp3",
- "Still 8 total bases: those are my numbers. Give your batter more hits.": "still-8-total-bases-those-are-my-numbers-8fdd5920.mp3",
+ "That is 8 total bases, the same as my batter. A great day is 10 or more: give your batter more hits.": "that-is-8-total-bases-the-same-as-my-bat-0fd38570.mp3",
  "Keep the print line so we can see the total.": "keep-the-print-line-so-we-can-see-the-to-70f01b7d.mp3",
  "0.39 seconds! You used a function all by yourself. Try 80 (a curveball) or 45 (a 10-year-old's pitch) to see how much more time the batter gets.": "0-39-seconds-you-used-a-function-all-by-1d21e8f4.mp3",
  "Use our machine. Its name is time_to_plate, and the speed goes in the round brackets.": "use-our-machine-its-name-is-time-to-plat-9addc6d7.mp3",
