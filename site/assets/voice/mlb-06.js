@@ -32,5 +32,11 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "Those are still Ohtani's numbers. Put Raleigh's in: 147 hits, 596 at-bats.": "those-are-still-ohtani-s-numbers-put-ral-bc82399d.mp3",
  "The order matters! Hits go first, then at-bats: batting_average(147, 596).": "the-order-matters-hits-go-first-then-at-ee01da2d.mp3",
  "Keep Judge's line as it was: judge = batting_average(179, 541).": "keep-judge-s-line-as-it-was-judge-battin-5f922235.mp3",
- "Judge 0.331, Raleigh 0.247. Judge had the best average in baseball in 2025. But Raleigh hit 60 home runs that year: a batting average does not tell you everything!": "judge-0-331-raleigh-0-247-judge-had-the-49e15a00.mp3"
+ "Judge 0.331, Raleigh 0.247. Judge had the best average in baseball in 2025. But Raleigh hit 60 home runs that year: a batting average does not tell you everything!": "judge-0-331-raleigh-0-247-judge-had-the-49e15a00.mp3",
+ "Check the total2 line. It should add up the second player's career. Which input box holds him?": "check-the-total2-line-it-should-add-up-t-cd80caff.mp3",
+ "Check the line under if. The missing word hands the answer back, and it has 6 letters.": "check-the-line-under-if-the-missing-word-05eb3062.mp3",
+ "The winner should be Aaron Judge, 386 to 385. Keep the last two lines as they were.": "the-winner-should-be-aaron-judge-386-to-6a82a585.mp3",
+ "Judge 386, Schwarber 385: one home run apart! Your machine prints the totals and returns the winner. Only one return line ever runs: the one under the rule that is true.": "judge-386-schwarber-385-one-home-run-apa-c23de424.mp3",
+ "Keep my_team a list with at least one player in square brackets.": "keep-my-team-a-list-with-at-least-one-pl-09d74fff.mp3",
+ "Those are still my three players. Put your own inside the quotes.": "those-are-still-my-three-players-put-you-cfa5b326.mp3"
 });
