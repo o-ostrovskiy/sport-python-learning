@@ -53,7 +53,7 @@ try {
       await page.locator('#say .go').click();
       const rv = await page.evaluate(() => seasonState.REVIEW.map(r => r.a));
       for (const a of rv) { await page.locator(`#film .opt[data-i="${a}"]:not([disabled])`).click(); await page.waitForTimeout(1500); }
-      await page.waitForFunction(() => /SCOUTING REPORT/.test(document.querySelector('#film')?.textContent || ''), null, { timeout: 10000 });
+      await page.waitForFunction(() => /TODAY YOU LEARNED/.test(document.querySelector('#film')?.textContent || ''), null, { timeout: 10000 });
       const charts = await page.locator('#nb .out img').count();
       if (errors.length) throw new Error('page errors: ' + errors.join(' | '));
       console.log(`✓ ${name}  (${n} plays${charts ? `, ${charts} charts` : ''})`);

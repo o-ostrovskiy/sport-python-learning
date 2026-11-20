@@ -1,4 +1,4 @@
-// The lab notebook: the plays (boxes), running and checking them, the film review and the scouting report.
+// The lab notebook: the plays (boxes), running and checking them, the film review and the final card.
 import { $, S, LABS, store, esc } from './state.js';
 import { say, rest } from './voice.js';
 import { py, pyCall, stopPy, closeAsk, g, q, ready, loadData, loadCharts, CHART, friendly } from './python.js';
@@ -272,6 +272,8 @@ async function runBox(c) {
   const text = res.out;
   out.className = 'out on';
   out.innerHTML = (text ? `<div>${esc(text)}</div>` : '') + res.rich || '(nothing printed)';
+  // A chart is tall: bring all of it into view, or its bottom axis stays hidden under the fold (the child's feedback, 2026-11-19).
+  out.querySelectorAll('img').forEach(img => img.addEventListener('load', () => img.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), { once: true }));
   if (c.done) return;
   let r;
   try {
@@ -304,7 +306,7 @@ function finish(c, text) {
   } else {
     $('#you').textContent = 7;
     confetti();
-    say(`<b>${words().win}</b> ${text} You win 7–0! Now let's watch the film and see what stuck.`, 'win', { label: '🎬 Film review', go: () => review(0) });
+    say(`<b>${words().win}</b> ${text} You win 7–0! Now a quick film review, just for fun.`, 'win', { label: '🎬 Film review', go: () => review(0) });
   }
 }
 function confetti() {
@@ -336,7 +338,7 @@ function review(i) {
   $('#down').textContent = `Question ${i + 1} of ${S.REVIEW.length}`;
   const el = card(`<span class="tag">🎬 FILM REVIEW · ONE TRY, NO HINTS</span><div class="task">${r.q}</div>${r.code ? `<pre class="show">${esc(r.code)}</pre>` : ''}
     <div class="opts">${r.opts.map((o, k) => `<button class="opt" data-i="${k}">${esc(o)}</button>`).join('')}</div>`);
-  if (i === 0) say('Film room time. One try each, no hints from me. It is OK to miss. This just shows me what we should practice.');
+  if (i === 0) say('Film room time! A few quick questions about today, just for fun. One try each.');
   el.querySelectorAll('.opt').forEach(o => o.onclick = () => {
     const ok = +o.dataset.i === r.a;
     el.querySelectorAll('.opt').forEach(b => b.disabled = true);
@@ -347,22 +349,21 @@ function review(i) {
     }
     S.rvAt = i + 1;
     saveNow();
-    say(ok ? 'Yes! Locked in.' : 'Not this time. The green one is right. We will drill it.', ok ? 'jump' : '');
+    say(ok ? 'Yes! Locked in.' : 'Good try! The green one is the answer. Now you know it.', ok ? 'jump' : '');
     setTimeout(() => i + 1 < S.REVIEW.length ? review(i + 1) : report(), 1400);
   });
 }
 function report() {
+  // Only what was learned, never a grade: the child asked not to see "Not yet" or "Practice more" at the end.
   const names = S.SKILL_NAMES;
-  const level = k => S.rvWrong[k] ? ['n', 'Not yet'] : S.misses[k] >= 2 ? ['p', 'Practice more'] : ['g', 'Got it'];
-  const rows = Object.keys(names).map(k => `<div class="rep">${names[k]}<span class="${level(k)[0]}">${level(k)[1]}</span></div>`).join('');
-  const weak = Object.keys(names).filter(k => level(k)[0] !== 'g').map(k => names[k]);
-  card(`<span class="tag">📋 SCOUTING REPORT</span><div class="big">🏆</div><div class="task" style="text-align:center"><b>Week ${S.week + 1} final: You 7, Bugs 0</b></div>${rows}`);
+  const rows = Object.keys(names).map(k => `<div class="rep">${names[k]}<span class="g">✅</span></div>`).join('');
+  card(`<span class="tag">🏆 TODAY YOU LEARNED</span><div class="big">🏆</div><div class="task" style="text-align:center"><b>Week ${S.week + 1} final: You 7, Bugs 0</b></div>${rows}`);
   $('#down').textContent = 'Final';
   const won = S.won[S.sport];
   if (!won.includes(S.week)) { won.push(S.week); store.set('wins', S.won); }
   dropProgress(S.gameSport, S.week);   // the week is won: the trophy stays, the half-way record goes
   draw();
-  say(weak.length ? `Great game! Next time we will warm up with <b>${weak.join(' and ')}</b>.` : 'A perfect game! Every skill locked in.',
+  say('Great game! Look at everything you learned today. See you next week!',
     'win', { label: 'Back to the map', go: leave });
 }
 

@@ -34,12 +34,19 @@ but no programming words and no math/statistics words. The same plan now has a b
 10. **Explain whatever shows up, even if it's taught later** (his feedback on Lab 2, 2026-11-05). If a box contains something from
     a future lab (a list, `True`), say in plain words what it's doing there and why it's needed, and name the lab that covers it.
     Long lines get taken apart step by step, with a small box for each step.
+11. **Say when something is already built** (his feedback on Lab 1, 2026-11-19). A "your turn" box that uses a function, list or table
+    from an earlier box never starts empty: it starts with the line to change, and the task says "it is already built, Python
+    remembers it, do not write `def` again". Facing an empty box, he rewrote the whole function.
+12. **Charts a beginner can read.** Before the chart, a short "how to read it" (what one dot is, what the bottom and the side mean).
+    At most about 300 dots, figure height 4–4.5, plain-words axis labels and a title that is the question.
+13. **No grades at the end.** The site's final card lists what was learned, each with ✅; never "Not yet" or "Practice more"
+    (they upset him). The film review stays, but a miss is "Good try! Now you know it."
 
 ## Already covered (don't re-teach, just reuse)
 
 | Lab | New Python ideas | Data skills |
 |---|---|---|
-| **1. Football Lab** (guided; he did it 2026-10-22; plain-words explanations added 2026-10-24 and 2026-11-05, same code) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
+| **1. Football Lab** (guided; he did it 2026-10-22; plain-words explanations added 2026-10-24 and 2026-11-05, same code) | variables, numbers, `print` with commas, math (`*`, `+`), a function to use (`speed_mph`), `round( )` (site, 2026-11-19) | load a table, find a player, sort, `head`/`tail`, a scatter chart |
 | **2. Stat Detective** | `print( )` and brackets, quotes = text, variable vs `"variable"`, `NameError`, numbers vs text (`"100" + "50"`), `=` vs `==`, `True`/`False` as answers (first look), `len( )`, `import ... as`, square brackets to pick columns (`[ ]` one, `[[ ]]` = a list inside brackets, first look), `KeyError`, `SyntaxError`, `=` as a setting (`ascending=False`), the dot | reading a row filter from the inside out, one player's games, `.max()`, `.mean()`, `.sum()`, `round( )`, `sort_values(ascending=False)`, using a ready-made machine `compare( )` |
 | **3. Referee Bot** | `True` / `False`, `>` `<` `>=` `<=` `==`, `if` / `elif` / `else`, colon + indent (`SyntaxError: expected ':'`, `IndentationError`), rules checked top to bottom, reading `def` line by line, reading the `total1` line from the inside out, finding and fixing a bug (tie in `compare`) | rate a player's best game with `if` |
 | **4. My Draft Board** (NFL) / **My Lineup Card** (MLB) | lists `[ ]` and commas (a missing comma glues two names), counting from 0, `IndexError`, `.append( )`, `in`, a list written over several lines, `list( )`, the last spot is `len( ) - 1` | season-totals file (NFL `player_stats_season.csv`, one row = one season), newest season with `.max()`, top 5 as a list |

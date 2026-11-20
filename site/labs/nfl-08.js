@@ -92,7 +92,7 @@ const LAB8 = [
   { skill: 'game', kind: 'run', data: true, task: 'One new command: <code>.to_dict("records")</code> turns every row of the table into a <b>player card</b>: a dictionary, like in Lab 7. <b>Guess first:</b> how many cards will there be?',
     code: 'cards = top.to_dict("records")\n\nprint("Cards:", len(cards))\nprint(cards[0])\nprint(cards[0]["player_display_name"], "plays for", cards[0]["recent_team"])',
     ok: '<code>cards</code> is a <b>list of dictionaries</b>: 10 player cards. <code>cards[0]</code> is the first card, and <code>cards[0]["recent_team"]</code> reads the team from it.' },
-  { skill: 'game', kind: 'turn', data: true, task: '<b>The game!</b> Python picks a secret card and gives a clue inside the answer box. <code>str( )</code> is the twin of <code>int( )</code>: it turns a number into text, so <code>+</code> can glue it into the clue. Right now you get only <b>1</b> try. Change <code>max_tries</code> to <b>3</b>, then play.',
+  { skill: 'game', kind: 'turn', data: true, task: '<b>The game!</b> Python picks a secret card and gives a clue inside the answer box. <code>str( )</code> is the twin of <code>int( )</code>: it turns a number into text, so <code>+</code> can glue it into the clue. Right now you get only <b>1</b> try. Change <code>max_tries</code> to <b>3</b>, then play. (Clue 3 uses <code>answer[0]</code>: counting from 0 works on text too, so spot 0 of a name is its first letter.)',
     code: 'import random\n\nstat = "receiving_yards"\nmax_tries = 1      # how many guesses you get: change it to 3\n\n' + GAME_LOOP,
     hints: ['Only one number changes: the <code>1</code> in the <code>max_tries</code> line near the top.', 'Line 4 should be: <code>max_tries = 3</code>'],
     check: async ({ q }) => {

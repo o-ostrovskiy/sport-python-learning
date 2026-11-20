@@ -34,19 +34,24 @@ const LAB1 = [
       if (sc === 27) return { msg: 'The locker is there, but the score line is not using it yet. Add <code>+ safeties * 2</code> at the end of that line.' };
       if (sc !== 29) return { msg: `The scoreboard says ${sc}, we need 29. A safety is 2 points, so it is <code>safeties * 2</code>.` };
       return { ok: true, msg: '29! You wrote a new variable and used it in math. That is programming.' }; } },
-  { md: '<h2>Mission 3. Speedometer 🏎️</h2>Let\'s build a <b>machine</b> (programmers call it a <b>function</b>): you put a 40-yard time in, and a speed in miles per hour comes out. The lines inside the machine are pushed to the right. That is how Python knows they belong to it.' },
+  { md: '<h2>Mission 3. Speedometer 🏎️</h2>Let\'s build a <b>machine</b> (programmers call it a <b>function</b>): you put a 40-yard time in, and a speed in miles per hour comes out.<br><br>How to read it, line by line:<br>• <code>def speed_mph(seconds):</code> means "build a machine called <code>speed_mph</code>". The time goes into the slot called <code>seconds</code>.<br>• The lines under it are pushed to the right. That is how Python knows they are the machine\'s insides.<br>• Line 2 finds the yards per second. Line 3 turns that into miles per hour (an hour has 3,600 seconds, a mile has 1,760 yards).<br>• <code>return</code> sends the answer out of the machine.<br><br>You build a machine <b>once</b>. After that you just call it by its name, as many times as you like.' },
   { skill: 'functions', kind: 'run', task: 'Run it to build the machine and test it on Xavier Worthy, the fastest 40 in Combine history.',
-    code: 'def speed_mph(seconds):\n    yards_per_second = 40 / seconds\n    return round(yards_per_second * 3600 / 1760, 2)\n\nprint("Xavier Worthy (4.21 sec):", speed_mph(4.21), "mph")',
-    ok: '19.43 miles per hour! <code>speed_mph(4.21)</code> fed 4.21 into the machine, and the answer came back out.' },
-  { skill: 'functions', kind: 'turn', task: 'Your turn to use the machine. Tyreek Hill ran the 40 in <b>4.29</b> seconds. Print his speed.',
-    code: '# Tyreek Hill ran 4.29 seconds. Print his speed in mph:\n',
-    hints: ['Look at the Worthy line above. The machine is used like this: <code>speed_mph(4.21)</code>.', 'Put the machine inside print: <code>print(speed_mph(____))</code>. Which number goes in?', 'The answer: <code>print(speed_mph(4.29))</code>'],
+    code: 'def speed_mph(seconds):\n    yards_per_second = 40 / seconds\n    mph = yards_per_second * 3600 / 1760\n    return round(mph, 2)\n\nprint("Xavier Worthy (4.21 sec):", speed_mph(4.21), "mph")',
+    ok: '19.43 miles per hour! <code>speed_mph(4.21)</code> put 4.21 into the machine, and the answer came back out.' },
+  { skill: 'functions', kind: 'quiz', task: 'What is <code>round</code> on the last line of the machine? The real speed is a long number: 19.4299287... <code>round(mph, 2)</code> keeps only <b>2 digits after the dot</b>, like a scoreboard would. So what does this print?',
+    code: 'print(round(4.567, 1))',
+    opts: ['4.5', '4.6', '5'], a: 1,
+    tips: ['Close! <code>round</code> rounds like in math class: 4.567 is closer to 4.6 than to 4.5.', '', 'The <code>1</code> means keep 1 digit after the dot, so it is not a whole number.'],
+    ok: 'Right: 4.6. The number after the comma says how many digits to keep after the dot.' },
+  { skill: 'functions', kind: 'turn', task: 'Your turn to use the machine. Tyreek Hill ran the 40 in <b>4.29</b> seconds.<br>The machine is <b>already built</b> in the box above, and Python remembers it. So you do <b>not</b> write <code>def</code> again. Just change the time in the line below.',
+    code: '# speed_mph is already built above. Just use it by its name.\nprint("Tyreek Hill:", speed_mph(4.21), "mph")   # change 4.21 to 4.29',
+    hints: ['Find <code>4.21</code> inside the round brackets and type <code>4.29</code> instead.', 'The line should be: <code>print("Tyreek Hill:", speed_mph(4.29), "mph")</code>'],
     check: async ({ out, code }) => {
-      if (out.includes('19.07')) return { ok: true, msg: '19.07 mph! You used a function all by yourself. Tyreek would be proud.' };
+      if (out.includes('19.07')) return { ok: true, msg: /def\s/.test(code) ? '19.07 mph! It works. Tip: you did not need to build the machine again. Python remembered it, so just its name is enough.' : '19.07 mph! You used a function all by yourself. Build once, use many times.' };
       if (!/speed_mph\s*\(/.test(code)) return { msg: 'Use our machine. Its name is <code>speed_mph</code>, and the time goes in the round brackets.' };
-      if (!/print/.test(code)) return { msg: 'The machine made the answer, but nobody showed it! Wrap it in <code>print( )</code>.' };
-      if (!/4\.29/.test(code)) return { msg: 'Check the time you fed the machine. Tyreek ran <code>4.29</code>.' };
-      return { msg: 'Almost. Try exactly <code>print(speed_mph(4.29))</code>.' }; } }
+      if (!/print/.test(code)) return { msg: 'The machine made the answer, but nobody showed it! Keep the <code>print( )</code> around it.' };
+      if (!/4\.29/.test(code)) return { msg: 'It still uses Worthy\'s time. Change <code>4.21</code> to Tyreek\'s time, <code>4.29</code>.' };
+      return { msg: 'Almost. Try exactly <code>print("Tyreek Hill:", speed_mph(4.29), "mph")</code>.' }; } }
   ,{ md: '<h2>Mission 4. The secret NFL archive 📂</h2>Every spring the NFL holds the <b>Scouting Combine</b>: future players run the 40-yard dash, jump and lift. We are going to open <b>every Combine result since 2000</b>. A helper called <b>pandas</b> lets Python work with tables, like a spreadsheet. We call it <code>pd</code> for short.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Run it to open the archive. <code>len( )</code> <b>counts</b> the rows, and <code>.head()</code> shows the <b>first 5</b>. One row is one player.',
     code: 'import pandas as pd\n\ncombine = pd.read_csv("combine.csv")\n\nprint("Players in the archive:", len(combine))\ncombine.head()',
@@ -60,10 +65,6 @@ const LAB1 = [
       if (n === 'Justin Jefferson') return { msg: 'That is still Justin Jefferson. Put your own player between the quotes.' };
       if (!(await q('len(combine[combine["player_name"] == name])'))) return { msg: `Nobody in the archive is called "${esc(n)}". Check the spelling and the capital letters. Or maybe he skipped the Combine: try another player.` };
       return { ok: true, msg: `Found him! ${esc(n)}: ${(await q('_who(combine, name)'))}.` }; } },
-  { skill: 'tables', kind: 'quiz', task: 'Quick one. What does this count?', code: 'len(combine)',
-    opts: ['the columns in the table', 'the rows: one for each player', 'the letters in the word combine'], a: 1,
-    tips: ['Not the columns. <code>len</code> of a table counts how many rows it has.', '', '<code>combine</code> has no quotes, so it is the locker with our table inside, not a word.'],
-    ok: 'Right: one row per player, so <code>len(combine)</code> is how many players we have.' },
   { md: '<h2>Mission 5. Who is the fastest ever? ⚡</h2>Now we put every player in order by 40-yard time. Read the chain from left to right: <code>.dropna</code> throws away players with an empty time, <code>.sort_values("forty")</code> sorts them with the smallest time first, and <code>.head(10)</code> keeps the top 10.' },
   { skill: 'tables', kind: 'run', data: true, task: 'Run it to see the 10 fastest players since 2000.',
     code: 'fastest = combine.dropna(subset=["forty"]).sort_values("forty")\nfastest[["player_name", "pos", "forty", "season"]].head(10)',
@@ -74,27 +75,17 @@ const LAB1 = [
     check: async ({ code, q }) => /\.tail\s*\(/.test(code.replace(/#.*/g, ''))
       ? { ok: true, msg: `The slowest is ${(await q('fastest.iloc[-1]["player_name"]'))}, position ${(await q('fastest.iloc[-1]["pos"]'))}, with ${(await q('fastest.iloc[-1]["forty"]'))} seconds. Big linemen are built for power, not speed. Did you guess right?` }
       : { msg: 'That is still the fastest 10. Change the word <code>head</code> to <code>tail</code>.' } },
-  { skill: 'tables', kind: 'turn', data: true, task: 'Now just one position. It starts with wide receivers, <code>"WR"</code>. Change it to <code>"RB"</code>, <code>"CB"</code>, <code>"TE"</code> or <code>"QB"</code>. Keep the quotes.',
-    code: 'position = "WR"   # try RB, CB, QB, TE\n\none_position = combine[combine["pos"] == position]\none_position.sort_values("forty")[["player_name", "forty", "season"]].head(10)',
-    hints: ['Only change the two letters between the quotes on line 1.'],
-    check: async ({ g, q }) => {
-      const p = (await g('position'));
-      if (p === 'WR') return { msg: 'Still wide receivers. Change <code>"WR"</code> to another position, like <code>"RB"</code>.' };
-      if (!(await q('len(one_position)'))) return { msg: `No players have the position "${esc(String(p))}". Use capital letters: <code>"RB"</code>, <code>"CB"</code>, <code>"QB"</code> or <code>"TE"</code>.` };
-      return { ok: true, msg: `The fastest ${esc(p)} since 2000 is ${(await q('one_position.sort_values("forty").iloc[0]["player_name"]'))}. You just filtered a table of 9,000 players with one line.` }; } },
   { md: '<h2>Mission 6. THE BIG QUESTION 🔍</h2>NFL teams spend millions picking players by their Combine numbers. But <b>do the fastest receivers become the best ones?</b> Scientists guess <b>before</b> they look, so nobody can say "I knew it all along".' },
   { skill: 'tables', kind: 'quiz', vote: true, task: 'What do you think? There is no wrong answer here.',
     opts: ['Yes, the fastest ones get the most yards', 'No, speed does not matter at all', 'It is mixed: speed helps a little'],
     ok: 'Locked in! Now let us check it with the data.' },
-  { skill: 'tables', kind: 'run', data: true, task: '👀 <b>Watch the pros.</b> This box glues each receiver\'s 40 time to the yards he gained in his whole career, then draws a chart. Every dot is one receiver. <b>Left = faster. Up = more yards.</b>',
-    code: 'import matplotlib.pyplot as plt\n\nyards = pd.read_csv("career_yards.csv")\nwr = combine[(combine["pos"] == "WR") & combine["forty"].notna()]\nwr = wr.drop_duplicates("player_name", keep=False)\ndata = wr.merge(yards, on="player_name")\nprint("Receivers with both numbers:", len(data))\n\nplt.figure(figsize=(9, 5))\nplt.scatter(data["forty"], data["yards"], alpha=0.5)\nplt.xlabel("40-yard dash in seconds   (left = faster)")\nplt.ylabel("Career receiving yards")\nplt.title("Does speed make a great receiver?")\nplt.show()',
-    check: async () => ({ ok: true, msg: (myVote === 2 ? 'Good call! ' : 'Surprise! ') + 'If speed decided everything, the highest dots would all be on the left. But they are all mixed up: fast and slow receivers both became stars, and both flopped.' }) },
-  { skill: 'tables', kind: 'turn', data: true, task: 'Be the scout. This finds <b>slow stars</b>: 4.55 seconds or slower, but more than 8,000 career yards. Now find the <b>superstars</b>: change <code>8000</code> to <code>10000</code>. (<code>&gt;=</code> means "at least", <code>&gt;</code> means "more than".)',
-    code: 'data[(data["forty"] >= 4.55) & (data["yards"] > 8000)][["player_name", "forty", "yards"]]',
-    hints: ['Find the number <code>8000</code> in the line and type <code>10000</code> instead. No comma inside the number.'],
-    check: async ({ code, q }) => /\b10000\b/.test(code)
-      ? { ok: true, msg: `${(await q('len(data[(data["forty"] >= 4.55) & (data["yards"] > 10000)])'))} receivers were "slow" at the Combine and still gained over 10,000 yards. Catching, routes and smarts matter too. That is why teams hire analysts like you.` }
-      : { msg: 'It still says 8000. Change it to <code>10000</code> to keep only the superstars.' } }
+  { md: '<b>How to read the chart</b> you are about to draw. Every dot is one receiver who gained at least 1,000 yards in his NFL career.<br>• <b>Along the bottom (left to right):</b> his 40-yard time. Dots on the <b>left</b> are the <b>fast</b> guys, dots on the right are slower.<br>• <b>Up the side (bottom to top):</b> his career receiving yards. Dots near the <b>top</b> are the <b>stars</b>.<br>So if speed decided everything, the top dots would all sit on the left.' },
+  { skill: 'tables', kind: 'run', data: true, task: 'Run it to draw the chart. <code>plt</code> is the chart helper. <code>scatter</code> draws one dot per row, <code>xlabel</code> writes the words along the bottom, <code>ylabel</code> the words up the side, and <code>title</code> the words on top.',
+    code: 'import matplotlib.pyplot as plt\n\nreceivers = pd.read_csv("receivers.csv")\nprint("Receivers:", len(receivers))\n\nplt.figure(figsize=(8, 4))\nplt.scatter(receivers["forty"], receivers["yards"])\nplt.xlabel("40-yard time in seconds   (left = faster)")\nplt.ylabel("Career receiving yards")\nplt.title("Does speed make a great receiver?")\nplt.show()',
+    check: async () => ({ ok: true, msg: (myVote === 2 ? 'Good call! ' : 'Surprise! ') + 'Look at the top dots: some are on the left, some in the middle, some on the right. Fast and slow receivers both became stars.' }) },
+  { skill: 'tables', kind: 'predict', data: true, task: '<b>Guess first!</b> These are the 10 receivers with the <b>most</b> career yards. <code>ascending=False</code> means "biggest first". How many of these 10 stars ran the 40 <b>slower than 4.50</b> seconds? Type your guess, then run it.',
+    code: 'stars = receivers.sort_values("yards", ascending=False).head(10)\nstars',
+    check: async ({ guess }) => ({ ok: true, missed: +guess !== 6, msg: (+guess === 6 ? 'You called it: 6! ' : `You guessed ${esc(String(guess))}, the answer is 6. `) + 'Anquan Boldin ran 4.72 and still gained 13,780 yards. Catching, routes and smarts matter too. That is why teams hire analysts like you.' }) }
 ];
 const REVIEW1 = [
   { skill: 'variables', q: 'Which line puts 18 into a locker called number?', opts: ['18 = number', 'number = 18', 'number == 18'], a: 1 },
@@ -107,7 +98,7 @@ const REVIEW1 = [
 registerLab('nfl', 1, {
   title: 'Football Lab',
   skills: SKILLS1, cells: LAB1, review: REVIEW1,
-  data: ['combine.csv', 'career_yards.csv'],
+  data: ['combine.csv', 'receivers.csv'],
   setup: `
 def _who(df, name):
     r = df[df["player_name"] == name].iloc[0]

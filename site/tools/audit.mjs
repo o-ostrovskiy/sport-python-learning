@@ -3,7 +3,7 @@
 //   cd site/tools && node audit.mjs --base http://localhost:8765 nfl-03 mlb-08
 // In every play: every hint, every wrong quiz option, the starting code (a "your turn" box should not pass as it is),
 // every wrong answer from the answer key, then the right answer. Then the film review (first question answered wrong
-// on purpose), the scouting report, and the trophy on the map. Google Analytics is blocked, and the browser's
+// on purpose), the final card of what was learned, and the trophy on the map. Google Analytics is blocked, and the browser's
 // storage is cleared afterwards, so a run leaves nothing behind.
 // Writes audit/<lab>.json (every coach line, output and problem) and audit/<lab>-*.png next to this file,
 // and prints the problems: a play that does not finish, an empty or odd coach line (undefined, NaN, [object…),
@@ -122,9 +122,10 @@ for (const name of names) {
       log.review.push({ q: r.q, coach: await coach() });
       await page.waitForTimeout(1500);
     }
-    await page.waitForFunction(() => /SCOUTING REPORT/.test(document.querySelector('#film')?.textContent || ''), null, { timeout: 15000 });
+    await page.waitForFunction(() => /TODAY YOU LEARNED/.test(document.querySelector('#film')?.textContent || ''), null, { timeout: 15000 });
     log.report = await page.locator('#film').innerText();
-    if (!/Not yet/.test(log.report)) problem(0, 'the report does not show the skill missed in the review');
+    // The final card lists what was learned and never grades (the child's wish, 2026-11-19), even after a missed question.
+    if (/Not yet|Practice more/.test(log.report)) problem(0, 'the final card shows a grade');
     await page.locator('#film').screenshot({ path: path.join(OUT, `${name}-report.png`) });
     await page.getByRole('button', { name: 'Back to the map' }).click();
     const pin = await page.locator(`#map .pin[data-i="${week - 1}"]`).getAttribute('class');
