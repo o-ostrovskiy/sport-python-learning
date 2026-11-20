@@ -60,15 +60,16 @@ try {
   must(await getCode(4) === mine, 'Play 4 lost the typed code');
   must(await cell(5).evaluate(e => e.classList.contains('wait')), 'Play 5 should still be locked');
 
-  step('finish Plays 4–6, reload, Continue, then Plays 7–9 need speed_mph and combine from before the reload');
+  step('finish Plays 4–7, reload, Continue, then Plays 8–10 need speed_mph and combine from before the reload');
   await cell(4).locator('.guess').fill(String(ANS[4].answer)); await run(4);
   await typeIn(5, ANS[5].solution); await run(5);
   await run(6);
+  await cell(7).locator('.opt[data-i="1"]').click(); await waitDone(7);
   await cont();
-  for (const k of [1, 2, 3, 4, 5, 6]) must(await cell(k).evaluate(e => e.classList.contains('done')), `Play ${k} is not done after the second Continue`);
-  await typeIn(7, ANS[7].solution); await run(7); await noNameError();
-  await run(8);
-  await typeIn(9, ANS[9].solution); await run(9); await noNameError();
+  for (const k of [1, 2, 3, 4, 5, 6, 7]) must(await cell(k).evaluate(e => e.classList.contains('done')), `Play ${k} is not done after the second Continue`);
+  await typeIn(8, ANS[8].solution); await run(8); await noNameError();
+  await run(9);
+  await typeIn(10, ANS[10].solution); await run(10); await noNameError();
 
   step('reload, Start over: every box back to its starting code');
   await open(); await page.getByRole('button', { name: /Start over/ }).click(); await page.locator('#game.on').waitFor();
