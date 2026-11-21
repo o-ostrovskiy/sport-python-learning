@@ -29,5 +29,19 @@ window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
  "guess is not a whole number yet. Line 1 should start with guess = int(input(.": "guess-is-not-a-whole-number-yet-line-1-s-7b617813.mp3",
  "Yes, 62!": "yes-62-82a97a71.mp3",
  "Read line 1 from the inside out: input gets text, int makes it a number, = stores it.": "read-line-1-from-the-inside-out-input-ge-680675b5.mp3",
- "The loop never asked you anything. Keep the while line as it was.": "the-loop-never-asked-you-anything-keep-t-5bed44f9.mp3"
+ "Exactly, 4!": "exactly-4-5c57e316.mp3",
+ "Three strikes, then \"You're out!\". Before every lap Python asks \"is strikes < 3?\" When strikes reached 3, the answer was False and the loop stopped.": "three-strikes-then-you-re-out-before-eve-7a9efed7.mp3",
+ "Keep the while balls < …: line, and change only its number.": "keep-the-while-balls-line-and-change-onl-3199b549.mp3",
+ "Keep the print(\"Ball\", balls) line inside the loop.": "keep-the-print-ball-balls-line-inside-th-71451f8b.mp3",
+ "Ball 4, take your base! When balls reached 4, \"is 4 less than 4?\" was False, so the loop stopped.": "ball-4-take-your-base-when-balls-reached-53b524b3.mp3",
+ "The missing word starts the loop. It has 5 letters and means \"as long as\". Keep the rest of that line as it was.": "the-missing-word-starts-the-loop-it-has-ee71a83d.mp3",
+ "The loop never asked you anything. Keep tries = 0 and guess = 0 at the top.": "the-loop-never-asked-you-anything-keep-t-506dd8f8.mp3",
+ "Out of tries: it was 60, a record that stood for 34 years. The loop stopped by itself because tries < 3 turned False. That count keeps a while from running forever.": "out-of-tries-it-was-60-a-record-that-sto-8311fda8.mp3",
+ "Look at the secret line. The missing word picks one thing from the list, and it has 6 letters.": "look-at-the-secret-line-the-missing-word-fbeca1bf.mp3",
+ "The secret must come from the list hitters. Keep the list as it was.": "the-secret-must-come-from-the-list-hitte-e796eef3.mp3",
+ "A good game gives clues. For those we need the stats.": "a-good-game-gives-clues-for-those-we-nee-d0707e48.mp3",
+ "There are only 3 clues, so 3 tries is the most. Set chances = 3 and play again.": "there-are-only-3-clues-so-3-tries-is-the-a20912f4.mp3",
+ "The loop never asked you anything. Keep the while line as it was.": "the-loop-never-asked-you-anything-keep-t-5bed44f9.mp3",
+ "The loop never asked you anything. Keep chances = 3.": "the-loop-never-asked-you-anything-keep-c-c90ffd60.mp3",
+ "Your own quiz, built from MLB stats. Now let mom, dad or a friend play it: you wrote a program other people can use!": "your-own-quiz-built-from-mlb-stats-now-l-54b45be6.mp3"
 });

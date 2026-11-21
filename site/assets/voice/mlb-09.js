@@ -1,2 +1,29 @@
 // Made by tools/record-voice.mjs. Do not edit by hand.
-window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {});
+window.COACH_VOICE = Object.assign(window.COACH_VOICE || {}, {
+ "A bar chart! plt.bar(seasons, homers): the first list says where each bar stands, the second says how tall it is. 2022 goes with 62, 2023 with 37, and so on.": "a-bar-chart-plt-bar-seasons-homers-the-f-a365e0d5.mp3",
+ "plt.title is the headline. plt.xlabel writes under the bottom line (x goes across). plt.ylabel writes along the left side, the line that goes up.": "plt-title-is-the-headline-plt-xlabel-wri-a7dd7792.mp3",
+ "Yes! xlabel is for the line that goes across, ylabel for the line that goes up.": "yes-xlabel-is-for-the-line-that-goes-acr-a58aff8f.mp3",
+ "The title is the headline at the very top.": "the-title-is-the-headline-at-the-very-to-8a13dc12.mp3",
+ "That one writes along the left side, the line that goes up. Remember: x goes across.": "that-one-writes-along-the-left-side-the-6f4bc403.mp3",
+ "Change only the name inside the quotes on the plt.title line.": "change-only-the-name-inside-the-quotes-o-01570a62.mp3",
+ "Like this: plt.title(\"Shohei Ohtani: home runs each season\")": "like-this-plt-title-shohei-ohtani-home-r-d64802c1.mp3",
+ "Change only what is between the quotes on line 1.": "change-only-what-is-between-the-quotes-o-9a0655cb.mp3",
+ "Like this: name = \"Mike Trout\". Capital letters matter.": "like-this-name-mike-trout-capital-letter-ee9765a8.mp3",
+ "You ran it in Part 1. It is the twin of xlabel, for the line that goes up.": "you-ran-it-in-part-1-it-is-the-twin-of-x-c20d408e.mp3",
+ "The line should start with: plt.ylabel(": "the-line-should-start-with-plt-ylabel-dee44b68.mp3",
+ "2024: he stole 59 bases, and hit 54 home runs in the same season! You found it in one look. That is what a chart is for.": "2024-he-stole-59-bases-and-hit-54-home-r-c13bd757.mp3",
+ "2021 is a tall bar (26), but one bar is more than twice as tall. Look again.": "2021-is-a-tall-bar-26-but-one-bar-is-mor-9e9d23fa.mp3",
+ "2025 is a normal bar (20). Find the one that towers over all the others.": "2025-is-a-normal-bar-20-find-the-one-tha-d93394f8.mp3",
+ "Read it like a story. Flat at the bottom at first: Ruth was a pitcher then! Then the line shoots up, and after 1930 it slides down as he got older. The label says (higher = more) now: words must fit the picture.": "read-it-like-a-story-flat-at-the-bottom-cd28894f.mp3",
+ "1927: 60 home runs, a record that stood for 34 years.": "1927-60-home-runs-a-record-that-stood-fo-e785c613.mp3",
+ "Close! 1921 is the first peak, with 59. One dot is a tiny bit higher.": "close-1921-is-the-first-peak-with-59-one-ace50864.mp3",
+ "1930 is high (49), but look further left for the highest dot of all.": "1930-is-high-49-but-look-further-left-fo-1ea48f94.mp3",
+ "You ran it in the Babe Ruth box. plt.bar draws bars; which one draws a line?": "you-ran-it-in-the-babe-ruth-box-plt-bar-488568b2.mp3",
+ "The line should start with: plt.plot(": "the-line-should-start-with-plt-plot-90bca0ff.mp3",
+ "Right. A line connects the seasons, so the ups and downs jump out. Bars are best for comparing sizes.": "right-a-line-connects-the-seasons-so-the-7dce3fca.mp3",
+ "A table has the numbers, but your eye can't follow ups and downs in it.": "a-table-has-the-numbers-but-your-eye-can-f4638b42.mp3",
+ "A chart without words is a mystery! And which kind of chart would it be?": "a-chart-without-words-is-a-mystery-and-w-61d6c542.mp3",
+ "The loop ran twice, so two lines, each in its own color. In 2022 Judge is far on top (62 to 34). In 2025 Ohtani is just ahead (55 to 53). They keep trading places!": "the-loop-ran-twice-so-two-lines-each-in-8073fb09.mp3",
+ "Ruth is far on the left, Judge far on the right, with about 80 empty years between them. They are not side by side at all. We need a different line across the bottom.": "ruth-is-far-on-the-left-judge-far-on-the-7138c035.mp3",
+ "Now both start at 1. Judge started faster: 52 home runs in his 2nd season, when Ruth was still a pitcher. We changed the words under the chart too: when the chart changes, the words must change.": "now-both-start-at-1-judge-started-faster-ee3323af.mp3"
+});
